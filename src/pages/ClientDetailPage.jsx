@@ -1,4 +1,4 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import L from 'leaflet'
@@ -6,7 +6,8 @@ import {
   ArrowLeft, User, MapPin, CreditCard, Wifi, Radio,
   Phone, Mail, Calendar, Clock
 } from 'lucide-react'
-import { clientData, odpData, pathData, oltLocation } from '../data/mockData'
+import { getClients, getOdps, getPaths } from '../api'
+import { oltLocation } from '../data/mockData'
 
 function createIcon(color, size = 20) {
   return L.divIcon({
@@ -23,12 +24,28 @@ function formatCurrency(amount) {
 
 export default function ClientDetailPage() {
   const { id } = useParams()
+  const [client, setClient] = useState(null)
+  const [odp, setOdp] = useState(null)
+  const [path, setPath] = useState(null)
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  const client = useMemo(() => clientData.find(c => c.id === id), [id])
-  const odp = useMemo(() => client ? odpData.find(o => o.id === client.odpId) : null, [client])
-  const path = useMemo(() => odp ? pathData.find(p => p.odpIds.includes(odp.id)) : null, [odp])
+  useEffect(() => {
+    Promise.all([getClients(), getOdps(), getPaths()]).then(([clients, odps, pathsData]) => {
+      const foundClient = clients.find(c => c.id === id)
+      setClient(foundClient)
+      if (foundClient) {
+        const foundOdp = odps.find(o => o.id === foundClient.odpId)
+        setOdp(foundOdp)
+        if (foundOdp) {
+          setPath(pathsData.find(p => p.odpIds.includes(foundOdp.id)))
+        }
+      }
+      setLoading(false)
+    })
+  }, [id])
 
+  if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
   if (!client) {
     return (
       <div className="flex flex-col items-center justify-center h-full text-text-muted">

@@ -1,18 +1,29 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Users, Filter, ArrowUpDown } from 'lucide-react'
-import { clientData, odpData } from '../data/mockData'
+import { getClients } from '../api'
+import AddClientModal from '../components/AddClientModal'
 
 function formatCurrency(amount) {
   return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount)
 }
 
 export default function ClientsPage() {
+  const [clientData, setClientData] = useState([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterPayment, setFilterPayment] = useState('all')
   const [sortBy, setSortBy] = useState('name')
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    getClients().then(data => {
+      setClientData(data)
+      setLoading(false)
+    })
+  }, [])
 
   const filtered = useMemo(() => {
     let data = [...clientData]
@@ -47,7 +58,7 @@ export default function ClientsPage() {
     })
 
     return data
-  }, [search, filterStatus, filterPayment, sortBy])
+  }, [clientData, search, filterStatus, filterPayment, sortBy])
 
   const onlineCount = clientData.filter(c => c.status === 'online').length
   const offlineCount = clientData.filter(c => c.status === 'offline').length
@@ -62,7 +73,7 @@ export default function ClientsPage() {
             <h1 className="text-2xl font-bold text-text-primary tracking-tight">Manajemen Pelanggan</h1>
             <p className="text-sm text-text-muted mt-1 font-medium">{clientData.length} pelanggan terdaftar</p>
           </div>
-          <button className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
+          <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
             <Plus size={16} />
             <span className="hidden sm:inline">Tambah Pelanggan</span>
           </button>
@@ -187,6 +198,18 @@ export default function ClientsPage() {
           </div>
         )}
       </div>
+
+      <AddClientModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAdd={() => {
+          setLoading(true)
+          getClients().then(data => {
+            setClientData(data)
+            setLoading(false)
+          })
+        }} 
+      />
     </div>
   )
 }

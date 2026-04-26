@@ -1,9 +1,9 @@
-import { useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import { ArrowLeft, Radio, MapPin, Cable, User, Plug } from 'lucide-react'
-import { odpData, clientData, pathData } from '../data/mockData'
+import { getOdps, getClients, getPaths } from '../api'
 
 function createIcon(color, size = 24) {
   return L.divIcon({
@@ -16,13 +16,25 @@ function createIcon(color, size = 24) {
 
 export default function ODPDetailPage() {
   const { id } = useParams()
+  const [odp, setOdp] = useState(null)
+  const [connectedClients, setConnectedClients] = useState([])
+  const [path, setPath] = useState(null)
+  const [clientData, setClientData] = useState([])
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  const odp = useMemo(() => odpData.find(o => o.id === id), [id])
-  const connectedClients = useMemo(() =>
-    clientData.filter(c => c.odpId === id), [id])
-  const path = useMemo(() =>
-    pathData.find(p => p.odpIds.includes(id)), [id])
+  useEffect(() => {
+    Promise.all([getOdps(), getClients(), getPaths()]).then(([odps, clients, pathsData]) => {
+      const foundOdp = odps.find(o => o.id === id)
+      setOdp(foundOdp)
+      setConnectedClients(clients.filter(c => c.odpId === id))
+      setPath(pathsData.find(p => p.odpIds.includes(id)))
+      setClientData(clients)
+      setLoading(false)
+    })
+  }, [id])
+
+  if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
 
   if (!odp) {
     return (
@@ -50,13 +62,13 @@ export default function ODPDetailPage() {
           </button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-bold text-text-primary">{odp.id}</h1>
+              <h1 className="text-xl font-bold text-text-primary">{odp.name}</h1>
               <div
                 className="w-3 h-3 rounded-full"
                 style={{ background: statusColor, boxShadow: `0 0 8px ${statusColor}66` }}
               />
             </div>
-            <p className="text-sm text-text-muted">{odp.name}</p>
+            <p className="text-sm text-text-muted">{odp.id}</p>
           </div>
         </div>
       </div>
@@ -102,23 +114,25 @@ export default function ODPDetailPage() {
           <div className="bg-bg-secondary border border-border rounded-2xl p-5">
             <h3 className="text-sm font-semibold text-text-secondary mb-4 flex items-center gap-2">
               <Plug size={16} className="text-accent" />
-              Status Port ({odp.usedPorts}/{odp.totalPorts})
+              Status Port ({connectedClients.length}/{odp.totalPorts})
             </h3>
             <div className={`grid gap-2 ${odp.totalPorts <= 8 ? 'grid-cols-4' : 'grid-cols-4 md:grid-cols-8'}`}>
-              {odp.ports.map(port => {
-                const client = port.clientId ? clientData.find(c => c.id === port.clientId) : null
+              {Array.from({ length: odp.totalPorts }).map((_, i) => {
+                const portNumber = i + 1;
+                const client = connectedClients.find(c => Number(c.portNumber) === portNumber)
+                const isUsed = !!client;
                 return (
                   <div
-                    key={port.number}
+                    key={portNumber}
                     className={`relative group aspect-square rounded-xl flex flex-col items-center justify-center text-xs cursor-pointer transition-all duration-200 border ${
-                      port.status === 'used'
+                      isUsed
                         ? 'bg-danger/10 border-danger/30 text-danger hover:bg-danger/20'
                         : 'bg-success/10 border-success/30 text-success hover:bg-success/20'
                     }`}
                   >
-                    <span className="font-bold text-base">{port.number}</span>
+                    <span className="font-bold text-base">{portNumber}</span>
                     <span className="text-[10px] opacity-70">
-                      {port.status === 'used' ? 'Terpakai' : 'Kosong'}
+                      {isUsed ? 'Terpakai' : 'Kosong'}
                     </span>
                     {/* Tooltip */}
                     {client && (

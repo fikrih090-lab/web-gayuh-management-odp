@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import L from 'leaflet'
 import { useNavigate } from 'react-router-dom'
 import { Radio, Users, Plug, AlertTriangle, Layers, LocateFixed, ZoomIn, ZoomOut, Eye, EyeOff } from 'lucide-react'
-import { odpData, clientData, pathData, oltLocation, getStats } from '../data/mockData'
+import { oltLocation } from '../data/mockData'
+import { getClients, getOdps, getPaths, getAlerts } from '../api'
 
 // Fix Leaflet map size when container becomes visible
 function MapResizer() {
@@ -92,7 +93,33 @@ function MapControls() {
 }
 
 export default function DashboardPage() {
-  const stats = useMemo(() => getStats(), [])
+  const [clientData, setClientData] = useState([]);
+  const [odpData, setOdpData] = useState([]);
+  const [pathData, setPathData] = useState([]);
+  const [alertData, setAlertData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([getClients(), getOdps(), getPaths(), getAlerts()])
+      .then(([clients, odps, paths, alerts]) => {
+        setClientData(clients);
+        setOdpData(odps);
+        setPathData(paths);
+        setAlertData(alerts);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Failed to fetch dashboard data:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const stats = useMemo(() => ({
+    totalOdp: odpData.length,
+    totalClients: clientData.length,
+    availablePorts: odpData.reduce((acc, odp) => acc + (odp.totalPorts || 8) - (odp.usedPorts || 0), 0),
+    activeAlerts: alertData.filter(a => !a.resolved).length
+  }), [odpData, clientData, alertData])
   const navigate = useNavigate()
   const [layers, setLayers] = useState({ odp: true, clients: true, paths: true })
 

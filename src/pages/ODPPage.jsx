@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker } from 'react-leaflet'
 import L from 'leaflet'
 import { Search, Plus, Radio, Filter } from 'lucide-react'
-import { odpData } from '../data/mockData'
+import { getOdps, getClients } from '../api'
+import AddOdpModal from '../components/AddOdpModal'
 
 function getODPColor(odp) {
   const ratio = odp.usedPorts / odp.totalPorts
@@ -29,10 +30,24 @@ function createMiniIcon(color) {
 }
 
 export default function ODPPage() {
+  const [odpData, setOdpData] = useState([])
+  const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [filterType, setFilterType] = useState('all')
   const [selectedODP, setSelectedODP] = useState(null)
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    Promise.all([getOdps(), getClients()]).then(([odps, clients]) => {
+      const odpsWithPorts = odps.map(odp => {
+        const usedPorts = clients.filter(c => c.odpId === odp.id).length;
+        return { ...odp, usedPorts };
+      });
+      setOdpData(odpsWithPorts)
+      setLoading(false)
+    })
+  }, [])
 
   const filtered = useMemo(() => {
     return odpData.filter(odp => {
@@ -42,7 +57,7 @@ export default function ODPPage() {
       const matchType = filterType === 'all' || odp.type === filterType
       return matchSearch && matchType
     })
-  }, [search, filterType])
+  }, [odpData, search, filterType])
 
   const mapCenter = selectedODP
     ? [selectedODP.lat, selectedODP.lng]
@@ -60,7 +75,7 @@ export default function ODPPage() {
               <h1 className="text-2xl font-bold text-text-primary tracking-tight">Manajemen ODP</h1>
               <p className="text-sm text-text-muted mt-1 font-medium">{odpData.length} ODP terdaftar</p>
             </div>
-            <button className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
+            <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
               <Plus size={16} />
               <span className="hidden sm:inline">Tambah ODP</span>
             </button>
@@ -125,8 +140,8 @@ export default function ODPPage() {
                           style={{ background: getODPColor(odp), boxShadow: `0 0 10px ${getODPColor(odp)}88` }}
                         />
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-text-primary truncate">{odp.id}</p>
-                          <p className="text-xs text-text-muted mt-0.5 truncate">{odp.name}</p>
+                          <p className="text-sm font-semibold text-text-primary truncate">{odp.name}</p>
+                          <p className="text-xs text-text-muted mt-0.5 truncate">{odp.id}</p>
                         </div>
                       </div>
                     </td>
@@ -209,6 +224,22 @@ export default function ODPPage() {
           </div>
         )}
       </div>
+
+      <AddOdpModal 
+        isOpen={isAddModalOpen} 
+        onClose={() => setIsAddModalOpen(false)} 
+        onAdd={() => {
+          setLoading(true)
+          Promise.all([getOdps(), getClients()]).then(([odps, clients]) => {
+            const odpsWithPorts = odps.map(odp => {
+              const usedPorts = clients.filter(c => c.odpId === odp.id).length;
+              return { ...odp, usedPorts };
+            });
+            setOdpData(odpsWithPorts)
+            setLoading(false)
+          })
+        }} 
+      />
     </div>
   )
 }

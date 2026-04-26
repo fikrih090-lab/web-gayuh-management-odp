@@ -1,0 +1,6625 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "prevId": "",
+  "version": "5",
+  "dialect": "mysql",
+  "tables": {
+    "bank": {
+      "name": "bank",
+      "columns": {
+        "bank_id": {
+          "autoincrement": true,
+          "name": "bank_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_rek": {
+          "autoincrement": false,
+          "name": "no_rek",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner": {
+          "autoincrement": false,
+          "name": "owner",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "bot_telegram": {
+      "name": "bot_telegram",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username_bot": {
+          "autoincrement": false,
+          "name": "username_bot",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username_owner": {
+          "autoincrement": false,
+          "name": "username_owner",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_telegram_owner": {
+          "autoincrement": false,
+          "name": "id_telegram_owner",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_group_teknisi": {
+          "autoincrement": false,
+          "name": "id_group_teknisi",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "cat_expenditure": {
+      "name": "cat_expenditure",
+      "columns": {
+        "category_id": {
+          "autoincrement": true,
+          "name": "category_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "cat_income": {
+      "name": "cat_income",
+      "columns": {
+        "category_id": {
+          "autoincrement": true,
+          "name": "category_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "company": {
+      "name": "company",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "company_name": {
+          "autoincrement": false,
+          "name": "company_name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sub_name": {
+          "autoincrement": false,
+          "name": "sub_name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "logo": {
+          "autoincrement": false,
+          "name": "logo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "whatsapp": {
+          "autoincrement": false,
+          "name": "whatsapp",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "facebook": {
+          "autoincrement": false,
+          "name": "facebook",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "twitter": {
+          "autoincrement": false,
+          "name": "twitter",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "instagram": {
+          "autoincrement": false,
+          "name": "instagram",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "owner": {
+          "autoincrement": false,
+          "name": "owner",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "video": {
+          "autoincrement": false,
+          "name": "video",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due_date": {
+          "autoincrement": false,
+          "name": "due_date",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ppn": {
+          "autoincrement": false,
+          "name": "ppn",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admin_fee": {
+          "autoincrement": false,
+          "name": "admin_fee",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "terms": {
+          "autoincrement": false,
+          "name": "terms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "policy": {
+          "autoincrement": false,
+          "name": "policy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expired": {
+          "autoincrement": false,
+          "name": "expired",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "isolir": {
+          "autoincrement": false,
+          "name": "isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "import": {
+          "autoincrement": false,
+          "name": "import",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "apps_name": {
+          "autoincrement": false,
+          "name": "apps_name",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cek_bill": {
+          "autoincrement": false,
+          "name": "cek_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cek_usage": {
+          "autoincrement": false,
+          "name": "cek_usage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "autoincrement": false,
+          "name": "latitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "autoincrement": false,
+          "name": "longitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phonecode": {
+          "autoincrement": false,
+          "name": "phonecode",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "country": {
+          "autoincrement": false,
+          "name": "country",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency": {
+          "autoincrement": false,
+          "name": "currency",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "timezone": {
+          "autoincrement": false,
+          "name": "timezone",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tawk": {
+          "autoincrement": false,
+          "name": "tawk",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "speedtest": {
+          "autoincrement": false,
+          "name": "speedtest",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maintenance": {
+          "autoincrement": false,
+          "name": "maintenance",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "watermark": {
+          "autoincrement": false,
+          "name": "watermark",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version": {
+          "autoincrement": false,
+          "name": "version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_update": {
+          "autoincrement": false,
+          "name": "last_update",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bcava": {
+          "autoincrement": false,
+          "name": "bcava",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "licence": {
+          "autoincrement": false,
+          "name": "licence",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "confirm_payment": {
+      "name": "confirm_payment",
+      "columns": {
+        "confirm_id": {
+          "autoincrement": true,
+          "name": "confirm_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_id": {
+          "autoincrement": false,
+          "name": "invoice_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(25)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "metode_payment": {
+          "autoincrement": false,
+          "name": "metode_payment",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_payment": {
+          "autoincrement": false,
+          "name": "date_payment",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "country": {
+      "name": "country",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "iso": {
+          "autoincrement": false,
+          "name": "iso",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nicename": {
+          "autoincrement": false,
+          "name": "nicename",
+          "type": "varchar(80)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "iso3": {
+          "default": "'NULL'",
+          "autoincrement": false,
+          "name": "iso3",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "numcode": {
+          "default": "'NULL'",
+          "autoincrement": false,
+          "name": "numcode",
+          "type": "smallint(6)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phonecode": {
+          "autoincrement": false,
+          "name": "phonecode",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "coupon": {
+      "name": "coupon",
+      "columns": {
+        "coupon_id": {
+          "autoincrement": true,
+          "name": "coupon_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "percent": {
+          "autoincrement": false,
+          "name": "percent",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "one_time": {
+          "autoincrement": false,
+          "name": "one_time",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_active": {
+          "autoincrement": false,
+          "name": "max_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_limit": {
+          "autoincrement": false,
+          "name": "max_limit",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expired": {
+          "autoincrement": false,
+          "name": "expired",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "coverage": {
+      "name": "coverage",
+      "columns": {
+        "coverage_id": {
+          "autoincrement": true,
+          "name": "coverage_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "c_name": {
+          "autoincrement": false,
+          "name": "c_name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_prov": {
+          "autoincrement": false,
+          "name": "id_prov",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_kab": {
+          "autoincrement": false,
+          "name": "id_kab",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_kec": {
+          "autoincrement": false,
+          "name": "id_kec",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_kel": {
+          "autoincrement": false,
+          "name": "id_kel",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "comment": {
+          "autoincrement": false,
+          "name": "comment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "autoincrement": false,
+          "name": "latitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "autoincrement": false,
+          "name": "longitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "radius": {
+          "autoincrement": false,
+          "name": "radius",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "public": {
+          "autoincrement": false,
+          "name": "public",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_area": {
+          "autoincrement": false,
+          "name": "code_area",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_mitra": {
+          "autoincrement": false,
+          "name": "coverage_mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "cover_operator": {
+      "name": "cover_operator",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_id": {
+          "autoincrement": false,
+          "name": "coverage_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "operator": {
+          "autoincrement": false,
+          "name": "operator",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "cover_package": {
+      "name": "cover_package",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_id": {
+          "autoincrement": false,
+          "name": "coverage_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "package_id": {
+          "autoincrement": false,
+          "name": "package_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "currencies": {
+      "name": "currencies",
+      "columns": {
+        "code": {
+          "autoincrement": false,
+          "name": "code",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "number": {
+          "autoincrement": false,
+          "name": "number",
+          "type": "char(5)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subunits_in_unit": {
+          "autoincrement": false,
+          "name": "subunits_in_unit",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "countries": {
+          "autoincrement": false,
+          "name": "countries",
+          "type": "longtext",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customer": {
+      "name": "customer",
+      "columns": {
+        "customer_id": {
+          "autoincrement": true,
+          "name": "customer_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "register_date": {
+          "autoincrement": false,
+          "name": "register_date",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due_date": {
+          "autoincrement": false,
+          "name": "due_date",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_wa": {
+          "autoincrement": false,
+          "name": "no_wa",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "c_status": {
+          "autoincrement": false,
+          "name": "c_status",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ppn": {
+          "autoincrement": false,
+          "name": "ppn",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_ktp": {
+          "autoincrement": false,
+          "name": "no_ktp",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ktp": {
+          "autoincrement": false,
+          "name": "ktp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mode_user": {
+          "autoincrement": false,
+          "name": "mode_user",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_mikrotik": {
+          "autoincrement": false,
+          "name": "user_mikrotik",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mitra": {
+          "autoincrement": false,
+          "name": "mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage": {
+          "autoincrement": false,
+          "name": "coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "auto_isolir": {
+          "autoincrement": false,
+          "name": "auto_isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_id": {
+          "autoincrement": false,
+          "name": "type_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router": {
+          "autoincrement": false,
+          "name": "router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "codeunique": {
+          "autoincrement": false,
+          "name": "codeunique",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phonecode": {
+          "autoincrement": false,
+          "name": "phonecode",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "autoincrement": false,
+          "name": "latitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "autoincrement": false,
+          "name": "longitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_profile": {
+          "autoincrement": false,
+          "name": "user_profile",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "autoincrement": false,
+          "name": "action",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_payment": {
+          "autoincrement": false,
+          "name": "type_payment",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "max_due_isolir": {
+          "autoincrement": false,
+          "name": "max_due_isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "olt": {
+          "autoincrement": false,
+          "name": "olt",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "connection": {
+          "autoincrement": false,
+          "name": "connection",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cust_amount": {
+          "autoincrement": false,
+          "name": "cust_amount",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mac_address": {
+          "autoincrement": false,
+          "name": "mac_address",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "level": {
+          "autoincrement": false,
+          "name": "level",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cust_description": {
+          "autoincrement": false,
+          "name": "cust_description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_ip": {
+          "autoincrement": false,
+          "name": "type_ip",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_odc": {
+          "autoincrement": false,
+          "name": "id_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_odp": {
+          "autoincrement": false,
+          "name": "id_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_port_odp": {
+          "autoincrement": false,
+          "name": "no_port_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "month_due_date": {
+          "autoincrement": false,
+          "name": "month_due_date",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_bill": {
+          "autoincrement": false,
+          "name": "send_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "serial_number": {
+          "autoincrement": false,
+          "name": "serial_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pass_mikrotik": {
+          "autoincrement": false,
+          "name": "pass_mikrotik",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slot": {
+          "autoincrement": false,
+          "name": "slot",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "port": {
+          "autoincrement": false,
+          "name": "port",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "onu_index": {
+          "autoincrement": false,
+          "name": "onu_index",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "onu_type": {
+          "autoincrement": false,
+          "name": "onu_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vlan": {
+          "autoincrement": false,
+          "name": "vlan",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_va": {
+          "autoincrement": false,
+          "name": "no_va",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "up_onu": {
+          "autoincrement": false,
+          "name": "up_onu",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "down_onu": {
+          "autoincrement": false,
+          "name": "down_onu",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_mitra": {
+          "autoincrement": false,
+          "name": "customer_mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createby": {
+          "autoincrement": false,
+          "name": "createby",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customer_chart": {
+      "name": "customer_chart",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_chart": {
+          "autoincrement": false,
+          "name": "id_chart",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fromcs": {
+          "autoincrement": false,
+          "name": "fromcs",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tocs": {
+          "autoincrement": false,
+          "name": "tocs",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customer_line": {
+      "name": "customer_line",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_line": {
+          "autoincrement": false,
+          "name": "id_line",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "width": {
+          "autoincrement": false,
+          "name": "width",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "height": {
+          "autoincrement": false,
+          "name": "height",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dir": {
+          "autoincrement": false,
+          "name": "dir",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customer_status": {
+      "name": "customer_status",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "active_bill": {
+          "autoincrement": false,
+          "name": "active_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "customer_usage": {
+      "name": "customer_usage",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "count_usage": {
+          "autoincrement": false,
+          "name": "count_usage",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_usage": {
+          "autoincrement": false,
+          "name": "date_usage",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_update": {
+          "autoincrement": false,
+          "name": "last_update",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "email": {
+      "name": "email",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "protocol": {
+          "autoincrement": false,
+          "name": "protocol",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "host": {
+          "autoincrement": false,
+          "name": "host",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "port": {
+          "autoincrement": false,
+          "name": "port",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_payment": {
+          "autoincrement": false,
+          "name": "send_payment",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_verify": {
+          "autoincrement": false,
+          "name": "send_verify",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "forgot_password": {
+          "autoincrement": false,
+          "name": "forgot_password",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_create": {
+          "autoincrement": false,
+          "name": "text_create",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_pay": {
+          "autoincrement": false,
+          "name": "text_pay",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_verify": {
+          "autoincrement": false,
+          "name": "text_verify",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_forgot": {
+          "autoincrement": false,
+          "name": "text_forgot",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_invoice": {
+          "autoincrement": false,
+          "name": "create_invoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "expenditure": {
+      "name": "expenditure",
+      "columns": {
+        "expenditure_id": {
+          "autoincrement": true,
+          "name": "expenditure_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_payment": {
+          "autoincrement": false,
+          "name": "date_payment",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nominal": {
+          "autoincrement": false,
+          "name": "nominal",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "autoincrement": false,
+          "name": "category",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "help": {
+      "name": "help",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_ticket": {
+          "autoincrement": false,
+          "name": "no_ticket",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_type": {
+          "autoincrement": false,
+          "name": "help_type",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_solution": {
+          "autoincrement": false,
+          "name": "help_solution",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "teknisi": {
+          "autoincrement": false,
+          "name": "teknisi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "autoincrement": false,
+          "name": "action",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estimation": {
+          "autoincrement": false,
+          "name": "estimation",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ticket_password": {
+          "autoincrement": false,
+          "name": "ticket_password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "help_action": {
+      "name": "help_action",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "autoincrement": false,
+          "name": "action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "help_solution": {
+      "name": "help_solution",
+      "columns": {
+        "hs_id": {
+          "autoincrement": true,
+          "name": "hs_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hs_help_id": {
+          "autoincrement": false,
+          "name": "hs_help_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hs_name": {
+          "autoincrement": false,
+          "name": "hs_name",
+          "type": "varchar(110)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "solution": {
+          "autoincrement": false,
+          "name": "solution",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "help_timeline": {
+      "name": "help_timeline",
+      "columns": {
+        "ht_id": {
+          "autoincrement": true,
+          "name": "ht_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_id": {
+          "autoincrement": false,
+          "name": "help_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_update": {
+          "autoincrement": false,
+          "name": "date_update",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "teknisi": {
+          "autoincrement": false,
+          "name": "teknisi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "action": {
+          "autoincrement": false,
+          "name": "action",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "help_type": {
+      "name": "help_type",
+      "columns": {
+        "help_id": {
+          "autoincrement": true,
+          "name": "help_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_type": {
+          "autoincrement": false,
+          "name": "help_type",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_remark": {
+          "autoincrement": false,
+          "name": "help_remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "income": {
+      "name": "income",
+      "columns": {
+        "income_id": {
+          "autoincrement": true,
+          "name": "income_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_payment": {
+          "autoincrement": false,
+          "name": "date_payment",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nominal": {
+          "autoincrement": false,
+          "name": "nominal",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "autoincrement": false,
+          "name": "category",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_id": {
+          "autoincrement": false,
+          "name": "invoice_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mode_payment": {
+          "autoincrement": false,
+          "name": "mode_payment",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage": {
+          "autoincrement": false,
+          "name": "coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "invoice": {
+      "name": "invoice",
+      "columns": {
+        "invoice_id": {
+          "autoincrement": true,
+          "name": "invoice_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice": {
+          "autoincrement": false,
+          "name": "invoice",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_unique": {
+          "autoincrement": false,
+          "name": "code_unique",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "month": {
+          "autoincrement": false,
+          "name": "month",
+          "type": "varchar(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "year": {
+          "autoincrement": false,
+          "name": "year",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "i_ppn": {
+          "autoincrement": false,
+          "name": "i_ppn",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_payment": {
+          "default": "'NULL'",
+          "autoincrement": false,
+          "name": "date_payment",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "metode_payment": {
+          "autoincrement": false,
+          "name": "metode_payment",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admin_fee": {
+          "autoincrement": false,
+          "name": "admin_fee",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "autoincrement": false,
+          "name": "amount",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order_id": {
+          "autoincrement": false,
+          "name": "order_id",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_type": {
+          "autoincrement": false,
+          "name": "payment_type",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transaction_time": {
+          "autoincrement": false,
+          "name": "transaction_time",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bank": {
+          "autoincrement": false,
+          "name": "bank",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "va_number": {
+          "autoincrement": false,
+          "name": "va_number",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pdf_url": {
+          "autoincrement": false,
+          "name": "pdf_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_code": {
+          "autoincrement": false,
+          "name": "status_code",
+          "type": "varchar(5)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expired": {
+          "autoincrement": false,
+          "name": "expired",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_id": {
+          "autoincrement": false,
+          "name": "x_id",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_bank_code": {
+          "autoincrement": false,
+          "name": "x_bank_code",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_method": {
+          "autoincrement": false,
+          "name": "x_method",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_account_number": {
+          "autoincrement": false,
+          "name": "x_account_number",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_expired": {
+          "autoincrement": false,
+          "name": "x_expired",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_external_id": {
+          "autoincrement": false,
+          "name": "x_external_id",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_amount": {
+          "autoincrement": false,
+          "name": "x_amount",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "x_qrcode": {
+          "autoincrement": false,
+          "name": "x_qrcode",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference": {
+          "autoincrement": false,
+          "name": "reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_url": {
+          "autoincrement": false,
+          "name": "payment_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_coupon": {
+          "autoincrement": false,
+          "name": "code_coupon",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "disc_coupon": {
+          "autoincrement": false,
+          "name": "disc_coupon",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "outlet": {
+          "autoincrement": false,
+          "name": "outlet",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status_income": {
+          "autoincrement": false,
+          "name": "status_income",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inv_due_date": {
+          "autoincrement": false,
+          "name": "inv_due_date",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_isolir": {
+          "autoincrement": false,
+          "name": "date_isolir",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_before_due": {
+          "autoincrement": false,
+          "name": "send_before_due",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_due": {
+          "autoincrement": false,
+          "name": "send_due",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inv_ppn": {
+          "autoincrement": false,
+          "name": "inv_ppn",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture1": {
+          "autoincrement": false,
+          "name": "picture1",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_bill": {
+          "autoincrement": false,
+          "name": "send_bill",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_paid": {
+          "autoincrement": false,
+          "name": "send_paid",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_paid": {
+          "autoincrement": false,
+          "name": "date_paid",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_bill_email": {
+          "autoincrement": false,
+          "name": "send_bill_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_bill_sms": {
+          "autoincrement": false,
+          "name": "send_bill_sms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_paid_email": {
+          "autoincrement": false,
+          "name": "send_paid_email",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_paid_sms": {
+          "autoincrement": false,
+          "name": "send_paid_sms",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "subtotal": {
+          "autoincrement": false,
+          "name": "subtotal",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amountuniq": {
+          "autoincrement": false,
+          "name": "amountuniq",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "daterequniq": {
+          "autoincrement": false,
+          "name": "daterequniq",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {
+        "invoice": {
+          "name": "invoice",
+          "columns": [
+            "invoice"
+          ]
+        }
+      },
+      "checkConstraint": {}
+    },
+    "invoice_detail": {
+      "name": "invoice_detail",
+      "columns": {
+        "detail_id": {
+          "autoincrement": true,
+          "name": "detail_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_id": {
+          "autoincrement": false,
+          "name": "invoice_id",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "qty": {
+          "autoincrement": false,
+          "name": "qty",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "disc": {
+          "autoincrement": false,
+          "name": "disc",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total": {
+          "autoincrement": false,
+          "name": "total",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "item_id": {
+          "autoincrement": false,
+          "name": "item_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "autoincrement": false,
+          "name": "category_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "d_month": {
+          "autoincrement": false,
+          "name": "d_month",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "d_year": {
+          "autoincrement": false,
+          "name": "d_year",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "d_no_services": {
+          "autoincrement": false,
+          "name": "d_no_services",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "invoice_id": {
+          "name": "invoice_id",
+          "columns": [
+            "invoice_id"
+          ],
+          "isUnique": false
+        },
+        "category_id": {
+          "name": "category_id",
+          "columns": [
+            "category_id"
+          ],
+          "isUnique": false
+        },
+        "item_id": {
+          "name": "item_id",
+          "columns": [
+            "item_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "logs": {
+      "name": "logs",
+      "columns": {
+        "log_id": {
+          "autoincrement": true,
+          "name": "log_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "datetime": {
+          "autoincrement": false,
+          "name": "datetime",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_log": {
+          "autoincrement": false,
+          "name": "date_log",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "autoincrement": false,
+          "name": "category",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "maps": {
+      "name": "maps",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "modem": {
+      "name": "modem",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_customer": {
+          "autoincrement": false,
+          "name": "show_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_local": {
+          "autoincrement": false,
+          "name": "ip_local",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_public": {
+          "autoincrement": false,
+          "name": "ip_public",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ssid_name": {
+          "autoincrement": false,
+          "name": "ssid_name",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ssid_password": {
+          "autoincrement": false,
+          "name": "ssid_password",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "login_user": {
+          "autoincrement": false,
+          "name": "login_user",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "login_password": {
+          "autoincrement": false,
+          "name": "login_password",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createby": {
+          "autoincrement": false,
+          "name": "createby",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated": {
+          "autoincrement": false,
+          "name": "updated",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updateby": {
+          "autoincrement": false,
+          "name": "updateby",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "moota": {
+      "name": "moota",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_whatsapp": {
+          "autoincrement": false,
+          "name": "send_whatsapp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_telegram": {
+          "autoincrement": false,
+          "name": "send_telegram",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "secret": {
+          "autoincrement": false,
+          "name": "secret",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_whatsapp": {
+          "autoincrement": false,
+          "name": "no_whatsapp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_income": {
+          "autoincrement": false,
+          "name": "text_income",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_expend": {
+          "autoincrement": false,
+          "name": "text_expend",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "change_bill": {
+          "autoincrement": false,
+          "name": "change_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "m_brand_device": {
+      "name": "m_brand_device",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "onu_type": {
+          "autoincrement": false,
+          "name": "onu_type",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "m_odc": {
+      "name": "m_odc",
+      "columns": {
+        "id_odc": {
+          "autoincrement": true,
+          "name": "id_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_odc": {
+          "autoincrement": false,
+          "name": "code_odc",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_odc": {
+          "autoincrement": false,
+          "name": "coverage_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_port_olt": {
+          "autoincrement": false,
+          "name": "no_port_olt",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color_tube_fo": {
+          "autoincrement": false,
+          "name": "color_tube_fo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_pole": {
+          "autoincrement": false,
+          "name": "no_pole",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "autoincrement": false,
+          "name": "latitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "autoincrement": false,
+          "name": "longitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_port": {
+          "autoincrement": false,
+          "name": "total_port",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "document": {
+          "autoincrement": false,
+          "name": "document",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "m_odp": {
+      "name": "m_odp",
+      "columns": {
+        "id_odp": {
+          "autoincrement": true,
+          "name": "id_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_odp": {
+          "autoincrement": false,
+          "name": "code_odp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_odc": {
+          "autoincrement": false,
+          "name": "code_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_odp": {
+          "autoincrement": false,
+          "name": "coverage_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_port_odc": {
+          "autoincrement": false,
+          "name": "no_port_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color_tube_fo": {
+          "autoincrement": false,
+          "name": "color_tube_fo",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_pole": {
+          "autoincrement": false,
+          "name": "no_pole",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "latitude": {
+          "autoincrement": false,
+          "name": "latitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "longitude": {
+          "autoincrement": false,
+          "name": "longitude",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_port": {
+          "autoincrement": false,
+          "name": "total_port",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "document": {
+          "autoincrement": false,
+          "name": "document",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "olt": {
+      "name": "olt",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "autoincrement": false,
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alias": {
+          "autoincrement": false,
+          "name": "alias",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "autoincrement": false,
+          "name": "username",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "autoincrement": false,
+          "name": "value",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bridge_olt": {
+          "autoincrement": false,
+          "name": "bridge_olt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "port": {
+          "autoincrement": false,
+          "name": "port",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "other": {
+      "name": "other",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "say_wa": {
+          "autoincrement": false,
+          "name": "say_wa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "body_wa": {
+          "autoincrement": false,
+          "name": "body_wa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "footer_wa": {
+          "autoincrement": false,
+          "name": "footer_wa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "thanks_wa": {
+          "autoincrement": false,
+          "name": "thanks_wa",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_customer": {
+          "autoincrement": false,
+          "name": "add_customer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_unique": {
+          "autoincrement": false,
+          "name": "code_unique",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_code_unique": {
+          "autoincrement": false,
+          "name": "text_code_unique",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark_invoice": {
+          "autoincrement": false,
+          "name": "remark_invoice",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_reset": {
+          "autoincrement": false,
+          "name": "date_reset",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_create": {
+          "autoincrement": false,
+          "name": "date_create",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_reminder": {
+          "autoincrement": false,
+          "name": "date_reminder",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "key_apps": {
+          "autoincrement": false,
+          "name": "key_apps",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reset_password": {
+          "autoincrement": false,
+          "name": "reset_password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_otp": {
+          "autoincrement": false,
+          "name": "code_otp",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_isolir": {
+          "autoincrement": false,
+          "name": "sch_isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_createbill": {
+          "autoincrement": false,
+          "name": "sch_createbill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_usage": {
+          "autoincrement": false,
+          "name": "sch_usage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_reset_usage": {
+          "autoincrement": false,
+          "name": "sch_reset_usage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_before_due": {
+          "autoincrement": false,
+          "name": "sch_before_due",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_due": {
+          "autoincrement": false,
+          "name": "sch_due",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_resend": {
+          "autoincrement": false,
+          "name": "sch_resend",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "inv_thermal": {
+          "autoincrement": false,
+          "name": "inv_thermal",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "checkout": {
+          "autoincrement": false,
+          "name": "checkout",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_help": {
+          "autoincrement": false,
+          "name": "create_help",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_help_customer": {
+          "autoincrement": false,
+          "name": "create_help_customer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "frontend": {
+          "autoincrement": false,
+          "name": "frontend",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "showentri": {
+          "autoincrement": false,
+          "name": "showentri",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_backup": {
+          "autoincrement": false,
+          "name": "sch_backup",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "size_thermal": {
+          "autoincrement": false,
+          "name": "size_thermal",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_help_customer": {
+          "autoincrement": false,
+          "name": "text_help_customer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "versi_menu": {
+          "autoincrement": false,
+          "name": "versi_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "default_lang": {
+          "autoincrement": false,
+          "name": "default_lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_ex_generate": {
+          "autoincrement": false,
+          "name": "last_ex_generate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_ex_isolir": {
+          "autoincrement": false,
+          "name": "last_ex_isolir",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_ex_usage": {
+          "autoincrement": false,
+          "name": "last_ex_usage",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_ex_backup": {
+          "autoincrement": false,
+          "name": "last_ex_backup",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_isolir": {
+          "autoincrement": false,
+          "name": "text_isolir",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sch_router": {
+          "autoincrement": false,
+          "name": "sch_router",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "package": {
+          "autoincrement": false,
+          "name": "package",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "package": {
+      "name": "package",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_gateway": {
+          "autoincrement": false,
+          "name": "payment_gateway",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router": {
+          "autoincrement": false,
+          "name": "router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "count_router": {
+          "autoincrement": false,
+          "name": "count_router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "count_customer": {
+          "autoincrement": false,
+          "name": "count_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "telegram_bot": {
+          "autoincrement": false,
+          "name": "telegram_bot",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "wa_gateway": {
+          "autoincrement": false,
+          "name": "wa_gateway",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maps": {
+          "autoincrement": false,
+          "name": "maps",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "chart": {
+          "autoincrement": false,
+          "name": "chart",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mitra": {
+          "autoincrement": false,
+          "name": "mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_custom": {
+          "autoincrement": false,
+          "name": "invoice_custom",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_no": {
+          "autoincrement": false,
+          "name": "invoice_no",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_operator": {
+          "autoincrement": false,
+          "name": "coverage_operator",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_teknisi": {
+          "autoincrement": false,
+          "name": "coverage_teknisi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modem": {
+          "autoincrement": false,
+          "name": "modem",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_package": {
+          "autoincrement": false,
+          "name": "coverage_package",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "olt": {
+          "autoincrement": false,
+          "name": "olt",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "count_olt": {
+          "autoincrement": false,
+          "name": "count_olt",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "absensi": {
+          "autoincrement": false,
+          "name": "absensi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "briva": {
+          "autoincrement": false,
+          "name": "briva",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_gateway": {
+          "autoincrement": false,
+          "name": "sms_gateway",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "moota": {
+          "autoincrement": false,
+          "name": "moota",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bcava": {
+          "autoincrement": false,
+          "name": "bcava",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "package_category": {
+      "name": "package_category",
+      "columns": {
+        "p_category_id": {
+          "autoincrement": true,
+          "name": "p_category_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_updated": {
+          "autoincrement": false,
+          "name": "date_updated",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "package_item": {
+      "name": "package_item",
+      "columns": {
+        "p_item_id": {
+          "autoincrement": true,
+          "name": "p_item_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "autoincrement": false,
+          "name": "category_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_update": {
+          "autoincrement": false,
+          "name": "date_update",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "public": {
+          "autoincrement": false,
+          "name": "public",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "package_mitra": {
+          "autoincrement": false,
+          "name": "package_mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "category_id": {
+          "name": "category_id",
+          "columns": [
+            "category_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "payment_gateway": {
+      "name": "payment_gateway",
+      "columns": {
+        "id": {
+          "autoincrement": false,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "api_key": {
+          "autoincrement": false,
+          "name": "api_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "server_key": {
+          "autoincrement": false,
+          "name": "server_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "client_key": {
+          "autoincrement": false,
+          "name": "client_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mode": {
+          "autoincrement": false,
+          "name": "mode",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expired": {
+          "autoincrement": false,
+          "name": "expired",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bca_va": {
+          "autoincrement": false,
+          "name": "bca_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bri_va": {
+          "autoincrement": false,
+          "name": "bri_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bni_va": {
+          "autoincrement": false,
+          "name": "bni_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "kodemerchant": {
+          "autoincrement": false,
+          "name": "kodemerchant",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mandiri_va": {
+          "autoincrement": false,
+          "name": "mandiri_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cimb_va": {
+          "autoincrement": false,
+          "name": "cimb_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mybank_va": {
+          "autoincrement": false,
+          "name": "mybank_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ovo": {
+          "autoincrement": false,
+          "name": "ovo",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "permata_va": {
+          "autoincrement": false,
+          "name": "permata_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gopay": {
+          "autoincrement": false,
+          "name": "gopay",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "shopeepay": {
+          "autoincrement": false,
+          "name": "shopeepay",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "indomaret": {
+          "autoincrement": false,
+          "name": "indomaret",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alfamart": {
+          "autoincrement": false,
+          "name": "alfamart",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admin_fee": {
+          "autoincrement": false,
+          "name": "admin_fee",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "va": {
+          "autoincrement": false,
+          "name": "va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ewallet": {
+          "autoincrement": false,
+          "name": "ewallet",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "retail": {
+          "autoincrement": false,
+          "name": "retail",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "qrcode": {
+          "autoincrement": false,
+          "name": "qrcode",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alfamidi": {
+          "autoincrement": false,
+          "name": "alfamidi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "muamalat_va": {
+          "autoincrement": false,
+          "name": "muamalat_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sinarmas_va": {
+          "autoincrement": false,
+          "name": "sinarmas_va",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dana": {
+          "autoincrement": false,
+          "name": "dana",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "linkaja": {
+          "autoincrement": false,
+          "name": "linkaja",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "payment_gateway_transaction": {
+      "name": "payment_gateway_transaction",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "external_id": {
+          "autoincrement": false,
+          "name": "external_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "method": {
+          "autoincrement": false,
+          "name": "method",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_number": {
+          "autoincrement": false,
+          "name": "code_number",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice": {
+          "autoincrement": false,
+          "name": "invoice",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reference": {
+          "autoincrement": false,
+          "name": "reference",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_url": {
+          "autoincrement": false,
+          "name": "payment_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transaction_time": {
+          "autoincrement": false,
+          "name": "transaction_time",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "product": {
+      "name": "product",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(225)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "link": {
+          "autoincrement": false,
+          "name": "link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "promo": {
+      "name": "promo",
+      "columns": {
+        "promo_id": {
+          "autoincrement": true,
+          "name": "promo_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "autoincrement": false,
+          "name": "slug",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "report_transaction": {
+      "name": "report_transaction",
+      "columns": {
+        "report_id": {
+          "autoincrement": true,
+          "name": "report_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "autoincrement": false,
+          "name": "date",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "income": {
+          "autoincrement": false,
+          "name": "income",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "expenditure": {
+          "autoincrement": false,
+          "name": "expenditure",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "role_group": {
+      "name": "role_group",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_name": {
+          "autoincrement": false,
+          "name": "role_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "profit_sharing": {
+          "autoincrement": false,
+          "name": "profit_sharing",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "role_management": {
+      "name": "role_management",
+      "columns": {
+        "role_id": {
+          "autoincrement": true,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_customer": {
+          "autoincrement": false,
+          "name": "show_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_customer": {
+          "autoincrement": false,
+          "name": "add_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_customer": {
+          "autoincrement": false,
+          "name": "edit_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_customer": {
+          "autoincrement": false,
+          "name": "del_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_item": {
+          "autoincrement": false,
+          "name": "show_item",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_item": {
+          "autoincrement": false,
+          "name": "add_item",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_item": {
+          "autoincrement": false,
+          "name": "edit_item",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_item": {
+          "autoincrement": false,
+          "name": "del_item",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_bill": {
+          "autoincrement": false,
+          "name": "show_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_bill": {
+          "autoincrement": false,
+          "name": "add_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_bill": {
+          "autoincrement": false,
+          "name": "del_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_coverage": {
+          "autoincrement": false,
+          "name": "show_coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_coverage": {
+          "autoincrement": false,
+          "name": "add_coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_coverage": {
+          "autoincrement": false,
+          "name": "edit_coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_coverage": {
+          "autoincrement": false,
+          "name": "del_coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_operator": {
+          "autoincrement": false,
+          "name": "coverage_operator",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_slide": {
+          "autoincrement": false,
+          "name": "show_slide",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_slide": {
+          "autoincrement": false,
+          "name": "add_slide",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_slide": {
+          "autoincrement": false,
+          "name": "edit_slide",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_slide": {
+          "autoincrement": false,
+          "name": "del_slide",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_router": {
+          "autoincrement": false,
+          "name": "show_router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_router": {
+          "autoincrement": false,
+          "name": "add_router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_router": {
+          "autoincrement": false,
+          "name": "edit_router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_router": {
+          "autoincrement": false,
+          "name": "del_router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_saldo": {
+          "autoincrement": false,
+          "name": "show_saldo",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_income": {
+          "autoincrement": false,
+          "name": "show_income",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_income": {
+          "autoincrement": false,
+          "name": "add_income",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_income": {
+          "autoincrement": false,
+          "name": "edit_income",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_income": {
+          "autoincrement": false,
+          "name": "del_income",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_user": {
+          "autoincrement": false,
+          "name": "show_user",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_user": {
+          "autoincrement": false,
+          "name": "edit_user",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_user": {
+          "autoincrement": false,
+          "name": "del_user",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_user": {
+          "autoincrement": false,
+          "name": "add_user",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_product": {
+          "autoincrement": false,
+          "name": "show_product",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_product": {
+          "autoincrement": false,
+          "name": "add_product",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_product": {
+          "autoincrement": false,
+          "name": "edit_product",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_product": {
+          "autoincrement": false,
+          "name": "del_product",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_usage": {
+          "autoincrement": false,
+          "name": "show_usage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_history": {
+          "autoincrement": false,
+          "name": "show_history",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_speedtest": {
+          "autoincrement": false,
+          "name": "show_speedtest",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_log": {
+          "autoincrement": false,
+          "name": "show_log",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cek_bill": {
+          "autoincrement": false,
+          "name": "cek_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cek_usage": {
+          "autoincrement": false,
+          "name": "cek_usage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "show_help": {
+          "autoincrement": false,
+          "name": "show_help",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_help": {
+          "autoincrement": false,
+          "name": "edit_help",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_help": {
+          "autoincrement": false,
+          "name": "del_help",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_help": {
+          "autoincrement": false,
+          "name": "add_help",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "register_coverage": {
+          "autoincrement": false,
+          "name": "register_coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "register_maps": {
+          "autoincrement": false,
+          "name": "register_maps",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "register_show": {
+          "autoincrement": false,
+          "name": "register_show",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_teknisi": {
+          "autoincrement": false,
+          "name": "coverage_teknisi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_free": {
+          "autoincrement": false,
+          "name": "customer_free",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_isolir": {
+          "autoincrement": false,
+          "name": "customer_isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_bill": {
+          "autoincrement": false,
+          "name": "edit_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "confirm_bill": {
+          "autoincrement": false,
+          "name": "confirm_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_odc": {
+          "autoincrement": false,
+          "name": "add_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_odc": {
+          "autoincrement": false,
+          "name": "edit_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_odc": {
+          "autoincrement": false,
+          "name": "del_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_odp": {
+          "autoincrement": false,
+          "name": "add_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_odp": {
+          "autoincrement": false,
+          "name": "edit_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_odp": {
+          "autoincrement": false,
+          "name": "del_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_midi": {
+          "autoincrement": false,
+          "name": "add_midi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_midi": {
+          "autoincrement": false,
+          "name": "edit_midi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_midi": {
+          "autoincrement": false,
+          "name": "del_midi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_voip": {
+          "autoincrement": false,
+          "name": "add_voip",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_voip": {
+          "autoincrement": false,
+          "name": "edit_voip",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_voip": {
+          "autoincrement": false,
+          "name": "del_voip",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_gsm": {
+          "autoincrement": false,
+          "name": "add_gsm",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_gsm": {
+          "autoincrement": false,
+          "name": "edit_gsm",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_gsm": {
+          "autoincrement": false,
+          "name": "del_gsm",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_item_inventori": {
+          "autoincrement": false,
+          "name": "add_item_inventori",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_item_inventori": {
+          "autoincrement": false,
+          "name": "edit_item_inventori",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_item_inventori": {
+          "autoincrement": false,
+          "name": "del_item_inventori",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "add_vendor": {
+          "autoincrement": false,
+          "name": "add_vendor",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "edit_vendor": {
+          "autoincrement": false,
+          "name": "edit_vendor",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "del_vendor": {
+          "autoincrement": false,
+          "name": "del_vendor",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pay_bill": {
+          "autoincrement": false,
+          "name": "pay_bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "role_menu": {
+      "name": "role_menu",
+      "columns": {
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer": {
+          "autoincrement": false,
+          "name": "customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_menu": {
+          "autoincrement": false,
+          "name": "customer_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_add": {
+          "autoincrement": false,
+          "name": "customer_add",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_active": {
+          "autoincrement": false,
+          "name": "customer_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_non_active": {
+          "autoincrement": false,
+          "name": "customer_non_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_waiting": {
+          "autoincrement": false,
+          "name": "customer_waiting",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_whatsapp": {
+          "autoincrement": false,
+          "name": "customer_whatsapp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_chart": {
+          "autoincrement": false,
+          "name": "customer_chart",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_maps": {
+          "autoincrement": false,
+          "name": "customer_maps",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "services_menu": {
+          "autoincrement": false,
+          "name": "services_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "services_add": {
+          "autoincrement": false,
+          "name": "services_add",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "services_item": {
+          "autoincrement": false,
+          "name": "services_item",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "services_category": {
+          "autoincrement": false,
+          "name": "services_category",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage": {
+          "autoincrement": false,
+          "name": "coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_add": {
+          "autoincrement": false,
+          "name": "coverage_add",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_menu": {
+          "autoincrement": false,
+          "name": "coverage_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "coverage_maps": {
+          "autoincrement": false,
+          "name": "coverage_maps",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill": {
+          "autoincrement": false,
+          "name": "bill",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_menu": {
+          "autoincrement": false,
+          "name": "bill_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_unpaid": {
+          "autoincrement": false,
+          "name": "bill_unpaid",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_paid": {
+          "autoincrement": false,
+          "name": "bill_paid",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_due_date": {
+          "autoincrement": false,
+          "name": "bill_due_date",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_draf": {
+          "autoincrement": false,
+          "name": "bill_draf",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_debt": {
+          "autoincrement": false,
+          "name": "bill_debt",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_confirm": {
+          "autoincrement": false,
+          "name": "bill_confirm",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_code_coupon": {
+          "autoincrement": false,
+          "name": "bill_code_coupon",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_history": {
+          "autoincrement": false,
+          "name": "bill_history",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_delete": {
+          "autoincrement": false,
+          "name": "bill_delete",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_send": {
+          "autoincrement": false,
+          "name": "bill_send",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finance_menu": {
+          "autoincrement": false,
+          "name": "finance_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finance_income": {
+          "autoincrement": false,
+          "name": "finance_income",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finance_expend": {
+          "autoincrement": false,
+          "name": "finance_expend",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "finance_report": {
+          "autoincrement": false,
+          "name": "finance_report",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help": {
+          "autoincrement": false,
+          "name": "help",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_menu": {
+          "autoincrement": false,
+          "name": "help_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "help_category": {
+          "autoincrement": false,
+          "name": "help_category",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router": {
+          "autoincrement": false,
+          "name": "router",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router_menu": {
+          "autoincrement": false,
+          "name": "router_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router_customer": {
+          "autoincrement": false,
+          "name": "router_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router_schedule": {
+          "autoincrement": false,
+          "name": "router_schedule",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "website_menu": {
+          "autoincrement": false,
+          "name": "website_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "website_slide": {
+          "autoincrement": false,
+          "name": "website_slide",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "website_product": {
+          "autoincrement": false,
+          "name": "website_product",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user": {
+          "autoincrement": false,
+          "name": "user",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_menu": {
+          "autoincrement": false,
+          "name": "user_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_add": {
+          "autoincrement": false,
+          "name": "user_add",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_admin": {
+          "autoincrement": false,
+          "name": "user_admin",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_operator": {
+          "autoincrement": false,
+          "name": "user_operator",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_teknisi": {
+          "autoincrement": false,
+          "name": "user_teknisi",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_mitra": {
+          "autoincrement": false,
+          "name": "user_mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_outlet": {
+          "autoincrement": false,
+          "name": "user_outlet",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_customer": {
+          "autoincrement": false,
+          "name": "user_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_kolektor": {
+          "autoincrement": false,
+          "name": "user_kolektor",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_finance": {
+          "autoincrement": false,
+          "name": "user_finance",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_menu": {
+          "autoincrement": false,
+          "name": "role_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_access": {
+          "autoincrement": false,
+          "name": "role_access",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_sub_menu": {
+          "autoincrement": false,
+          "name": "role_sub_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_menu": {
+          "autoincrement": false,
+          "name": "integration_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_whatsapp": {
+          "autoincrement": false,
+          "name": "integration_whatsapp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_email": {
+          "autoincrement": false,
+          "name": "integration_email",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_telegram": {
+          "autoincrement": false,
+          "name": "integration_telegram",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_sms": {
+          "autoincrement": false,
+          "name": "integration_sms",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_payment_gateway": {
+          "autoincrement": false,
+          "name": "integration_payment_gateway",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_olt": {
+          "autoincrement": false,
+          "name": "integration_olt",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_radius": {
+          "autoincrement": false,
+          "name": "integration_radius",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_menu": {
+          "autoincrement": false,
+          "name": "setting_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_company": {
+          "autoincrement": false,
+          "name": "setting_company",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_about_company": {
+          "autoincrement": false,
+          "name": "setting_about_company",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_bank_account": {
+          "autoincrement": false,
+          "name": "setting_bank_account",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_terms_condition": {
+          "autoincrement": false,
+          "name": "setting_terms_condition",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_privacy_policy": {
+          "autoincrement": false,
+          "name": "setting_privacy_policy",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_logs": {
+          "autoincrement": false,
+          "name": "setting_logs",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_backup": {
+          "autoincrement": false,
+          "name": "setting_backup",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "setting_other": {
+          "autoincrement": false,
+          "name": "setting_other",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_free": {
+          "autoincrement": false,
+          "name": "customer_free",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_isolir": {
+          "autoincrement": false,
+          "name": "customer_isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_briva": {
+          "autoincrement": false,
+          "name": "integration_briva",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "integration_moota": {
+          "autoincrement": false,
+          "name": "integration_moota",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "master_menu": {
+          "autoincrement": false,
+          "name": "master_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "master_odc": {
+          "autoincrement": false,
+          "name": "master_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "master_odp": {
+          "autoincrement": false,
+          "name": "master_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_group": {
+          "autoincrement": false,
+          "name": "role_group",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maps_menu": {
+          "autoincrement": false,
+          "name": "maps_menu",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maps_customer": {
+          "autoincrement": false,
+          "name": "maps_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maps_coverage": {
+          "autoincrement": false,
+          "name": "maps_coverage",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maps_odc": {
+          "autoincrement": false,
+          "name": "maps_odc",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "maps_odp": {
+          "autoincrement": false,
+          "name": "maps_odp",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "master_statuscustomer": {
+          "autoincrement": false,
+          "name": "master_statuscustomer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "master_branddevice": {
+          "autoincrement": false,
+          "name": "master_branddevice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "master_script": {
+          "autoincrement": false,
+          "name": "master_script",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "router": {
+      "name": "router",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "alias": {
+          "autoincrement": false,
+          "name": "alias",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ip_address": {
+          "autoincrement": false,
+          "name": "ip_address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "autoincrement": false,
+          "name": "username",
+          "type": "varchar(20)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "port": {
+          "autoincrement": false,
+          "name": "port",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_reset": {
+          "autoincrement": false,
+          "name": "date_reset",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "router_mitra": {
+          "autoincrement": false,
+          "name": "router_mitra",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "script": {
+      "name": "script",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "onu_type": {
+          "autoincrement": false,
+          "name": "onu_type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "script": {
+          "autoincrement": false,
+          "name": "script",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "services": {
+      "name": "services",
+      "columns": {
+        "services_id": {
+          "autoincrement": true,
+          "name": "services_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "item_id": {
+          "autoincrement": false,
+          "name": "item_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "autoincrement": false,
+          "name": "category_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(125)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "qty": {
+          "autoincrement": false,
+          "name": "qty",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price": {
+          "autoincrement": false,
+          "name": "price",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "disc": {
+          "default": "'NULL'",
+          "autoincrement": false,
+          "name": "disc",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "total": {
+          "autoincrement": false,
+          "name": "total",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "services_create": {
+          "autoincrement": false,
+          "name": "services_create",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {
+        "item_id": {
+          "name": "item_id",
+          "columns": [
+            "item_id"
+          ],
+          "isUnique": false
+        },
+        "category_id": {
+          "name": "category_id",
+          "columns": [
+            "category_id"
+          ],
+          "isUnique": false
+        }
+      },
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "slide": {
+      "name": "slide",
+      "columns": {
+        "slide_id": {
+          "autoincrement": true,
+          "name": "slide_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(225)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "picture": {
+          "autoincrement": false,
+          "name": "picture",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "autoincrement": false,
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "link": {
+          "autoincrement": false,
+          "name": "link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "sms_gateway": {
+      "name": "sms_gateway",
+      "columns": {
+        "sms_id": {
+          "autoincrement": true,
+          "name": "sms_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_name": {
+          "autoincrement": false,
+          "name": "sms_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_url": {
+          "autoincrement": false,
+          "name": "sms_url",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_token": {
+          "autoincrement": false,
+          "name": "sms_token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_user": {
+          "autoincrement": false,
+          "name": "sms_user",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_password": {
+          "autoincrement": false,
+          "name": "sms_password",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_api_key": {
+          "autoincrement": false,
+          "name": "sms_api_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_vendor": {
+          "autoincrement": false,
+          "name": "sms_vendor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_createinvoice": {
+          "autoincrement": false,
+          "name": "sms_createinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_paymentinvoice": {
+          "autoincrement": false,
+          "name": "sms_paymentinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_duedateinvoice": {
+          "autoincrement": false,
+          "name": "sms_duedateinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_interval": {
+          "autoincrement": false,
+          "name": "sms_interval",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_reminderinvoice": {
+          "autoincrement": false,
+          "name": "sms_reminderinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_sender": {
+          "autoincrement": false,
+          "name": "sms_sender",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_time_start": {
+          "autoincrement": false,
+          "name": "sms_time_start",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sms_time_end": {
+          "autoincrement": false,
+          "name": "sms_time_end",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_bill": {
+          "autoincrement": false,
+          "name": "text_bill",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_payment": {
+          "autoincrement": false,
+          "name": "text_payment",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_duedate": {
+          "autoincrement": false,
+          "name": "text_duedate",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_add_customer": {
+          "autoincrement": false,
+          "name": "text_add_customer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "theme": {
+      "name": "theme",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "user_id": {
+          "autoincrement": false,
+          "name": "user_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "dark_mode": {
+          "autoincrement": false,
+          "name": "dark_mode",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "nav_active": {
+          "autoincrement": false,
+          "name": "nav_active",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "primary-color": {
+          "autoincrement": false,
+          "name": "primary-color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "timezone": {
+      "name": "timezone",
+      "columns": {
+        "timezid": {
+          "autoincrement": true,
+          "name": "timezid",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "tz": {
+          "autoincrement": false,
+          "name": "tz",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gmt": {
+          "autoincrement": false,
+          "name": "gmt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "user": {
+      "name": "user",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "autoincrement": false,
+          "name": "password",
+          "type": "varchar(100)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "autoincrement": false,
+          "name": "name",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "phone": {
+          "autoincrement": false,
+          "name": "phone",
+          "type": "varchar(25)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "autoincrement": false,
+          "name": "address",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "image": {
+          "autoincrement": false,
+          "name": "image",
+          "type": "varchar(225)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role_id": {
+          "autoincrement": false,
+          "name": "role_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "gender": {
+          "autoincrement": false,
+          "name": "gender",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "no_services": {
+          "autoincrement": false,
+          "name": "no_services",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee": {
+          "autoincrement": false,
+          "name": "fee",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ppn": {
+          "autoincrement": false,
+          "name": "ppn",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pph": {
+          "autoincrement": false,
+          "name": "pph",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bhp": {
+          "autoincrement": false,
+          "name": "bhp",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "uso": {
+          "autoincrement": false,
+          "name": "uso",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "admin": {
+          "autoincrement": false,
+          "name": "admin",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee_active": {
+          "autoincrement": false,
+          "name": "fee_active",
+          "type": "varchar(40)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "fee_mitra": {
+          "autoincrement": false,
+          "name": "fee_mitra",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "lang": {
+          "autoincrement": false,
+          "name": "lang",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "user_token": {
+      "name": "user_token",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "autoincrement": false,
+          "name": "type",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "email": {
+          "autoincrement": false,
+          "name": "email",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "whatsapp": {
+      "name": "whatsapp",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "autoincrement": false,
+          "name": "is_active",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "api_key": {
+          "autoincrement": false,
+          "name": "api_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "token": {
+          "autoincrement": false,
+          "name": "token",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "domain_api": {
+          "autoincrement": false,
+          "name": "domain_api",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "username": {
+          "autoincrement": false,
+          "name": "username",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createinvoice": {
+          "autoincrement": false,
+          "name": "createinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "paymentinvoice": {
+          "autoincrement": false,
+          "name": "paymentinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "duedateinvoice": {
+          "autoincrement": false,
+          "name": "duedateinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "interval_message": {
+          "autoincrement": false,
+          "name": "interval_message",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "sender": {
+          "autoincrement": false,
+          "name": "sender",
+          "type": "varchar(128)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reminderinvoice": {
+          "autoincrement": false,
+          "name": "reminderinvoice",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "version": {
+          "autoincrement": false,
+          "name": "version",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "period": {
+          "autoincrement": false,
+          "name": "period",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_help": {
+          "autoincrement": false,
+          "name": "create_help",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "update_help": {
+          "autoincrement": false,
+          "name": "update_help",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "get_help": {
+          "autoincrement": false,
+          "name": "get_help",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_help_customer": {
+          "autoincrement": false,
+          "name": "create_help_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_help_admin": {
+          "autoincrement": false,
+          "name": "create_help_admin",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id_devices": {
+          "autoincrement": false,
+          "name": "id_devices",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "text_help_customer": {
+          "autoincrement": false,
+          "name": "text_help_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_help_customer": {
+          "autoincrement": false,
+          "name": "send_help_customer",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "official": {
+          "autoincrement": false,
+          "name": "official",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "count_blast": {
+          "autoincrement": false,
+          "name": "count_blast",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "last_excute": {
+          "autoincrement": false,
+          "name": "last_excute",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time_start": {
+          "autoincrement": false,
+          "name": "time_start",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time_end": {
+          "autoincrement": false,
+          "name": "time_end",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "send_isolir": {
+          "autoincrement": false,
+          "name": "send_isolir",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    },
+    "whatsapp_schedule": {
+      "name": "whatsapp_schedule",
+      "columns": {
+        "id": {
+          "autoincrement": true,
+          "name": "id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "target": {
+          "autoincrement": false,
+          "name": "target",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "autoincrement": false,
+          "name": "message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "autoincrement": false,
+          "name": "customer_id",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "invoice_id": {
+          "autoincrement": false,
+          "name": "invoice_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_excute": {
+          "autoincrement": false,
+          "name": "date_excute",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_message": {
+          "autoincrement": false,
+          "name": "type_message",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "create_by": {
+          "autoincrement": false,
+          "name": "create_by",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created": {
+          "autoincrement": false,
+          "name": "created",
+          "type": "int(11)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remark": {
+          "autoincrement": false,
+          "name": "remark",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "autoincrement": false,
+          "name": "status",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type_bill": {
+          "autoincrement": false,
+          "name": "type_bill",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date_created": {
+          "autoincrement": false,
+          "name": "date_created",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "vendor": {
+          "autoincrement": false,
+          "name": "vendor",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "compositePrimaryKeys": {},
+      "indexes": {},
+      "foreignKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraint": {}
+    }
+  },
+  "views": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  },
+  "internal": {
+    "tables": {},
+    "indexes": {}
+  }
+}

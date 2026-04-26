@@ -1,10 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   AlertTriangle, AlertCircle, Info, CheckCircle,
   Activity, Users, Wifi, WifiOff, Clock, Radio
 } from 'lucide-react'
-import { alertData, clientData, odpData, getStats } from '../data/mockData'
+import { getAlerts, getClients, getOdps } from '../api'
 
 function getAlertStyle(severity) {
   switch (severity) {
@@ -25,12 +25,35 @@ function timeAgo(dateStr) {
 }
 
 export default function MonitoringPage() {
-  const stats = useMemo(() => getStats(), [])
+  const [alertData, setAlertData] = useState([])
+  const [clientData, setClientData] = useState([])
+  const [odpData, setOdpData] = useState([])
+  const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    Promise.all([getAlerts(), getClients(), getOdps()]).then(([alerts, clients, odps]) => {
+      setAlertData(alerts)
+      setClientData(clients)
+      setOdpData(odps)
+      setLoading(false)
+    })
+  }, [])
+
+  const stats = useMemo(() => {
+    const totalClients = clientData.length || 1
+    const onlineClients = clientData.filter(c => c.status === 'online').length
+    const offlineClients = clientData.filter(c => c.status === 'offline').length
+    const availablePorts = odpData.reduce((acc, odp) => acc + (odp.totalPorts || 8) - (odp.usedPorts || 0), 0)
+    return { totalClients, onlineClients, offlineClients, availablePorts }
+  }, [clientData, odpData])
+
   const activeAlerts = alertData.filter(a => !a.resolved)
   const resolvedAlerts = alertData.filter(a => a.resolved)
 
   const onlinePercent = Math.round((stats.onlineClients / stats.totalClients) * 100)
+
+  if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
 
   return (
     <div className="h-full overflow-auto animate-fade-in z-0 relative bg-bg-primary">
