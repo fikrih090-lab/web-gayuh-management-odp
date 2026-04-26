@@ -71,19 +71,19 @@ function MapControls() {
     <div className="absolute bottom-6 right-4 z-[1000] flex flex-col gap-2">
       <button
         onClick={() => map.zoomIn()}
-        className="w-10 h-10 glass rounded-xl flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-all"
+        className="w-10 h-10 card flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-all"
       >
         <ZoomIn size={18} />
       </button>
       <button
         onClick={() => map.zoomOut()}
-        className="w-10 h-10 glass rounded-xl flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-all"
+        className="w-10 h-10 card flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-bg-tertiary transition-all"
       >
         <ZoomOut size={18} />
       </button>
       <button
         onClick={() => map.flyTo([oltLocation.lat, oltLocation.lng], 14)}
-        className="w-10 h-10 glass rounded-xl flex items-center justify-center text-text-secondary hover:text-accent transition-all"
+        className="w-10 h-10 card flex items-center justify-center text-text-secondary hover:text-accent transition-all"
       >
         <LocateFixed size={18} />
       </button>
@@ -218,45 +218,51 @@ export default function DashboardPage() {
       </MapContainer>
 
       {/* Stats overlay */}
-      <div className="absolute top-4 left-4 z-[1000] space-y-3 animate-slide-left">
-        {statCards.map((card) => (
-          <div key={card.label} className="glass rounded-xl px-4 py-3 flex items-center gap-3 min-w-[180px] cursor-pointer hover:bg-bg-tertiary/50 transition-all">
-            <div className={`w-9 h-9 rounded-lg ${card.bg} flex items-center justify-center`}>
-              <card.icon size={18} className={card.color} />
+      <div className="absolute top-6 left-6 z-[1000] space-y-3">
+        {statCards.map((card, i) => (
+          <div 
+            key={card.label} 
+            className={`card px-5 py-4 flex items-center gap-4 min-w-[200px] cursor-pointer animate-slide-left`}
+            style={{ animationDelay: `${i * 100}ms`, animationFillMode: 'both' }}
+          >
+            <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center`}>
+              <card.icon size={20} className={card.color} />
             </div>
             <div>
-              <p className="text-xs text-text-muted">{card.label}</p>
-              <p className="text-lg font-bold text-text-primary">{card.value}</p>
+              <p className="text-xs text-text-secondary font-medium mb-0.5 uppercase tracking-wide">{card.label}</p>
+              <p className="text-2xl font-bold text-text-primary tracking-tight leading-none">{card.value}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Layer toggle */}
-      <div className="absolute top-4 right-4 z-[1000] animate-slide-right">
-        <div className="glass rounded-xl p-3 space-y-2">
-          <div className="flex items-center gap-2 px-1 pb-2 border-b border-border">
-            <Layers size={14} className="text-text-muted" />
-            <span className="text-xs font-medium text-text-secondary">Layer</span>
+      <div className="absolute top-6 right-6 z-[1000] animate-slide-right stagger-1">
+        <div className="card p-4 space-y-2.5 min-w-[160px]">
+          <div className="flex items-center gap-2 px-1 pb-3 border-b border-border">
+            <Layers size={16} className="text-text-muted" />
+            <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Layer Peta</span>
           </div>
-          {[
-            { key: 'odp', label: 'ODP', color: 'text-success' },
-            { key: 'clients', label: 'Pelanggan', color: 'text-purple-400' },
-            { key: 'paths', label: 'Jalur', color: 'text-accent' },
-          ].map(item => (
-            <button
-              key={item.key}
-              onClick={() => toggleLayer(item.key)}
-              className={`flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs font-medium w-full transition-all ${
-                layers[item.key]
-                  ? 'text-text-primary bg-bg-tertiary/50'
-                  : 'text-text-muted'
-              }`}
-            >
-              {layers[item.key] ? <Eye size={14} className={item.color} /> : <EyeOff size={14} />}
-              {item.label}
-            </button>
-          ))}
+          <div className="space-y-1 pt-1">
+            {[
+              { key: 'odp', label: 'ODP', color: 'text-success' },
+              { key: 'clients', label: 'Pelanggan', color: 'text-purple-400' },
+              { key: 'paths', label: 'Jalur Kabel', color: 'text-accent' },
+            ].map(item => (
+              <button
+                key={item.key}
+                onClick={() => toggleLayer(item.key)}
+                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-all duration-200 ${
+                  layers[item.key]
+                    ? 'text-text-primary bg-bg-tertiary'
+                    : 'text-text-muted hover:text-text-secondary hover:bg-bg-tertiary/50'
+                }`}
+              >
+                {layers[item.key] ? <Eye size={16} className={item.color} /> : <EyeOff size={16} />}
+                {item.label}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

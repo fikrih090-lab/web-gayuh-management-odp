@@ -1,12 +1,12 @@
-import { Settings, Bell, User, Database, Shield, Palette } from 'lucide-react'
+import { Settings, Bell, User, Database, Shield, Palette, Info } from 'lucide-react'
 
 export default function SettingsPage() {
   return (
-    <div className="h-full overflow-auto animate-fade-in">
-      <div className="p-4 md:p-6 space-y-6 max-w-3xl">
-        <div>
-          <h1 className="text-xl font-bold text-text-primary">Pengaturan</h1>
-          <p className="text-sm text-text-muted mt-1">Konfigurasi aplikasi dan preferensi</p>
+    <div className="h-full overflow-auto animate-fade-in z-0 relative bg-bg-primary">
+      <div className="p-5 md:p-6 max-w-4xl mx-auto space-y-6">
+        <div className="bg-bg-primary -mx-5 -mt-5 p-5 md:p-6 md:-mx-6 md:-mt-6 border-b border-border mb-6">
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Pengaturan</h1>
+          <p className="text-sm text-text-muted mt-1 font-medium">Konfigurasi aplikasi dan preferensi</p>
         </div>
 
         {/* Settings sections */}
@@ -18,17 +18,21 @@ export default function SettingsPage() {
             { icon: Shield, title: 'Keamanan', desc: 'Autentikasi dua faktor dan sesi aktif', action: 'Pengaturan' },
             { icon: Palette, title: 'Tampilan', desc: 'Kustomisasi tema dan layout', action: 'Kustomisasi' },
           ].map((item, i) => (
-            <div key={i} className="bg-bg-secondary border border-border rounded-2xl p-5 flex items-center justify-between hover:border-border-hover transition-colors">
+            <div 
+              key={i} 
+              className="card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-up group"
+              style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}
+            >
               <div className="flex items-center gap-4">
-                <div className="w-10 h-10 rounded-xl bg-accent/10 flex items-center justify-center">
-                  <item.icon size={20} className="text-accent" />
+                <div className="w-12 h-12 rounded-lg bg-bg-tertiary flex items-center justify-center border border-border group-hover:bg-bg-elevated transition-all duration-300 shrink-0">
+                  <item.icon size={22} className="text-text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-text-primary">{item.title}</p>
-                  <p className="text-xs text-text-muted mt-0.5">{item.desc}</p>
+                  <p className="text-base font-bold text-text-primary">{item.title}</p>
+                  <p className="text-sm text-text-muted mt-0.5">{item.desc}</p>
                 </div>
               </div>
-              <button className="text-xs font-medium text-accent bg-accent/10 px-4 py-2 rounded-xl hover:bg-accent/20 transition-colors">
+              <button className="text-sm font-medium text-text-primary bg-bg-tertiary border border-border px-5 py-2 rounded-lg hover:bg-bg-elevated transition-all duration-200 self-start sm:self-auto w-full sm:w-auto">
                 {item.action}
               </button>
             </div>
@@ -36,20 +40,23 @@ export default function SettingsPage() {
         </div>
 
         {/* App info */}
-        <div className="bg-bg-secondary border border-border rounded-2xl p-5">
-          <h3 className="text-sm font-semibold text-text-secondary mb-3">Tentang Aplikasi</h3>
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-text-muted">Versi</span>
-              <span className="text-text-primary font-mono">1.0.0-dev</span>
+        <div className="card p-6 mt-8 animate-slide-up" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
+          <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider mb-4 flex items-center gap-2">
+            <Info size={16} className="text-text-muted" />
+            Tentang Aplikasi
+          </h3>
+          <div className="space-y-3 text-sm">
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-text-muted font-medium">Versi</span>
+              <span className="text-text-primary font-mono bg-bg-tertiary px-2 py-1 rounded">1.0.0-dev</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-text-muted">Frontend</span>
-              <span className="text-text-primary">React + Vite + Tailwind v4</span>
+            <div className="flex justify-between items-center py-2 border-b border-border">
+              <span className="text-text-muted font-medium">Frontend</span>
+              <span className="text-text-primary font-medium">React + Vite + Tailwind v4</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-text-muted">Maps</span>
-              <span className="text-text-primary">Leaflet.js + OpenStreetMap</span>
+            <div className="flex justify-between items-center py-2">
+              <span className="text-text-muted font-medium">Maps</span>
+              <span className="text-text-primary font-medium">Leaflet.js + OpenStreetMap</span>
             </div>
           </div>
         </div>

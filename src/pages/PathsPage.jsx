@@ -28,61 +28,62 @@ export default function PathsPage() {
   const mapCenter = [-6.905, 107.610]
 
   return (
-    <div className="h-full flex flex-col lg:flex-row animate-fade-in">
+    <div className="h-full flex flex-col lg:flex-row animate-fade-in relative z-0">
       {/* Side panel */}
-      <div className="w-full lg:w-[380px] xl:w-[420px] flex flex-col border-r border-border min-h-0">
-        <div className="p-4 md:p-6 border-b border-border">
-          <h1 className="text-xl font-bold text-text-primary">Jalur Kabel FO</h1>
-          <p className="text-sm text-text-muted mt-1">{pathData.length} jalur terdaftar</p>
+      <div className="w-full lg:w-[380px] xl:w-[420px] flex flex-col border-r border-border min-h-0 bg-bg-primary z-10">
+        <div className="p-5 md:p-6 border-b border-border bg-bg-primary">
+          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Jalur Kabel FO</h1>
+          <p className="text-sm text-text-muted mt-1 font-medium">{pathData.length} jalur terdaftar</p>
         </div>
 
-        <div className="flex-1 overflow-auto p-4 space-y-3">
+        <div className="flex-1 overflow-auto p-5 space-y-4">
           {pathData.map((path, i) => (
             <button
               key={path.id}
               onClick={() => setSelectedPath(selectedPath?.id === path.id ? null : path)}
-              className={`w-full text-left rounded-2xl border transition-all duration-200 ${
+              className={`w-full text-left rounded-xl border transition-all duration-300 animate-fade-in ${
                 selectedPath?.id === path.id
-                  ? 'bg-accent/5 border-accent/30'
-                  : 'bg-bg-secondary border-border hover:border-border-hover'
+                  ? 'bg-bg-tertiary border-border shadow-sm scale-[1.02]'
+                  : 'bg-bg-secondary border-border hover:border-border-hover hover:bg-bg-tertiary'
               }`}
+              style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}
             >
               <div className="p-4">
-                <div className="flex items-center gap-3 mb-3">
+                <div className="flex items-center gap-4 mb-4">
                   <div
-                    className="w-3 h-10 rounded-full"
+                    className="w-1.5 h-12 rounded-full"
                     style={{ background: pathColors[i % pathColors.length] }}
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-text-primary">{path.name}</p>
-                    <p className="text-xs text-text-muted">{path.id}</p>
+                    <p className="text-base font-semibold text-text-primary tracking-tight">{path.name}</p>
+                    <p className="text-xs text-text-muted mt-0.5 font-mono">{path.id}</p>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3 text-xs">
-                  <div className="bg-bg-primary/50 rounded-xl px-3 py-2">
-                    <p className="text-text-muted">Tipe Kabel</p>
-                    <p className="text-text-primary font-medium mt-0.5">{path.cableType}</p>
+                <div className="grid grid-cols-2 gap-3 text-xs mb-4">
+                  <div className="bg-bg-primary border border-border rounded-lg px-3 py-2.5">
+                    <p className="text-text-muted mb-0.5">Tipe Kabel</p>
+                    <p className="text-sm text-text-primary font-semibold">{path.cableType}</p>
                   </div>
-                  <div className="bg-bg-primary/50 rounded-xl px-3 py-2">
-                    <p className="text-text-muted">Jarak</p>
-                    <p className="text-text-primary font-medium mt-0.5">{path.distance} km</p>
+                  <div className="bg-bg-primary border border-border rounded-lg px-3 py-2.5">
+                    <p className="text-text-muted mb-0.5">Jarak</p>
+                    <p className="text-sm text-text-primary font-semibold">{path.distance} km</p>
                   </div>
                 </div>
 
-                <div className="mt-3 flex items-center justify-between">
+                <div className="flex items-center justify-between pt-3 border-t border-border">
                   <div className="flex items-center gap-2 text-xs">
-                    <span className="text-accent font-medium">OLT</span>
-                    <ArrowRight size={12} className="text-text-muted" />
-                    <span className="text-text-secondary">{path.odpIds.join(', ')}</span>
+                    <span className="text-text-primary font-bold tracking-wider">OLT</span>
+                    <ArrowRight size={14} className="text-text-muted" />
+                    <span className="text-text-secondary font-medium truncate max-w-[100px]">{path.odpIds.join(', ')}</span>
                   </div>
                   {path.hasRedundancy ? (
-                    <span className="flex items-center gap-1 text-xs text-success">
-                      <Shield size={12} /> Backup
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-success bg-success/10 px-2 py-1 rounded border border-success/20">
+                      <Shield size={14} /> Backup
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1 text-xs text-warning">
-                      <ShieldOff size={12} /> No Backup
+                    <span className="flex items-center gap-1.5 text-xs font-semibold text-warning bg-warning/10 px-2 py-1 rounded border border-warning/20">
+                      <ShieldOff size={14} /> No Backup
                     </span>
                   )}
                 </div>
@@ -106,8 +107,10 @@ export default function PathsPage() {
           {/* OLT */}
           <Marker position={[oltLocation.lat, oltLocation.lng]} icon={oltIcon}>
             <Popup>
-              <p className="font-bold text-sm">{oltLocation.name}</p>
-              <p className="text-xs text-text-muted">Pusat Jaringan</p>
+              <div className="min-w-[140px] text-center">
+                <p className="font-bold text-sm text-text-primary">{oltLocation.name}</p>
+                <p className="text-xs text-text-muted mt-1">Pusat Jaringan</p>
+              </div>
             </Popup>
           </Marker>
 
@@ -118,18 +121,20 @@ export default function PathsPage() {
               positions={path.coordinates}
               pathOptions={{
                 color: pathColors[i % pathColors.length],
-                weight: selectedPath?.id === path.id ? 5 : 3,
-                opacity: selectedPath ? (selectedPath.id === path.id ? 1 : 0.2) : 0.7,
+                weight: selectedPath?.id === path.id ? 6 : 3,
+                opacity: selectedPath ? (selectedPath.id === path.id ? 1 : 0.15) : 0.7,
                 dashArray: path.hasRedundancy ? null : '8 6',
+                lineCap: 'round',
+                lineJoin: 'round'
               }}
               eventHandlers={{
                 click: () => setSelectedPath(path)
               }}
             >
               <Popup>
-                <div className="min-w-[180px]">
-                  <p className="font-bold text-sm">{path.name}</p>
-                  <p className="text-xs text-text-secondary mt-1">{path.cableType} • {path.distance} km</p>
+                <div className="min-w-[180px] p-1">
+                  <p className="font-bold text-sm text-text-primary">{path.name}</p>
+                  <p className="text-xs text-text-secondary mt-1">{path.cableType} • <span className="font-semibold text-text-primary">{path.distance} km</span></p>
                 </div>
               </Popup>
             </Polyline>
@@ -140,11 +145,13 @@ export default function PathsPage() {
             <Marker
               key={odp.id}
               position={[odp.lat, odp.lng]}
-              icon={createIcon('#22c55e', 18)}
+              icon={createIcon('#10b981', 16)}
             >
               <Popup>
-                <p className="font-bold text-sm">{odp.id}</p>
-                <p className="text-xs text-text-muted">{odp.name}</p>
+                <div className="text-center">
+                  <p className="font-bold text-sm text-text-primary">{odp.id}</p>
+                  <p className="text-xs text-text-muted mt-0.5">{odp.name}</p>
+                </div>
               </Popup>
             </Marker>
           ))}
@@ -152,28 +159,28 @@ export default function PathsPage() {
 
         {/* Selected path detail overlay */}
         {selectedPath && (
-          <div className="absolute bottom-4 left-4 right-4 z-[1000] glass rounded-xl p-4 animate-fade-in max-w-md">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-bold text-text-primary">{selectedPath.name}</p>
+          <div className="absolute bottom-6 left-6 right-6 z-[1000] card p-5 animate-slide-up max-w-md">
+            <div className="flex items-center justify-between mb-4 pb-3 border-b border-border">
+              <p className="text-base font-bold text-text-primary tracking-tight">{selectedPath.name}</p>
               <button
                 onClick={() => setSelectedPath(null)}
-                className="text-xs text-text-muted hover:text-text-primary"
+                className="w-8 h-8 flex items-center justify-center rounded-lg bg-bg-tertiary text-text-muted hover:text-text-primary transition-colors"
               >
                 ✕
               </button>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-xs">
-              <div>
-                <p className="text-text-muted">Kabel</p>
-                <p className="text-text-primary font-medium">{selectedPath.cableType}</p>
+            <div className="grid grid-cols-3 gap-3 text-xs">
+              <div className="bg-bg-primary rounded-lg p-3 border border-border">
+                <p className="text-text-muted mb-1">Kabel</p>
+                <p className="text-sm text-text-primary font-semibold">{selectedPath.cableType}</p>
               </div>
-              <div>
-                <p className="text-text-muted">Jarak</p>
-                <p className="text-text-primary font-medium">{selectedPath.distance} km</p>
+              <div className="bg-bg-primary rounded-lg p-3 border border-border">
+                <p className="text-text-muted mb-1">Jarak</p>
+                <p className="text-sm text-text-primary font-semibold">{selectedPath.distance} km</p>
               </div>
-              <div>
-                <p className="text-text-muted">ODP Dilayani</p>
-                <p className="text-text-primary font-medium">{selectedPath.odpIds.length}</p>
+              <div className="bg-bg-primary rounded-lg p-3 border border-border">
+                <p className="text-text-muted mb-1">ODP Dilayani</p>
+                <p className="text-sm text-text-primary font-semibold">{selectedPath.odpIds.length}</p>
               </div>
             </div>
           </div>

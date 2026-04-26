@@ -50,44 +50,44 @@ export default function ODPPage() {
   const mapZoom = selectedODP ? 16 : 13
 
   return (
-    <div className="h-full flex flex-col lg:flex-row animate-fade-in">
+    <div className="h-full flex flex-col lg:flex-row animate-fade-in relative z-0">
       {/* Table panel */}
-      <div className="flex-1 flex flex-col min-h-0 border-r border-border">
+      <div className="flex-1 flex flex-col min-h-0 border-r border-border/50 bg-bg-primary">
         {/* Header */}
-        <div className="p-4 md:p-6 border-b border-border space-y-4">
-          <div className="flex items-center justify-between">
+        <div className="p-5 md:p-6 border-b border-border space-y-5 bg-bg-primary">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-text-primary">Manajemen ODP</h1>
-              <p className="text-sm text-text-muted mt-1">{odpData.length} ODP terdaftar</p>
+              <h1 className="text-2xl font-bold text-text-primary tracking-tight">Manajemen ODP</h1>
+              <p className="text-sm text-text-muted mt-1 font-medium">{odpData.length} ODP terdaftar</p>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-accent to-blue-500 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-accent/20 transition-all">
+            <button className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
               <Plus size={16} />
               <span className="hidden sm:inline">Tambah ODP</span>
             </button>
           </div>
 
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
+              <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
                 type="text"
                 placeholder="Cari nama, ID, atau alamat..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full pl-9 pr-4 py-2.5 bg-bg-tertiary border border-border rounded-xl text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-accent transition-all"
+                className="w-full pl-10 pr-4 py-2.5 text-sm input-modern"
               />
             </div>
-            <div className="relative">
+            <div className="relative sm:w-48">
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value)}
-                className="appearance-none pl-9 pr-8 py-2.5 bg-bg-tertiary border border-border rounded-xl text-sm text-text-primary focus:outline-none focus:border-accent transition-all cursor-pointer"
+                className="w-full appearance-none pl-10 pr-8 py-2.5 text-sm input-modern cursor-pointer"
               >
                 <option value="all">Semua Tipe</option>
                 <option value="1:8">1:8</option>
                 <option value="1:16">1:16</option>
               </select>
-              <Filter size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+              <Filter size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
             </div>
           </div>
         </div>
@@ -95,57 +95,59 @@ export default function ODPPage() {
         {/* Table */}
         <div className="flex-1 overflow-auto">
           <table className="w-full">
-            <thead className="sticky top-0 bg-bg-secondary z-10">
-              <tr className="text-left text-xs text-text-muted uppercase tracking-wider">
-                <th className="px-4 md:px-6 py-3 font-medium">ODP</th>
-                <th className="px-4 py-3 font-medium hidden md:table-cell">Tipe</th>
-                <th className="px-4 py-3 font-medium">Port</th>
-                <th className="px-4 py-3 font-medium">Status</th>
+            <thead className="sticky top-0 bg-bg-secondary/90 backdrop-blur-md z-10">
+              <tr className="text-left text-xs text-text-secondary uppercase tracking-wider font-semibold border-b border-border/50">
+                <th className="px-5 md:px-6 py-4">ODP</th>
+                <th className="px-5 py-4 hidden md:table-cell">Tipe</th>
+                <th className="px-5 py-4">Port</th>
+                <th className="px-5 py-4">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-border">
-              {filtered.map(odp => {
+            <tbody className="divide-y divide-border/30">
+              {filtered.map((odp, i) => {
                 const status = getStatusLabel(odp)
                 return (
                   <tr
                     key={odp.id}
                     onClick={() => { setSelectedODP(odp); }}
                     onDoubleClick={() => navigate(`/odp/${odp.id}`)}
-                    className={`cursor-pointer transition-colors ${
+                    className={`cursor-pointer table-row-hover animate-fade-in ${
                       selectedODP?.id === odp.id
-                        ? 'bg-accent/5'
-                        : 'hover:bg-bg-tertiary/50'
+                        ? 'bg-accent/5 shadow-[inset_2px_0_0_#3b82f6]'
+                        : ''
                     }`}
+                    style={{ animationDelay: `${i * 30}ms`, animationFillMode: 'both' }}
                   >
-                    <td className="px-4 md:px-6 py-4">
-                      <div className="flex items-center gap-3">
+                    <td className="px-5 md:px-6 py-4">
+                      <div className="flex items-center gap-4">
                         <div
                           className="w-3 h-3 rounded-full shrink-0"
-                          style={{ background: getODPColor(odp), boxShadow: `0 0 6px ${getODPColor(odp)}66` }}
+                          style={{ background: getODPColor(odp), boxShadow: `0 0 10px ${getODPColor(odp)}88` }}
                         />
                         <div className="min-w-0">
-                          <p className="text-sm font-medium text-text-primary truncate">{odp.id}</p>
-                          <p className="text-xs text-text-muted truncate">{odp.name}</p>
+                          <p className="text-sm font-semibold text-text-primary truncate">{odp.id}</p>
+                          <p className="text-xs text-text-muted mt-0.5 truncate">{odp.name}</p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-4 hidden md:table-cell">
-                      <span className="text-xs font-mono bg-bg-tertiary px-2 py-1 rounded-lg text-text-secondary">{odp.type}</span>
+                    <td className="px-5 py-4 hidden md:table-cell">
+                      <span className="text-xs font-mono bg-bg-tertiary/80 border border-border/50 px-2.5 py-1 rounded-lg text-text-secondary">{odp.type}</span>
                     </td>
-                    <td className="px-4 py-4">
-                      <div className="text-sm text-text-primary">{odp.usedPorts}/{odp.totalPorts}</div>
-                      <div className="w-16 h-1.5 bg-bg-tertiary rounded-full mt-1 overflow-hidden">
+                    <td className="px-5 py-4">
+                      <div className="text-sm font-medium text-text-primary mb-1.5">{odp.usedPorts}/{odp.totalPorts}</div>
+                      <div className="w-20 h-1.5 bg-bg-tertiary rounded-full overflow-hidden">
                         <div
-                          className="h-full rounded-full transition-all"
+                          className="h-full rounded-full transition-all duration-500"
                           style={{
                             width: `${(odp.usedPorts / odp.totalPorts) * 100}%`,
                             background: getODPColor(odp),
+                            boxShadow: `0 0 8px ${getODPColor(odp)}`
                           }}
                         />
                       </div>
                     </td>
-                    <td className="px-4 py-4">
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${status.class}`}>
+                    <td className="px-5 py-4">
+                      <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${status.class.replace('bg-', 'bg-').replace('/15', '/10').replace('text-', 'text-').concat(' border-current/20')}`}>
                         {status.text}
                       </span>
                     </td>
@@ -156,9 +158,11 @@ export default function ODPPage() {
           </table>
 
           {filtered.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-16 text-text-muted">
-              <Radio size={40} className="mb-3 opacity-30" />
-              <p className="text-sm">Tidak ada ODP ditemukan</p>
+            <div className="flex flex-col items-center justify-center py-20 text-text-muted animate-fade-in">
+              <div className="w-16 h-16 rounded-2xl bg-bg-tertiary/50 flex items-center justify-center mb-4">
+                <Radio size={32} className="opacity-50" />
+              </div>
+              <p className="text-sm font-medium">Tidak ada ODP ditemukan</p>
             </div>
           )}
         </div>
@@ -170,7 +174,7 @@ export default function ODPPage() {
           key={`${mapCenter[0]}-${mapCenter[1]}-${mapZoom}`}
           center={mapCenter}
           zoom={mapZoom}
-          className="w-full h-full"
+          className="w-full h-full border-l border-border"
           zoomControl={false}
           attributionControl={false}
         >
@@ -188,18 +192,19 @@ export default function ODPPage() {
 
         {/* Selected ODP info overlay */}
         {selectedODP && (
-          <div className="absolute bottom-4 left-4 right-4 z-[1000] glass rounded-xl p-4 animate-fade-in">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-bold text-text-primary">{selectedODP.id}</p>
-              <span className="text-xs font-mono text-text-muted">{selectedODP.type}</span>
+          <div className="absolute bottom-6 left-6 right-6 z-[1000] card p-5 animate-slide-left">
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-base font-bold text-text-primary tracking-tight">{selectedODP.id}</p>
+              <span className="text-xs font-mono bg-bg-tertiary px-2 py-0.5 rounded text-text-secondary border border-border">{selectedODP.type}</span>
             </div>
-            <p className="text-xs text-text-secondary">{selectedODP.address}</p>
-            <p className="text-xs text-text-muted mt-1">{selectedODP.note}</p>
+            <p className="text-sm text-text-secondary mb-1">{selectedODP.address}</p>
+            <p className="text-xs text-text-muted mb-4">{selectedODP.note}</p>
             <button
               onClick={() => navigate(`/odp/${selectedODP.id}`)}
-              className="mt-3 w-full py-2 text-xs font-medium text-accent bg-accent/10 rounded-lg hover:bg-accent/20 transition-colors"
+              className="w-full py-2 text-sm font-medium text-bg-primary bg-text-primary hover:bg-zinc-200 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
             >
-              Lihat Detail →
+              Lihat Detail Penuh
+              <span className="text-lg leading-none transition-transform group-hover:translate-x-1">→</span>
             </button>
           </div>
         )}
