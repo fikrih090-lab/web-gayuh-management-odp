@@ -22,3 +22,10 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment variables — JANGAN PERNAH DI-COMMIT
+.env
+.env.*
+!.env.example
+backend/.env
+backend/.env.*
