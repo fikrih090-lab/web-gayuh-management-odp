@@ -24,11 +24,13 @@ export default function ODPDetailPage() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    const decodedId = decodeURIComponent(id).toUpperCase().trim();
     Promise.all([getOdps(), getClients(), getPaths()]).then(([odps, clients, pathsData]) => {
-      const foundOdp = odps.find(o => o.id === id)
+      const foundOdp = odps.find(o => o.id.toUpperCase().trim() === decodedId)
       setOdp(foundOdp)
-      setConnectedClients(clients.filter(c => c.odpId === id))
-      setPath(pathsData.find(p => p.odpIds.includes(id)))
+      // Match case-insensitive agar tidak gagal karena perbedaan huruf besar/kecil
+      setConnectedClients(clients.filter(c => String(c.odpId).toUpperCase().trim() === decodedId))
+      setPath(pathsData.find(p => p.odpIds.includes(decodedId)))
       setClientData(clients)
       setLoading(false)
     })

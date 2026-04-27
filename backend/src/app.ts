@@ -10,8 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-
 import { db } from './config/db';
 import { sql } from 'drizzle-orm';
 
@@ -37,6 +35,25 @@ app.use('/api/alerts', alertRoutes);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
     console.log(`Server running on port ${PORT}`);
+
+    // === CACHE WARMING ===
+    // Pre-load data saat server pertama nyala, agar request pertama dari browser langsung cepat
+    console.log('[Cache Warm] Starting background cache warm-up...');
+    
+    try {
+        const { NetworkService } = await import('./services/network.service');
+        const { ClientService } = await import('./services/client.service');
+        
+        // Jalankan keduanya bersamaan
+        await Promise.all([
+            NetworkService.getAllOdps().then(r  => console.log(`[Cache Warm] ✅ ODPs: ${r.length} data`)),
+            ClientService.getAllClients().then(r => console.log(`[Cache Warm] ✅ Clients: ${r.length} data`)),
+        ]);
+        
+        console.log('[Cache Warm] ✅ Cache ready! Aplikasi siap digunakan.');
+    } catch (e) {
+        console.warn('[Cache Warm] ⚠️ Warm-up failed (will load on first request):', (e as any).message);
+    }
 });

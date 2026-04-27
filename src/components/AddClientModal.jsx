@@ -35,7 +35,13 @@ export default function AddClientModal({ isOpen, onClose, onAdd }) {
     e.preventDefault()
     setLoading(true)
     try {
-      await createClient(formData)
+      const selectedOdpObj = odpList.find(o => String(o.id) === String(formData.idOdp) || String(o.id) === `ODP-${formData.idOdp}`)
+      const payload = {
+        ...formData,
+        targetHost: selectedOdpObj?.hostId || 'default',
+        targetDb: selectedOdpObj?.sourceDb || 'gayuh'
+      }
+      await createClient(payload)
       onAdd()
       onClose()
     } catch (error) {

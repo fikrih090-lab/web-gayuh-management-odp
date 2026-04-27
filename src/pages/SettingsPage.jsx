@@ -1,6 +1,16 @@
-import { Settings, Bell, User, Database, Shield, Palette, Info } from 'lucide-react'
+import { useState } from 'react'
+import { Settings, Bell, User, Database, Shield, Palette, Info, ArrowLeft } from 'lucide-react'
+
+// Import components
+import ProfileSettings from '../components/settings/ProfileSettings'
+import NotificationSettings from '../components/settings/NotificationSettings'
+import DatabaseSettings from '../components/settings/DatabaseSettings'
+import SecuritySettings from '../components/settings/SecuritySettings'
+import AppearanceSettings from '../components/settings/AppearanceSettings'
 
 export default function SettingsPage() {
+  const [activeTab, setActiveTab] = useState(null)
+
   return (
     <div className="h-full overflow-auto animate-fade-in z-0 relative bg-bg-primary">
       <div className="p-5 md:p-6 max-w-4xl mx-auto space-y-6">
@@ -9,35 +19,57 @@ export default function SettingsPage() {
           <p className="text-sm text-text-muted mt-1 font-medium">Konfigurasi aplikasi dan preferensi</p>
         </div>
 
-        {/* Settings sections */}
-        <div className="space-y-4">
-          {[
-            { icon: User, title: 'Profil Admin', desc: 'Ubah nama, email, dan password', action: 'Edit Profil' },
-            { icon: Bell, title: 'Notifikasi', desc: 'Atur preferensi notifikasi gangguan', action: 'Konfigurasi' },
-            { icon: Database, title: 'Database', desc: 'Backup dan restore data', action: 'Kelola' },
-            { icon: Shield, title: 'Keamanan', desc: 'Autentikasi dua faktor dan sesi aktif', action: 'Pengaturan' },
-            { icon: Palette, title: 'Tampilan', desc: 'Kustomisasi tema dan layout', action: 'Kustomisasi' },
-          ].map((item, i) => (
-            <div 
-              key={i} 
-              className="card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-up group"
-              style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}
+        {/* Main Content Area */}
+        {activeTab ? (
+          <div className="space-y-6 animate-fade-in">
+            <button 
+              onClick={() => setActiveTab(null)}
+              className="flex items-center gap-2 text-sm font-medium text-text-muted hover:text-text-primary transition-colors mb-2 w-fit px-3 py-1.5 rounded-lg hover:bg-bg-tertiary"
             >
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-lg bg-bg-tertiary flex items-center justify-center border border-border group-hover:bg-bg-elevated transition-all duration-300 shrink-0">
-                  <item.icon size={22} className="text-text-primary" />
+              <ArrowLeft size={16} />
+              Kembali ke Pengaturan
+            </button>
+            
+            {activeTab === 'profile' && <ProfileSettings />}
+            {activeTab === 'notification' && <NotificationSettings />}
+            {activeTab === 'database' && <DatabaseSettings />}
+            {activeTab === 'security' && <SecuritySettings />}
+            {activeTab === 'appearance' && <AppearanceSettings />}
+          </div>
+        ) : (
+          <>
+            {/* Settings sections */}
+            <div className="space-y-4">
+              {[
+                { id: 'profile', icon: User, title: 'Profil Admin', desc: 'Ubah nama, email, dan password', action: 'Edit Profil' },
+                { id: 'notification', icon: Bell, title: 'Notifikasi', desc: 'Atur preferensi notifikasi gangguan', action: 'Konfigurasi' },
+                { id: 'database', icon: Database, title: 'Database', desc: 'Backup dan restore data', action: 'Kelola' },
+                { id: 'security', icon: Shield, title: 'Keamanan', desc: 'Autentikasi dua faktor dan sesi aktif', action: 'Pengaturan' },
+                { id: 'appearance', icon: Palette, title: 'Tampilan', desc: 'Kustomisasi tema dan layout', action: 'Kustomisasi' },
+              ].map((item, i) => (
+                <div 
+                  key={item.id} 
+                  className="card p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-slide-up group"
+                  style={{ animationDelay: `${i * 60}ms`, animationFillMode: 'both' }}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-bg-tertiary flex items-center justify-center border border-border group-hover:bg-bg-elevated transition-all duration-300 shrink-0">
+                      <item.icon size={22} className="text-text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-base font-bold text-text-primary">{item.title}</p>
+                      <p className="text-sm text-text-muted mt-0.5">{item.desc}</p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setActiveTab(item.id)}
+                    className="text-sm font-medium text-text-primary bg-bg-tertiary border border-border px-5 py-2 rounded-lg hover:bg-bg-elevated transition-all duration-200 self-start sm:self-auto w-full sm:w-auto cursor-pointer"
+                  >
+                    {item.action}
+                  </button>
                 </div>
-                <div>
-                  <p className="text-base font-bold text-text-primary">{item.title}</p>
-                  <p className="text-sm text-text-muted mt-0.5">{item.desc}</p>
-                </div>
-              </div>
-              <button className="text-sm font-medium text-text-primary bg-bg-tertiary border border-border px-5 py-2 rounded-lg hover:bg-bg-elevated transition-all duration-200 self-start sm:self-auto w-full sm:w-auto">
-                {item.action}
-              </button>
+              ))}
             </div>
-          ))}
-        </div>
 
         {/* App info */}
         <div className="card p-6 mt-8 animate-slide-up" style={{ animationDelay: '300ms', animationFillMode: 'both' }}>
@@ -60,6 +92,8 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
+          </>
+        )}
       </div>
     </div>
   )

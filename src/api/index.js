@@ -9,9 +9,10 @@ const api = axios.create({
   },
 });
 
+// Original — returns plain array (dipakai oleh Dashboard, Detail, Modal, dll)
 export const getClients = async () => {
-  const { data } = await api.get('/clients');
-  return data.map(mapClient);
+  const { data } = await api.get('/clients', { params: { page: 1, limit: 9999 } });
+  return data.data.map(mapClient);
 };
 
 export const createClient = async (clientData) => {
@@ -19,9 +20,31 @@ export const createClient = async (clientData) => {
   return data;
 };
 
+// Original — returns plain array
 export const getOdps = async () => {
-  const { data } = await api.get('/network/odps');
-  return data.map(mapOdp);
+  const { data } = await api.get('/network/odps', { params: { page: 1, limit: 9999 } });
+  return data.data.map(mapOdp);
+};
+
+// Paginated versions — dipakai oleh ClientsPage dan ODPPage
+export const getClientsPaged = async ({ page = 1, limit = 50, search = '' } = {}) => {
+  const { data } = await api.get('/clients', { params: { page, limit, search } });
+  return {
+    data: data.data.map(mapClient),
+    total: data.total,
+    page: data.page,
+    totalPages: data.totalPages,
+  };
+};
+
+export const getOdpsPaged = async ({ page = 1, limit = 50, search = '' } = {}) => {
+  const { data } = await api.get('/network/odps', { params: { page, limit, search } });
+  return {
+    data: data.data.map(mapOdp),
+    total: data.total,
+    page: data.page,
+    totalPages: data.totalPages,
+  };
 };
 
 export const createOdp = async (odpData) => {

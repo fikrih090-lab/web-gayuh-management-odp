@@ -3,31 +3,74 @@
 @theme {
   --font-sans: 'Inter', sans-serif;
 
-  /* Background — Vercel/Linear style deep dark neutral */
-  --color-bg-primary: #09090b; /* zinc-950 */
-  --color-bg-secondary: #18181b; /* zinc-900 */
-  --color-bg-tertiary: #27272a; /* zinc-800 */
-  --color-bg-elevated: #27272a;
-  --color-bg-card: #09090b;
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-tertiary: var(--bg-tertiary);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-card: var(--bg-card);
 
-  /* Accent — subtle modern blue */
-  --color-accent: #3b82f6;
-  --color-accent-hover: #2563eb;
-  --color-accent-light: #60a5fa;
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-light: var(--accent-light);
 
-  /* Status */
-  --color-success: #10b981; /* emerald-500 */
-  --color-warning: #f59e0b; /* amber-500 */
-  --color-danger: #ef4444; /* red-500 */
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
 
-  /* Text — sharp contrast */
-  --color-text-primary: #fafafa; /* zinc-50 */
-  --color-text-secondary: #a1a1aa; /* zinc-400 */
-  --color-text-muted: #71717a; /* zinc-500 */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
 
-  /* Border — clean, visible boundaries */
-  --color-border: #27272a; /* zinc-800 */
-  --color-border-hover: #3f3f46; /* zinc-700 */
+  --color-border: var(--border);
+  --color-border-hover: var(--border-hover);
+}
+
+:root {
+  /* Light mode defaults */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f4f4f5; 
+  --bg-tertiary: #e4e4e7;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+
+  --accent: #2563eb; 
+  --accent-hover: #1d4ed8; 
+  --accent-light: #bfdbfe; 
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --text-primary: #18181b; 
+  --text-secondary: #3f3f46; 
+  --text-muted: #71717a; 
+
+  --border: #e4e4e7; 
+  --border-hover: #d4d4d8; 
+}
+
+.dark {
+  /* Dark mode */
+  --bg-primary: #09090b; 
+  --bg-secondary: #18181b; 
+  --bg-tertiary: #27272a; 
+  --bg-elevated: #27272a;
+  --bg-card: #09090b;
+
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-light: #60a5fa;
+
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #ef4444;
+
+  --text-primary: #fafafa; 
+  --text-secondary: #a1a1aa; 
+  --text-muted: #71717a; 
+
+  --border: #27272a; 
+  --border-hover: #3f3f46; 
 }
 
 html, body, #root {

@@ -1,7 +1,7 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Search, Plus, Users, Filter, ArrowUpDown } from 'lucide-react'
-import { getClients } from '../api'
+import { getClientsPaged, createClient } from '../api'
 import AddClientModal from '../components/AddClientModal'
 
 function formatCurrency(amount) {
@@ -10,57 +10,48 @@ function formatCurrency(amount) {
 
 export default function ClientsPage() {
   const [clientData, setClientData] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [search, setSearch] = useState('')
-  const [filterStatus, setFilterStatus] = useState('all')
+  const [total, setTotal]           = useState(0)
+  const [totalPages, setTotalPages] = useState(1)
+  const [loading, setLoading]       = useState(true)
+  const [search, setSearch]         = useState('')
+  const [searchInput, setSearchInput] = useState('')
+  const [filterStatus, setFilterStatus]   = useState('all')
   const [filterPayment, setFilterPayment] = useState('all')
-  const [sortBy, setSortBy] = useState('name')
+  const [page, setPage]             = useState(1)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const PAGE_SIZE = 50
   const navigate = useNavigate()
 
-  useEffect(() => {
-    getClients().then(data => {
-      setClientData(data)
+  const fetchClients = useCallback(async (p = 1, q = search) => {
+    setLoading(true)
+    try {
+      const res = await getClientsPaged({ page: p, limit: PAGE_SIZE, search: q })
+      setClientData(res.data)
+      setTotal(res.total)
+      setTotalPages(res.totalPages)
+      setPage(res.page)
+    } finally {
       setLoading(false)
-    })
-  }, [])
-
-  const filtered = useMemo(() => {
-    let data = [...clientData]
-
-    // Search
-    if (search) {
-      const q = search.toLowerCase()
-      data = data.filter(c =>
-        c.name.toLowerCase().includes(q) ||
-        c.id.toLowerCase().includes(q) ||
-        c.address.toLowerCase().includes(q) ||
-        c.odpId.toLowerCase().includes(q)
-      )
     }
+  }, [search])
 
-    // Filter status
-    if (filterStatus !== 'all') {
-      data = data.filter(c => c.status === filterStatus)
-    }
+  useEffect(() => { fetchClients(1) }, [])
 
-    // Filter payment
-    if (filterPayment !== 'all') {
-      data = data.filter(c => c.paymentStatus === filterPayment)
-    }
+  // Debounce search — kirim ke API setelah 400ms berhenti mengetik
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setSearch(searchInput)
+      fetchClients(1, searchInput)
+    }, 400)
+    return () => clearTimeout(t)
+  }, [searchInput])
 
-    // Sort
-    data.sort((a, b) => {
-      if (sortBy === 'name') return a.name.localeCompare(b.name)
-      if (sortBy === 'package') return a.package.localeCompare(b.package)
-      if (sortBy === 'status') return a.status.localeCompare(b.status)
-      return 0
-    })
+  // Filter lokal (status & payment) — berlaku di data yang sudah diterima
+  const filtered = clientData
+    .filter(c => filterStatus  === 'all' || c.status        === filterStatus)
+    .filter(c => filterPayment === 'all' || c.paymentStatus === filterPayment)
 
-    return data
-  }, [clientData, search, filterStatus, filterPayment, sortBy])
-
-  const onlineCount = clientData.filter(c => c.status === 'online').length
+  const onlineCount  = clientData.filter(c => c.status === 'online').length
   const offlineCount = clientData.filter(c => c.status === 'offline').length
   const overdueCount = clientData.filter(c => c.paymentStatus === 'overdue').length
 
@@ -71,7 +62,9 @@ export default function ClientsPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-text-primary tracking-tight">Manajemen Pelanggan</h1>
-            <p className="text-sm text-text-muted mt-1 font-medium">{clientData.length} pelanggan terdaftar</p>
+            <p className="text-sm text-text-muted mt-1 font-medium">
+              {loading ? 'Memuat...' : `${total} pelanggan terdaftar`}
+            </p>
           </div>
           <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
             <Plus size={16} />
@@ -102,25 +95,17 @@ export default function ClientsPage() {
             <input
               type="text"
               placeholder="Cari nama, ID, alamat, ODP..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
               className="w-full pl-10 pr-4 py-2.5 text-sm input-modern"
             />
           </div>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value)}
-            className="appearance-none px-4 py-2.5 text-sm input-modern cursor-pointer w-40"
-          >
+          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="appearance-none px-4 py-2.5 text-sm input-modern cursor-pointer w-40">
             <option value="all">Semua Status</option>
             <option value="online">Online</option>
             <option value="offline">Offline</option>
           </select>
-          <select
-            value={filterPayment}
-            onChange={(e) => setFilterPayment(e.target.value)}
-            className="appearance-none px-4 py-2.5 text-sm input-modern cursor-pointer w-40"
-          >
+          <select value={filterPayment} onChange={(e) => setFilterPayment(e.target.value)} className="appearance-none px-4 py-2.5 text-sm input-modern cursor-pointer w-40">
             <option value="all">Semua Bayar</option>
             <option value="paid">Lunas</option>
             <option value="overdue">Tunggakan</option>
@@ -130,66 +115,62 @@ export default function ClientsPage() {
 
       {/* Table */}
       <div className="flex-1 overflow-auto bg-bg-primary">
-        <table className="w-full">
-          <thead className="sticky top-0 bg-bg-secondary/90 backdrop-blur-md z-10">
-            <tr className="text-left text-xs text-text-secondary uppercase tracking-wider font-semibold border-b border-border/50">
-              <th className="px-5 md:px-6 py-4">Pelanggan</th>
-              <th className="px-5 py-4 hidden sm:table-cell">Paket</th>
-              <th className="px-5 py-4 hidden lg:table-cell">ODP / Port</th>
-              <th className="px-5 py-4 hidden xl:table-cell">Biaya</th>
-              <th className="px-5 py-4">Koneksi</th>
-              <th className="px-5 py-4 hidden md:table-cell">Bayar</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border/30">
-            {filtered.map((client, i) => (
-              <tr
-                key={client.id}
-                onClick={() => navigate(`/clients/${client.id}`)}
-                className="table-row-hover cursor-pointer animate-fade-in"
-                style={{ animationDelay: `${i * 30}ms`, animationFillMode: 'both' }}
-              >
-                <td className="px-5 md:px-6 py-4">
-                  <p className="text-sm font-semibold text-text-primary">{client.name}</p>
-                  <p className="text-xs text-text-muted mt-0.5">{client.address}</p>
-                </td>
-                <td className="px-5 py-4 hidden sm:table-cell">
-                  <span className="text-sm text-text-secondary font-medium bg-bg-tertiary/50 px-2.5 py-1 rounded-lg border border-border/30">{client.package}</span>
-                </td>
-                <td className="px-5 py-4 hidden lg:table-cell">
-                  <span className="text-sm font-medium text-accent">{client.odpId}</span>
-                  <span className="text-xs text-text-muted ml-1 font-mono">P{client.portNumber}</span>
-                </td>
-                <td className="px-5 py-4 hidden xl:table-cell">
-                  <span className="text-sm font-medium text-text-secondary">{formatCurrency(client.monthlyFee)}</span>
-                </td>
-                <td className="px-5 py-4">
-                  <span className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full border ${
-                    client.status === 'online'
-                      ? 'bg-success/10 text-success border-success/20'
-                      : 'bg-danger/10 text-danger border-danger/20'
-                  }`}>
-                    <span className={`w-1.5 h-1.5 rounded-full ${
-                      client.status === 'online' ? 'bg-success animate-pulse-soft shadow-[0_0_6px_#34d399]' : 'bg-danger shadow-[0_0_6px_#f87171]'
-                    }`} />
-                    {client.status === 'online' ? 'Online' : 'Offline'}
-                  </span>
-                </td>
-                <td className="px-5 py-4 hidden md:table-cell">
-                  <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${
-                    client.paymentStatus === 'paid'
-                      ? 'bg-success/10 text-success border-success/20'
-                      : 'bg-warning/10 text-warning border-warning/20'
-                  }`}>
-                    {client.paymentStatus === 'paid' ? 'Lunas' : 'Tunggakan'}
-                  </span>
-                </td>
+        {loading ? (
+          <div className="flex items-center justify-center py-20 text-text-muted">
+            <div className="w-6 h-6 border-2 border-border border-t-text-primary rounded-full animate-spin mr-3" />
+            <span className="text-sm font-medium">Memuat data...</span>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead className="sticky top-0 bg-bg-secondary/90 backdrop-blur-md z-10">
+              <tr className="text-left text-xs text-text-secondary uppercase tracking-wider font-semibold border-b border-border/50">
+                <th className="px-5 md:px-6 py-4">Pelanggan</th>
+                <th className="px-5 py-4 hidden sm:table-cell">Paket</th>
+                <th className="px-5 py-4 hidden lg:table-cell">ODP / Port</th>
+                <th className="px-5 py-4 hidden xl:table-cell">Biaya</th>
+                <th className="px-5 py-4">Koneksi</th>
+                <th className="px-5 py-4 hidden md:table-cell">Bayar</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-border/30">
+              {filtered.map((client) => (
+                <tr key={client.id} onClick={() => navigate(`/clients/${client.id}`)} className="table-row-hover cursor-pointer">
+                  <td className="px-5 md:px-6 py-4">
+                    <p className="text-sm font-semibold text-text-primary">{client.name}</p>
+                    <p className="text-xs text-text-muted mt-0.5">{client.address}</p>
+                  </td>
+                  <td className="px-5 py-4 hidden sm:table-cell">
+                    <span className="text-sm text-text-secondary font-medium bg-bg-tertiary/50 px-2.5 py-1 rounded-lg border border-border/30">{client.package}</span>
+                  </td>
+                  <td className="px-5 py-4 hidden lg:table-cell">
+                    <span className="text-sm font-medium text-accent">{client.odpId}</span>
+                    <span className="text-xs text-text-muted ml-1 font-mono">P{client.portNumber}</span>
+                  </td>
+                  <td className="px-5 py-4 hidden xl:table-cell">
+                    <span className="text-sm font-medium text-text-secondary">{formatCurrency(client.monthlyFee)}</span>
+                  </td>
+                  <td className="px-5 py-4">
+                    <span className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full border ${
+                      client.status === 'online' ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${client.status === 'online' ? 'bg-success animate-pulse-soft shadow-[0_0_6px_#34d399]' : 'bg-danger shadow-[0_0_6px_#f87171]'}`} />
+                      {client.status === 'online' ? 'Online' : 'Offline'}
+                    </span>
+                  </td>
+                  <td className="px-5 py-4 hidden md:table-cell">
+                    <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${
+                      client.paymentStatus === 'paid' ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'
+                    }`}>
+                      {client.paymentStatus === 'paid' ? 'Lunas' : 'Tunggakan'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
-        {filtered.length === 0 && (
+        {!loading && filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-20 text-text-muted animate-fade-in">
             <div className="w-16 h-16 rounded-2xl bg-bg-tertiary/50 flex items-center justify-center mb-4">
               <Users size={32} className="opacity-50" />
@@ -197,18 +178,32 @@ export default function ClientsPage() {
             <p className="text-sm font-medium">Tidak ada pelanggan ditemukan</p>
           </div>
         )}
+
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-4 border-t border-border bg-bg-primary sticky bottom-0">
+            <span className="text-xs text-text-muted">
+              Halaman {page} dari {totalPages} ({total} total)
+            </span>
+            <div className="flex items-center gap-2">
+              <button onClick={() => fetchClients(page - 1)} disabled={page <= 1}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                ← Prev
+              </button>
+              <span className="text-xs font-mono text-text-secondary px-2">{page} / {totalPages}</span>
+              <button onClick={() => fetchClients(page + 1)} disabled={page >= totalPages}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
-      <AddClientModal 
-        isOpen={isAddModalOpen} 
-        onClose={() => setIsAddModalOpen(false)} 
-        onAdd={() => {
-          setLoading(true)
-          getClients().then(data => {
-            setClientData(data)
-            setLoading(false)
-          })
-        }} 
+      <AddClientModal
+        isOpen={isAddModalOpen}
+        onClose={() => setIsAddModalOpen(false)}
+        onAdd={() => fetchClients(1)}
       />
     </div>
   )

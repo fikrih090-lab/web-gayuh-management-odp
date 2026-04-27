@@ -3,8 +3,26 @@ import { ClientService } from '../services/client.service';
 
 export const getAllClients = async (req: Request, res: Response) => {
     try {
-        const result = await ClientService.getAllClients();
-        res.json(result);
+        const page  = Math.max(1, parseInt(req.query.page as string)  || 1);
+        const limit = parseInt(req.query.limit as string) || 50;
+        const search = ((req.query.search as string) || '').toLowerCase().trim();
+
+        const all = await ClientService.getAllClients();
+
+        // Filter di backend
+        const filtered = search
+            ? all.filter(c =>
+                (c.name  || '').toLowerCase().includes(search) ||
+                (c.noServices || '').toLowerCase().includes(search) ||
+                (c.address || '').toLowerCase().includes(search) ||
+                (c.idOdp  || '').toString().toLowerCase().includes(search)
+              )
+            : all;
+
+        const total = filtered.length;
+        const data  = filtered.slice((page - 1) * limit, page * limit);
+
+        res.json({ data, total, page, limit, totalPages: Math.ceil(total / limit) });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch clients' });
     }
