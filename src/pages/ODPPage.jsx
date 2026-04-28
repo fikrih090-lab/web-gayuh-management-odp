@@ -124,42 +124,37 @@ export default function ODPPage() {
           </div>
         </div>
 
-        {/* Alphabet Filter Bar */}
-        <div className="px-5 md:px-6 py-3 border-b border-border bg-bg-secondary flex flex-col gap-2">
-          {/* Single letters */}
-          <div className="flex flex-wrap gap-1 items-center justify-center sm:justify-start">
+        {/* Filter Bar — compact dropdown */}
+        <div className="px-5 md:px-6 py-3 border-b border-border bg-bg-secondary flex items-center gap-3">
+          <Filter size={14} className="text-text-muted shrink-0" />
+          <span className="text-xs font-semibold text-text-muted uppercase tracking-wider shrink-0">Filter</span>
+          <select
+            value={selectedLetter}
+            onChange={(e) => {
+              const val = e.target.value
+              setSelectedLetter(val)
+              fetchOdps(1, searchInput, val)
+            }}
+            className="input-modern text-sm py-1.5 px-3 pr-8 rounded-lg cursor-pointer flex-1 max-w-[200px]"
+          >
+            <option value="">Semua ODP</option>
+            <optgroup label="Huruf Tunggal">
+              {alphabet.map(l => <option key={l} value={l}>{l}</option>)}
+            </optgroup>
+            <optgroup label="Huruf Ganda (AA–AZ)">
+              {doubleAlphabet.map(l => <option key={l} value={l}>{l}</option>)}
+            </optgroup>
+          </select>
+          {selectedLetter && (
             <button
               onClick={() => { setSelectedLetter(''); fetchOdps(1, searchInput, ''); }}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${selectedLetter === '' ? 'bg-accent text-white shadow-md shadow-accent/20' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
+              className="text-xs text-text-muted hover:text-text-primary transition-colors shrink-0"
             >
-              Semua
+              Reset
             </button>
-            <div className="w-px h-4 bg-border mx-1"></div>
-            {alphabet.map(letter => (
-              <button
-                key={letter}
-                onClick={() => { setSelectedLetter(letter); fetchOdps(1, searchInput, letter); }}
-                className={`w-7 h-7 flex items-center justify-center text-xs font-medium rounded-lg transition-all ${selectedLetter === letter ? 'bg-accent text-white shadow-md shadow-accent/20' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
-              >
-                {letter}
-              </button>
-            ))}
-          </div>
-          {/* Double letters AA-AZ */}
-          <div className="flex flex-wrap gap-1 items-center justify-center sm:justify-start">
-            <span className="text-[10px] font-semibold text-text-muted mr-1 uppercase tracking-wider">AA–AZ</span>
-            <div className="w-px h-4 bg-border mx-1"></div>
-            {doubleAlphabet.map(letter => (
-              <button
-                key={letter}
-                onClick={() => { setSelectedLetter(letter); fetchOdps(1, searchInput, letter); }}
-                className={`px-2 h-7 flex items-center justify-center text-xs font-medium rounded-lg transition-all ${selectedLetter === letter ? 'bg-accent text-white shadow-md shadow-accent/20' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
-              >
-                {letter}
-              </button>
-            ))}
-          </div>
+          )}
         </div>
+
 
         {/* Table */}
         <div className="flex-1 overflow-auto">

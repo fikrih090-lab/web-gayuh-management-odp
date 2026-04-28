@@ -249,3 +249,63 @@ body {
 .glow-success, .glow-warning, .glow-danger, .glow-accent, .gradient-text {
   /* Disabled for cleaner aesthetic */
 }
+
+/* ============================================
+   RESPONSIVE LAYOUT — Sidebar & Hamburger
+   ============================================ */
+
+/* Desktop (>= 768px): sidebar selalu tampil, hamburger disembunyikan */
+@media (min-width: 768px) {
+  .layout-sidebar {
+    position: relative !important;
+    transform: translateX(0) !important;
+  }
+  .layout-hamburger {
+    display: none !important;
+  }
+  .layout-mobile-overlay {
+    display: none !important;
+  }
+  #search-box {
+    display: block !important;
+  }
+  .layout-profile-name {
+    display: block !important;
+  }
+  .layout-collapse-btn {
+    display: flex !important;
+  }
+}
+
+/* Mobile (< 768px): sidebar jadi overlay, hamburger tampil */
+@media (max-width: 767px) {
+  .layout-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    height: 100% !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1) !important;
+    width: 260px !important;
+    z-index: 2000 !important; /* lebih tinggi dari Leaflet (400-1000) */
+  }
+  .layout-sidebar[data-open="true"] {
+    transform: translateX(0) !important;
+  }
+  .layout-hamburger {
+    display: flex !important;
+  }
+  .layout-collapse-btn {
+    display: none !important;
+  }
+  .layout-profile-name {
+    display: none;
+  }
+}
+
+/* Mobile overlay juga harus di atas map */
+.layout-mobile-overlay {
+  z-index: 1999 !important;
+}
+
+

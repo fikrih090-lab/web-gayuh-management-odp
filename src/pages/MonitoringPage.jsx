@@ -184,7 +184,9 @@ export default function MonitoringPage() {
               </h3>
             </div>
             <div className="divide-y divide-border flex-1">
-              {resolvedAlerts.map(alert => (
+              {[...resolvedAlerts]
+                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                .map(alert => (
                 <div key={alert.id} className="p-5 opacity-70 hover:opacity-100 hover:bg-bg-tertiary transition-all duration-200">
                   <div className="flex items-start gap-4">
                     <div className="p-2 rounded-lg bg-success/10 text-success shrink-0">
