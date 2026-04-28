@@ -3,7 +3,7 @@ import { mapClient, mapOdp, mapAlert } from './mappers';
 
 // Base API configuration
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL: '/api',
   headers: {
     'Content-Type': 'application/json',
   },
