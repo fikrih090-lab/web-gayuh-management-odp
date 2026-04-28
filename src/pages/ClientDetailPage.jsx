@@ -4,10 +4,11 @@ import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import L from 'leaflet'
 import {
   ArrowLeft, User, MapPin, CreditCard, Wifi, Radio,
-  Phone, Mail, Calendar, Clock
+  Phone, Mail, Calendar, Clock, Trash2
 } from 'lucide-react'
-import { getClients, getOdps, getPaths } from '../api'
+import { getClients, getOdps, getPaths, deleteClient } from '../api'
 import { oltLocation } from '../data/mockData'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 function createIcon(color, size = 20) {
   return L.divIcon({
@@ -29,6 +30,10 @@ export default function ClientDetailPage() {
   const [path, setPath] = useState(null)
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const isDark = useDarkMode()
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isFullAccess = user.roleId === '1' || user.roleId === 1
 
   useEffect(() => {
     Promise.all([getClients(), getOdps(), getPaths()]).then(([clients, odps, pathsData]) => {
@@ -44,6 +49,17 @@ export default function ClientDetailPage() {
       setLoading(false)
     })
   }, [id])
+
+  const handleDelete = async () => {
+    if (window.confirm('Apakah Anda yakin ingin menghapus pelanggan ini secara permanen?')) {
+      try {
+        await deleteClient(id)
+        navigate('/clients')
+      } catch (err) {
+        alert('Gagal menghapus pelanggan')
+      }
+    }
+  }
 
   if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
   if (!client) {
@@ -74,7 +90,7 @@ export default function ClientDetailPage() {
   return (
     <div className="h-full overflow-auto animate-fade-in">
       {/* Header */}
-      <div className="border-b border-border px-4 md:px-6 py-4">
+      <div className="border-b border-border px-4 md:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/clients')}
@@ -94,6 +110,16 @@ export default function ClientDetailPage() {
             </div>
             <p className="text-sm text-text-muted">{client.id} • {client.address}</p>
           </div>
+          {isFullAccess && (
+            <button
+              onClick={handleDelete}
+              className="p-2 md:px-4 md:py-2 rounded-xl bg-danger/10 text-danger hover:bg-danger/20 transition-colors flex items-center gap-2 text-sm font-medium"
+              title="Hapus Pelanggan"
+            >
+              <Trash2 size={18} />
+              <span className="hidden md:inline">Hapus</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -204,7 +230,10 @@ export default function ClientDetailPage() {
                 zoomControl={false}
                 attributionControl={false}
               >
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+                <TileLayer 
+                  key={isDark ? 'dark' : 'light'}
+                  url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+                />
                 {traceLine.length > 0 && (
                   <Polyline positions={traceLine} pathOptions={{ color: '#3b82f6', weight: 2, opacity: 0.6, dashArray: '6 4' }} />
                 )}

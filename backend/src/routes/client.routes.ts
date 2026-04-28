@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { getAllClients, getClientById, createClient, updateClient, deleteClient } from '../controllers/client.controller';
+import { getAllClients, getClientById, createClient, updateClient, deleteClient, getOdpCodes } from '../controllers/client.controller';
 
 const router = Router();
 
 router.get('/', getAllClients);
+router.get('/odp-codes', getOdpCodes);
 router.get('/:id', getClientById);
 router.post('/', createClient);
 router.put('/:id', updateClient);

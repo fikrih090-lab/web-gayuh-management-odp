@@ -5,6 +5,8 @@ import L from 'leaflet'
 import { Search, Plus, Radio, Filter } from 'lucide-react'
 import { getOdpsPaged } from '../api'
 import AddOdpModal from '../components/AddOdpModal'
+import EditOdpModal from '../components/EditOdpModal'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 function getODPColor(odp) {
   const ratio = (odp.usedPorts || 0) / (odp.totalPorts || 1)
@@ -39,15 +41,26 @@ export default function ODPPage() {
   const [search, setSearch]         = useState('')
   const [selectedODP, setSelectedODP] = useState(null)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingOdp, setEditingOdp] = useState(null)
+  const [selectedLetter, setSelectedLetter] = useState('')
   const PAGE_SIZE = 50
   const navigate = useNavigate()
+  const isDark = useDarkMode()
 
-  const fetchOdps = useCallback(async (p, q) => {
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isFullAccess = user.roleId === '1' || user.roleId === 1
+
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
+  const doubleAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => `A${l}`);
+
+  const fetchOdps = useCallback(async (p, q, l) => {
     const pg  = p ?? page
     const qry = q ?? search
+    const ltr = l !== undefined ? l : selectedLetter
     setLoading(true)
     try {
-      const res = await getOdpsPaged({ page: pg, limit: PAGE_SIZE, search: qry })
+      const res = await getOdpsPaged({ page: pg, limit: PAGE_SIZE, search: qry, letter: ltr })
       setOdpData(res.data || [])
       setTotal(res.total || 0)
       setTotalPages(res.totalPages || 1)
@@ -58,15 +71,15 @@ export default function ODPPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [page, search, selectedLetter])
 
-  useEffect(() => { fetchOdps(1, '') }, [])
+  useEffect(() => { fetchOdps(1, '', '') }, [])
 
   // Debounce search 400ms
   useEffect(() => {
     const t = setTimeout(() => {
       setSearch(searchInput)
-      fetchOdps(1, searchInput)
+      fetchOdps(1, searchInput, selectedLetter)
     }, 400)
     return () => clearTimeout(t)
   }, [searchInput])
@@ -89,10 +102,12 @@ export default function ODPPage() {
                 {loading ? 'Memuat...' : `${total} ODP terdaftar`}
               </p>
             </div>
-            <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
-              <Plus size={16} />
-              <span className="hidden sm:inline">Tambah ODP</span>
-            </button>
+            {isFullAccess && (
+              <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
+                <Plus size={16} />
+                <span className="hidden sm:inline">Tambah ODP</span>
+              </button>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3">
@@ -106,6 +121,43 @@ export default function ODPPage() {
                 className="w-full pl-10 pr-4 py-2.5 text-sm input-modern"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Alphabet Filter Bar */}
+        <div className="px-5 md:px-6 py-3 border-b border-border bg-bg-secondary flex flex-col gap-2">
+          {/* Single letters */}
+          <div className="flex flex-wrap gap-1 items-center justify-center sm:justify-start">
+            <button
+              onClick={() => { setSelectedLetter(''); fetchOdps(1, searchInput, ''); }}
+              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${selectedLetter === '' ? 'bg-accent text-white shadow-md shadow-accent/20' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
+            >
+              Semua
+            </button>
+            <div className="w-px h-4 bg-border mx-1"></div>
+            {alphabet.map(letter => (
+              <button
+                key={letter}
+                onClick={() => { setSelectedLetter(letter); fetchOdps(1, searchInput, letter); }}
+                className={`w-7 h-7 flex items-center justify-center text-xs font-medium rounded-lg transition-all ${selectedLetter === letter ? 'bg-accent text-white shadow-md shadow-accent/20' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
+              >
+                {letter}
+              </button>
+            ))}
+          </div>
+          {/* Double letters AA-AZ */}
+          <div className="flex flex-wrap gap-1 items-center justify-center sm:justify-start">
+            <span className="text-[10px] font-semibold text-text-muted mr-1 uppercase tracking-wider">AA–AZ</span>
+            <div className="w-px h-4 bg-border mx-1"></div>
+            {doubleAlphabet.map(letter => (
+              <button
+                key={letter}
+                onClick={() => { setSelectedLetter(letter); fetchOdps(1, searchInput, letter); }}
+                className={`px-2 h-7 flex items-center justify-center text-xs font-medium rounded-lg transition-all ${selectedLetter === letter ? 'bg-accent text-white shadow-md shadow-accent/20' : 'text-text-secondary hover:bg-bg-tertiary hover:text-text-primary'}`}
+              >
+                {letter}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -146,7 +198,7 @@ export default function ODPPage() {
                           style={{ background: color, boxShadow: `0 0 10px ${color}88` }} />
                         <div className="min-w-0">
                           <p className="text-sm font-semibold text-text-primary truncate">{odp.name}</p>
-                          <p className="text-xs text-text-muted mt-0.5 truncate">{odp.id}</p>
+                          <p className="text-xs text-text-muted mt-0.5 truncate">{odp.note || 'Tidak ada keterangan'}</p>
                         </div>
                       </div>
                     </td>
@@ -161,9 +213,24 @@ export default function ODPPage() {
                       </div>
                     </td>
                     <td className="px-5 py-4">
-                      <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${status.class} border-current/20`}>
-                        {status.text}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${status.class} border-current/20`}>
+                          {status.text}
+                        </span>
+                        {isFullAccess && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setEditingOdp(odp)
+                              setIsEditModalOpen(true)
+                            }}
+                            className="p-1.5 text-text-muted hover:text-accent hover:bg-accent/10 rounded-lg transition-colors ml-2"
+                            title="Edit ODP"
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 )
@@ -185,12 +252,12 @@ export default function ODPPage() {
             <div className="flex items-center justify-between px-5 py-4 border-t border-border bg-bg-primary sticky bottom-0">
               <span className="text-xs text-text-muted">Halaman {page} dari {totalPages} ({total} ODP)</span>
               <div className="flex items-center gap-2">
-                <button onClick={() => fetchOdps(page - 1, search)} disabled={page <= 1}
+                <button onClick={() => fetchOdps(page - 1, search, selectedLetter)} disabled={page <= 1}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                   ← Prev
                 </button>
                 <span className="text-xs font-mono text-text-secondary px-2">{page} / {totalPages}</span>
-                <button onClick={() => fetchOdps(page + 1, search)} disabled={page >= totalPages}
+                <button onClick={() => fetchOdps(page + 1, search, selectedLetter)} disabled={page >= totalPages}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                   Next →
                 </button>
@@ -210,7 +277,10 @@ export default function ODPPage() {
           zoomControl={false}
           attributionControl={false}
         >
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+          <TileLayer 
+            key={isDark ? 'dark' : 'light'}
+            url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+          />
           {odpData.map(odp => {
             const lat = Number(odp.lat)
             const lng = Number(odp.lng)
@@ -247,7 +317,14 @@ export default function ODPPage() {
       <AddOdpModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAdd={() => fetchOdps(1, search)}
+        onAdd={() => fetchOdps(1, search, selectedLetter)}
+      />
+
+      <EditOdpModal
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        onSuccess={() => fetchOdps(1, search, selectedLetter)}
+        odpData={editingOdp}
       />
     </div>
   )

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { Radio, Users, Plug, AlertTriangle, Layers, LocateFixed, ZoomIn, ZoomOut, Eye, EyeOff } from 'lucide-react'
 import { oltLocation } from '../data/mockData'
 import { getClients, getOdps, getPaths, getAlerts } from '../api'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 // Fix Leaflet map size when container becomes visible
 function MapResizer() {
@@ -98,6 +99,7 @@ export default function DashboardPage() {
   const [pathData, setPathData] = useState([]);
   const [alertData, setAlertData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isDark = useDarkMode();
 
   useEffect(() => {
     Promise.all([getClients(), getOdps(), getPaths(), getAlerts()])
@@ -148,7 +150,8 @@ export default function DashboardPage() {
       >
         <MapResizer />
         <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          key={isDark ? 'dark' : 'light'}
+          url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`}
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
         />
 

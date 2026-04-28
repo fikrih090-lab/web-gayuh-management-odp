@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
 import { X, User, MapPin, Phone, Wifi, CreditCard, Plug, HardDrive } from 'lucide-react'
-import { createClient, getOdps, getClients } from '../api'
+import { createClient, getOdpCodes, getClients } from '../api'
 
 export default function AddClientModal({ isOpen, onClose, onAdd }) {
-  const [odpList, setOdpList] = useState([])
+  const [odpList, setOdpList] = useState([])  // now an array of strings (code_odp)
   const [clientList, setClientList] = useState([])
   const [formData, setFormData] = useState({
     name: '',
@@ -20,9 +20,9 @@ export default function AddClientModal({ isOpen, onClose, onAdd }) {
 
   useEffect(() => {
     if (isOpen) {
-      Promise.all([getOdps(), getClients()])
-        .then(([odps, clients]) => {
-          setOdpList(odps)
+      Promise.all([getOdpCodes(), getClients()])
+        .then(([codes, clients]) => {
+          setOdpList(codes)
           setClientList(clients)
         })
         .catch(console.error)
@@ -35,11 +35,10 @@ export default function AddClientModal({ isOpen, onClose, onAdd }) {
     e.preventDefault()
     setLoading(true)
     try {
-      const selectedOdpObj = odpList.find(o => String(o.id) === String(formData.idOdp) || String(o.id) === `ODP-${formData.idOdp}`)
       const payload = {
         ...formData,
-        targetHost: selectedOdpObj?.hostId || 'default',
-        targetDb: selectedOdpObj?.sourceDb || 'gayuh'
+        targetHost: 'default',
+        targetDb: 'gayuh'
       }
       await createClient(payload)
       onAdd()
@@ -52,9 +51,8 @@ export default function AddClientModal({ isOpen, onClose, onAdd }) {
     }
   }
 
-  const selectedOdp = odpList.find(o => String(o.id) === String(formData.idOdp) || String(o.id) === `ODP-${formData.idOdp}`)
-  const totalPorts = selectedOdp ? selectedOdp.totalPorts : 8
-  const connectedClients = selectedOdp ? clientList.filter(c => c.odpId === selectedOdp.id) : []
+  const totalPorts = 8
+  const connectedClients = clientList.filter(c => c.odpId === formData.idOdp)
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
@@ -173,9 +171,9 @@ export default function AddClientModal({ isOpen, onClose, onAdd }) {
                     onChange={e => setFormData({ ...formData, idOdp: e.target.value, noPortOdp: 1 })}
                     className="w-full px-3 py-2 bg-bg-secondary border border-border rounded-lg focus:border-accent outline-none text-sm appearance-none"
                   >
-                    <option value="">-- Pilih --</option>
-                    {odpList.map(o => (
-                      <option key={o.id} value={o.id.replace('ODP-', '')}>{o.id}</option>
+                    <option value="">-- Pilih ODP --</option>
+                    {odpList.map(code => (
+                      <option key={code} value={code}>{code}</option>
                     ))}
                   </select>
                 </div>

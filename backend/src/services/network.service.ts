@@ -18,10 +18,11 @@ export class NetworkService {
         const targetDbs = await getAllowedDatabases();
         const odpMap = new Map<string, any>();
 
-        // Step 1: Fetch ODP dari SEMUA database secara parallel
-        // Map otomatis deduplicate — code_odp yang sama hanya simpan satu
+        // Step 1: Fetch ODP dari SEMUA database secara parallel (Kecuali Host 3 sesuai request)
         const fetchResults = await Promise.all(
-            targetDbs.map(async ({ hostId, pool, dbName }) => {
+            targetDbs
+              .filter(db => db.hostId !== '3')
+              .map(async ({ hostId, pool, dbName }) => {
                 try {
                     const [rows] = await pool.query(`SELECT * FROM \`${dbName}\`.m_odp`);
                     return { hostId, dbName, rows: rows as any[] };
@@ -59,9 +60,11 @@ export class NetworkService {
             }
         }
 
-        // Step 2: Hitung total usedPorts dari SEMUA database (dijumlah lintas mitra)
+        // Step 2: Hitung total usedPorts dari SEMUA database (dijumlah lintas mitra, kecuali Host 3)
         const countResults = await Promise.all(
-            targetDbs.map(async ({ pool, dbName }) => {
+            targetDbs
+              .filter(db => db.hostId !== '3')
+              .map(async ({ pool, dbName }) => {
                 try {
                     const [rows] = await pool.query(`
                         SELECT o.code_odp, COUNT(c.customer_id) AS used_ports
@@ -83,12 +86,50 @@ export class NetworkService {
             }
         }
 
-        odpCache = Array.from(odpMap.values())
-            .filter(odp => {
-                const hasCoordinates = odp.latitude && Number(odp.latitude) !== 0;
-                const hasClients = (odp.usedPorts || 0) > 0;
-                return hasCoordinates || hasClients;
+        // Step 3: Tambah ODP dari code_odp di tabel customer yang BELUM ada di m_odp
+        const customerOdpResults = await Promise.all(
+            targetDbs
+              .filter(db => db.hostId !== '3')
+              .map(async ({ hostId, pool, dbName }) => {
+                try {
+                    // Ambil kode ODP unik dari customer yang belum ada di m_odp
+                    const [rows] = await pool.query(`
+                        SELECT UPPER(TRIM(c.code_odp)) as code_odp, COUNT(cu.customer_id) as used_ports
+                        FROM \`${dbName}\`.customer cu
+                        JOIN \`${dbName}\`.m_odp c ON cu.id_odp = c.id_odp
+                        WHERE c.code_odp IS NOT NULL AND c.code_odp != ''
+                        GROUP BY c.code_odp
+                    `);
+                    return { hostId, dbName, rows: rows as any[] };
+                } catch { return { hostId, dbName, rows: [] }; }
             })
+        );
+
+        for (const { hostId, dbName, rows } of customerOdpResults) {
+            for (const row of rows) {
+                if (!row.code_odp) continue;
+                const odpCode = String(row.code_odp).toUpperCase().trim();
+                
+                // Kalau ODP ini belum ada di map (tidak ada di m_odp), tambahkan sebagai entry minimal
+                if (!odpMap.has(odpCode)) {
+                    odpMap.set(odpCode, {
+                        codeOdp:    odpCode,
+                        idOdp:      odpCode,
+                        usedPorts:  Number(row.used_ports || 0),
+                        totalPort:  8,
+                        latitude:   '',
+                        longitude:  '',
+                        remark:     '',
+                        document:   '',
+                        coverageOdp: 0,
+                        sourceDb:   dbName,
+                        hostId:     hostId
+                    });
+                }
+            }
+        }
+
+        odpCache = Array.from(odpMap.values())
             .sort((a, b) => String(a.codeOdp || '').localeCompare(String(b.codeOdp || ''), 'id', { sensitivity: 'base' }));
         odpCacheExpiry = Date.now() + 2 * 60 * 1000;
         console.log(`[ODP Cache] Cached ${odpCache.length} ODP unik dari ${targetDbs.length} database (sorted A-Z)`);
@@ -140,10 +181,51 @@ export class NetworkService {
         } as typeof mOdp.$inferInsert;
         
         const result = await db.insert(mOdp).values(fullData);
+        invalidateOdpCache();
         return { idOdp: result[0].insertId, ...fullData };
+    }
+
+    static async updateOdp(codeOdp: string, data: { latitude: string, longitude: string, totalPort: number, coverageOdp: number, remark?: string }) {
+        if (!codeOdp) return false;
+        
+        const targetDbs = await getAllowedDatabases();
+        
+        await Promise.all(
+            targetDbs.map(async ({ pool, dbName }) => {
+                try {
+                    await pool.query(
+                        `UPDATE \`${dbName}\`.m_odp SET latitude = ?, longitude = ?, total_port = ?, coverage_odp = ?, remark = ? WHERE UPPER(code_odp) = ?`,
+                        [data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '', codeOdp.toUpperCase()]
+                    );
+                } catch (e) {}
+            })
+        );
+        
+        invalidateOdpCache();
+        return true;
     }
 
     static async getAllOdcs() {
         return await db.select().from(mOdc);
+    }
+
+    static async deleteOdp(codeOdp: string) {
+        if (!codeOdp) return false;
+        
+        const targetDbs = await getAllowedDatabases();
+        
+        // Loop through all databases and delete ODP with matching code_odp
+        await Promise.all(
+            targetDbs.map(async ({ pool, dbName }) => {
+                try {
+                    await pool.query(`DELETE FROM \`${dbName}\`.m_odp WHERE code_odp = ?`, [codeOdp]);
+                } catch (e) {
+                    // Ignore errors if table or column doesn't exist in a specific DB
+                }
+            })
+        );
+        
+        invalidateOdpCache();
+        return true;
     }
 }

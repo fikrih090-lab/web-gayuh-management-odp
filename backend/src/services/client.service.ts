@@ -61,6 +61,29 @@ export class ClientService {
         return clientCache;
     }
 
+    static async getOdpCodesFromCustomers() {
+        const targetDbs = await getAllowedDatabases();
+        const odpSet = new Set<string>();
+
+        await Promise.all(
+            targetDbs.map(async ({ pool, dbName }) => {
+                try {
+                    const [rows] = await pool.query(`
+                        SELECT DISTINCT UPPER(TRIM(o.code_odp)) as code_odp
+                        FROM \`${dbName}\`.customer c
+                        JOIN \`${dbName}\`.m_odp o ON c.id_odp = o.id_odp
+                        WHERE o.code_odp IS NOT NULL AND o.code_odp != ''
+                        ORDER BY o.code_odp ASC
+                    `);
+                    for (const row of rows as any[]) {
+                        if (row.code_odp) odpSet.add(row.code_odp);
+                    }
+                } catch (e) {}
+            })
+        );
+
+        return Array.from(odpSet).sort();
+    }
 
     static async getClientById(idStr: string | number) {
         if (typeof idStr === 'string' && idStr.includes('_')) {
@@ -190,8 +213,23 @@ export class ClientService {
         return { customerId: id, ...data };
     }
 
-    static async deleteClient(id: number) {
-        await db.delete(customer).where(eq(customer.customerId, id));
+    static async deleteClient(idStr: string | number) {
+        if (typeof idStr === 'string' && idStr.includes('_')) {
+            const parts = idStr.split('_');
+            const id = parts.pop();
+            const hostId = parts.shift();
+            const dbName = parts.join('_');
+            
+            const pool = connectionPools.get(hostId);
+            if (pool) {
+                await pool.query(`DELETE FROM \`${dbName}\`.customer WHERE customer_id = ?`, [id]);
+                invalidateClientCache();
+                return true;
+            }
+        }
+        
+        await db.delete(customer).where(eq(customer.customerId, Number(idStr)));
+        invalidateClientCache();
         return true;
     }
 }

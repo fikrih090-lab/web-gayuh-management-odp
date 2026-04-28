@@ -9,10 +9,11 @@ import ClientDetailPage from './pages/ClientDetailPage'
 import PathsPage from './pages/PathsPage'
 import MonitoringPage from './pages/MonitoringPage'
 import SettingsPage from './pages/SettingsPage'
+import UsersPage from './pages/UsersPage'
 
 function ProtectedRoute({ children }) {
-  const isLoggedIn = localStorage.getItem('isLoggedIn')
-  if (!isLoggedIn) return <Navigate to="/login" replace />
+  const token = localStorage.getItem('token')
+  if (!token) return <Navigate to="/login" replace />
   return children
 }
 
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="paths" element={<PathsPage />} />
         <Route path="monitoring" element={<MonitoringPage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="users" element={<UsersPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

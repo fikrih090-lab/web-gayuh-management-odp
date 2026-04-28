@@ -10,17 +10,20 @@ function formatCurrency(amount) {
 
 export default function ClientsPage() {
   const [clientData, setClientData] = useState([])
-  const [total, setTotal]           = useState(0)
+  const [total, setTotal] = useState(0)
   const [totalPages, setTotalPages] = useState(1)
-  const [loading, setLoading]       = useState(true)
-  const [search, setSearch]         = useState('')
+  const [loading, setLoading] = useState(true)
+  const [search, setSearch] = useState('')
   const [searchInput, setSearchInput] = useState('')
-  const [filterStatus, setFilterStatus]   = useState('all')
+  const [filterStatus, setFilterStatus] = useState('all')
   const [filterPayment, setFilterPayment] = useState('all')
-  const [page, setPage]             = useState(1)
+  const [page, setPage] = useState(1)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const PAGE_SIZE = 50
   const navigate = useNavigate()
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isFullAccess = user.roleId === '1' || user.roleId === 1
 
   const fetchClients = useCallback(async (p = 1, q = search) => {
     setLoading(true)
@@ -48,10 +51,10 @@ export default function ClientsPage() {
 
   // Filter lokal (status & payment) — berlaku di data yang sudah diterima
   const filtered = clientData
-    .filter(c => filterStatus  === 'all' || c.status        === filterStatus)
+    .filter(c => filterStatus === 'all' || c.status === filterStatus)
     .filter(c => filterPayment === 'all' || c.paymentStatus === filterPayment)
 
-  const onlineCount  = clientData.filter(c => c.status === 'online').length
+  const onlineCount = clientData.filter(c => c.status === 'online').length
   const offlineCount = clientData.filter(c => c.status === 'offline').length
   const overdueCount = clientData.filter(c => c.paymentStatus === 'overdue').length
 
@@ -66,10 +69,12 @@ export default function ClientsPage() {
               {loading ? 'Memuat...' : `${total} pelanggan terdaftar`}
             </p>
           </div>
-          <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
-            <Plus size={16} />
-            <span className="hidden sm:inline">Tambah Pelanggan</span>
-          </button>
+          {isFullAccess && (
+            <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
+              <Plus size={16} />
+              <span className="hidden sm:inline">Tambah Pelanggan</span>
+            </button>
+          )}
         </div>
 
         {/* Quick stats */}
@@ -150,17 +155,15 @@ export default function ClientsPage() {
                     <span className="text-sm font-medium text-text-secondary">{formatCurrency(client.monthlyFee)}</span>
                   </td>
                   <td className="px-5 py-4">
-                    <span className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full border ${
-                      client.status === 'online' ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'
-                    }`}>
+                    <span className={`inline-flex items-center gap-2 text-xs font-semibold px-3 py-1 rounded-full border ${client.status === 'online' ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'
+                      }`}>
                       <span className={`w-1.5 h-1.5 rounded-full ${client.status === 'online' ? 'bg-success animate-pulse-soft shadow-[0_0_6px_#34d399]' : 'bg-danger shadow-[0_0_6px_#f87171]'}`} />
                       {client.status === 'online' ? 'Online' : 'Offline'}
                     </span>
                   </td>
                   <td className="px-5 py-4 hidden md:table-cell">
-                    <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${
-                      client.paymentStatus === 'paid' ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'
-                    }`}>
+                    <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full border ${client.paymentStatus === 'paid' ? 'bg-success/10 text-success border-success/20' : 'bg-warning/10 text-warning border-warning/20'
+                      }`}>
                       {client.paymentStatus === 'paid' ? 'Lunas' : 'Tunggakan'}
                     </span>
                   </td>

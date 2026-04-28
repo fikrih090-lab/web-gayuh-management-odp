@@ -4,6 +4,7 @@ import L from 'leaflet'
 import { Cable, Plus, Trash2, Save, X, MousePointer, MapPin } from 'lucide-react'
 import { getOdps } from '../api'
 import { oltLocation } from '../data/mockData'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 const pathColors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ec4899', '#10b981', '#ef4444']
 
@@ -60,6 +61,10 @@ export default function PathsPage() {
   const [loading, setLoading] = useState(true)
   const [customPaths, setCustomPaths] = useState(loadPaths)
   const [selectedPath, setSelectedPath] = useState(null)
+  const isDark = useDarkMode()
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isFullAccess = user.roleId === '1' || user.roleId === 1
 
   // Drawing state
   const [isDrawing, setIsDrawing] = useState(false)
@@ -126,7 +131,7 @@ export default function PathsPage() {
             <h1 className="text-2xl font-bold text-text-primary tracking-tight">Jalur Kabel FO</h1>
             <p className="text-sm text-text-muted mt-1 font-medium">{customPaths.length} jalur terdaftar</p>
           </div>
-          {!isDrawing && (
+          {!isDrawing && isFullAccess && (
             <button onClick={handleStartDraw} className="btn-primary px-4 py-2 text-sm flex items-center gap-2">
               <Plus size={16} /> Gambar Jalur
             </button>
@@ -202,12 +207,14 @@ export default function PathsPage() {
                     <p className="text-sm font-semibold text-text-primary truncate">{path.name}</p>
                     <p className="text-xs text-text-muted mt-0.5">{path.cableType} • {path.coordinates.length} titik</p>
                   </div>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDeletePath(path.id) }}
-                    className="p-1.5 text-text-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors"
-                  >
-                    <Trash2 size={16} />
-                  </button>
+                  {isFullAccess && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDeletePath(path.id) }}
+                      className="p-1.5 text-text-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
                 <div className="flex items-center gap-4 text-xs text-text-muted">
                   <span className="flex items-center gap-1"><MapPin size={12} />{path.coordinates.length} titik</span>
@@ -222,7 +229,10 @@ export default function PathsPage() {
       {/* Map */}
       <div className="flex-1 relative min-h-[400px]">
         <MapContainer center={mapCenter} zoom={13} className="w-full h-full" zoomControl={false} attributionControl={false}>
-          <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+          <TileLayer 
+            key={isDark ? 'dark' : 'light'}
+            url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+          />
           <MapClickHandler isDrawing={isDrawing} onMapClick={handleMapClick} />
 
           {/* OLT */}

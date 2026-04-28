@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Wifi, Eye, EyeOff, ArrowRight } from 'lucide-react'
+import { login } from '../api'
 
 export default function LoginPage() {
   const [username, setUsername] = useState('')
@@ -15,16 +16,18 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
 
-    // Mock login
-    await new Promise(r => setTimeout(r, 800))
-
-    if (username === 'admin' && password === 'admin') {
-      localStorage.setItem('isLoggedIn', 'true')
-      navigate('/')
-    } else {
-      setError('Username atau password salah')
+    try {
+      const response = await login(username, password)
+      if (response.token) {
+        localStorage.setItem('token', response.token)
+        localStorage.setItem('user', JSON.stringify(response.user))
+        navigate('/')
+      }
+    } catch (err) {
+      setError(err.response?.data?.error || 'Username atau password salah')
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   return (

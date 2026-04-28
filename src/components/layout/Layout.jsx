@@ -20,8 +20,17 @@ export default function Layout() {
   const [mobileOpen, setMobileOpen] = useState(false)
   const navigate = useNavigate()
 
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isFullAccess = user.roleId === '1' || user.roleId === 1
+
+  const currentNavItems = [
+    ...navItems,
+    ...(isFullAccess ? [{ to: '/users', icon: Users, label: 'Manajemen User' }] : [])
+  ]
+
   const handleLogout = () => {
-    localStorage.removeItem('isLoggedIn')
+    localStorage.removeItem('token')
+    localStorage.removeItem('user')
     navigate('/login')
   }
 
@@ -60,7 +69,7 @@ export default function Layout() {
 
         {/* Nav items */}
         <nav className="flex-1 py-4 px-3 space-y-1 overflow-y-auto">
-          {navItems.map((item, i) => (
+          {currentNavItems.map((item, i) => (
             <NavLink
               key={item.to}
               to={item.to}
@@ -141,11 +150,12 @@ export default function Layout() {
 
             {/* Profile */}
             <div className="flex items-center gap-3 pl-4 border-l border-border">
-              <div className="w-8 h-8 rounded-full bg-bg-tertiary flex items-center justify-center text-xs font-medium text-text-primary border border-border">
-                AD
+              <div className="w-8 h-8 rounded-full bg-bg-tertiary flex items-center justify-center text-xs font-medium text-text-primary border border-border uppercase">
+                {user.name ? user.name.substring(0, 2) : 'US'}
               </div>
               <div className="hidden lg:block">
-                <p className="text-sm font-medium text-text-primary leading-none">Admin</p>
+                <p className="text-sm font-medium text-text-primary leading-none capitalize">{user.name || 'User'}</p>
+                <p className="text-[10px] text-text-muted leading-none mt-1 uppercase">{isFullAccess ? 'Full Access' : 'Read Only'}</p>
               </div>
             </div>
           </div>

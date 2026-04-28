@@ -42,6 +42,7 @@ export const mapOdp = (odp) => {
         status: 'active',
         pathId: `PATH-${odp.codeOdc || 1}`,
         note: odp.remark || '',
+        coverageOdp: Number(odp.coverageOdp) || 0,
         sourceDb: odp.sourceDb || 'gayuh',
         hostId: odp.hostId || 'default',
         createdAt: odp.created ? new Date(odp.created * 1000).toISOString() : new Date().toISOString(),

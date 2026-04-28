@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { MapContainer, TileLayer, Marker, Polyline } from 'react-leaflet'
 import L from 'leaflet'
-import { ArrowLeft, Radio, MapPin, Cable, User, Plug } from 'lucide-react'
-import { getOdps, getClients, getPaths } from '../api'
+import { ArrowLeft, Radio, MapPin, Cable, User, Plug, Trash2 } from 'lucide-react'
+import { getOdps, getClients, getPaths, deleteOdp } from '../api'
+import { useDarkMode } from '../hooks/useDarkMode'
 
 function createIcon(color, size = 24) {
   return L.divIcon({
@@ -22,6 +23,10 @@ export default function ODPDetailPage() {
   const [clientData, setClientData] = useState([])
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
+  const isDark = useDarkMode()
+
+  const user = JSON.parse(localStorage.getItem('user') || '{}')
+  const isFullAccess = user.roleId === '1' || user.roleId === 1
 
   useEffect(() => {
     const decodedId = decodeURIComponent(id).toUpperCase().trim();
@@ -35,6 +40,25 @@ export default function ODPDetailPage() {
       setLoading(false)
     })
   }, [id])
+
+  const handleDelete = async () => {
+    if (connectedClients.length > 0) {
+      if (!window.confirm(`Perhatian: Ada ${connectedClients.length} pelanggan yang terhubung ke ODP ini!\n\nApakah Anda YAKIN ingin menghapus ODP ini? Pelanggan tidak akan dihapus, tetapi koneksi mereka ke ODP ini akan hilang.`)) {
+        return
+      }
+    } else {
+      if (!window.confirm('Apakah Anda yakin ingin menghapus ODP ini secara permanen?')) {
+        return
+      }
+    }
+
+    try {
+      await deleteOdp(odp.codeOdp || odp.idOdp || id)
+      navigate('/odp')
+    } catch (err) {
+      alert('Gagal menghapus ODP')
+    }
+  }
 
   if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
 
@@ -54,7 +78,7 @@ export default function ODPDetailPage() {
   return (
     <div className="h-full overflow-auto animate-fade-in">
       {/* Header */}
-      <div className="border-b border-border px-4 md:px-6 py-4">
+      <div className="border-b border-border px-4 md:px-6 py-4 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/odp')}
@@ -73,6 +97,16 @@ export default function ODPDetailPage() {
             <p className="text-sm text-text-muted">{odp.id}</p>
           </div>
         </div>
+        {isFullAccess && (
+          <button
+            onClick={handleDelete}
+            className="p-2 md:px-4 md:py-2 rounded-xl bg-danger/10 text-danger hover:bg-danger/20 transition-colors flex items-center gap-2 text-sm font-medium"
+            title="Hapus ODP"
+          >
+            <Trash2 size={18} />
+            <span className="hidden md:inline">Hapus</span>
+          </button>
+        )}
       </div>
 
       <div className="p-4 md:p-6 space-y-6">
@@ -166,7 +200,10 @@ export default function ODPDetailPage() {
                 zoomControl={false}
                 attributionControl={false}
               >
-                <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+                <TileLayer 
+                  key={isDark ? 'dark' : 'light'}
+                  url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+                />
                 <Marker
                   position={[odp.lat, odp.lng]}
                   icon={createIcon(statusColor, 28)}
