@@ -32,14 +32,15 @@ export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
     e.preventDefault()
     setLoading(true)
     try {
-      await updateOdp(odpData.id, {
+      const result = await updateOdp(odpData.id, {
         latitude: String(formData.lat),
         longitude: String(formData.lng),
         totalPort: Number(formData.totalPorts),
         coverageOdp: Number(formData.coverageOdp),
         remark: formData.remark
       })
-      onSuccess()
+      // Pass updated odp data back so parent can refresh immediately
+      onSuccess(result?.odp || null)
       onClose()
     } catch (error) {
       alert('Gagal memperbarui ODP')

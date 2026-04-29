@@ -510,7 +510,29 @@ export default function ODPPage() {
       <EditOdpModal
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
-        onSuccess={() => fetchOdps(1, search, selectedLetter)}
+        onSuccess={(updatedOdp) => {
+          // Langsung update state lokal agar tampilan berubah seketika
+          if (updatedOdp) {
+            const updatedCode = (updatedOdp.codeOdp || updatedOdp.idOdp || '').toString().toUpperCase().trim()
+            setOdpData(prev => prev.map(o => {
+              const code = (o.name || o.id || '').toString().toUpperCase().trim()
+              if (code === updatedCode) {
+                return {
+                  ...o,
+                  lat: Number(updatedOdp.latitude) || o.lat,
+                  lng: Number(updatedOdp.longitude) || o.lng,
+                  totalPorts: Number(updatedOdp.totalPort) || o.totalPorts,
+                  coverageOdp: Number(updatedOdp.coverageOdp) || o.coverageOdp,
+                  type: updatedOdp.remark || o.type,
+                  note: updatedOdp.remark || o.note,
+                }
+              }
+              return o
+            }))
+          }
+          // Tetap fetch ulang dari server setelah 500ms untuk sinkronisasi
+          setTimeout(() => fetchOdps(page, search, selectedLetter), 500)
+        }}
         odpData={editingOdp}
       />
 

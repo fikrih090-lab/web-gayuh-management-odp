@@ -76,7 +76,9 @@ export const updateOdp = async (req: Request, res: Response) => {
             remark
         });
         
-        res.json({ message: 'ODP updated successfully' });
+        // Return updated ODP so frontend can update state immediately (bypasses cache staleness)
+        const updatedOdp = await NetworkService.getOdpById(id);
+        res.json({ message: 'ODP updated successfully', odp: updatedOdp });
     } catch (error) {
         res.status(500).json({ error: 'Failed to update ODP' });
     }
