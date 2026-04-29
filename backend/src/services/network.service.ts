@@ -56,6 +56,15 @@ export class NetworkService {
                         sourceDb:   dbName,
                         hostId:     hostId
                     });
+                } else if (existing) {
+                    // Kalau existing latitude kosong tapi di database lain ada, gunakan yang ada
+                    if (!existing.latitude && camelRow.latitude) {
+                        existing.latitude = camelRow.latitude;
+                        existing.longitude = camelRow.longitude;
+                    }
+                    if (!existing.remark && camelRow.remark) {
+                        existing.remark = camelRow.remark;
+                    }
                 }
             }
         }
@@ -158,20 +167,24 @@ export class NetworkService {
                     };
                 }
             } catch (e) {}
-            return null;
         }
-
-        const result = await db.select().from(mOdp).where(eq(mOdp.idOdp, Number(idStr)));
-        return result[0];
+        
+        // Fallback untuk backward compatibility (cari by code_odp pertama yang cocok)
+        const allOdps = await this.getAllOdps();
+        const odp = allOdps.find(o => String(o.idOdp) === String(idStr) || String(o.codeOdp).toUpperCase() === String(idStr).toUpperCase());
+        return odp || null;
     }
 
     static async createOdp(data: Partial<typeof mOdp.$inferInsert>) {
         const fullData = {
             codeOdc: 1,
-            coverageOdp: 1,
+            coverageOdp: 0,
             noPortOdc: 1,
-            colorTubeFo: '-',
-            noPole: '-',
+            colorTubeFo: '',
+            noPole: '',
+            latitude: '',
+            longitude: '',
+            totalPort: 8,
             document: '',
             remark: '',
             created: Math.floor(Date.now() / 1000),
@@ -188,39 +201,30 @@ export class NetworkService {
     static async updateOdp(codeOdp: string, data: { latitude: string, longitude: string, totalPort: number, coverageOdp: number, remark?: string }) {
         if (!codeOdp) return false;
         
-        // Cari info ODP ini berasal dari database dan host mana
-        const allOdps = await this.getAllOdps();
-        const targetOdp = allOdps.find(o => String(o.codeOdp).toUpperCase() === codeOdp.toUpperCase() || String(o.idOdp).toUpperCase() === codeOdp.toUpperCase());
+        const targetDbs = await getAllowedDatabases();
         
-        if (!targetOdp) return false;
-        
-        const targetHostId = targetOdp.hostId || 'default';
-        const targetDbName = targetOdp.sourceDb;
-        
-        if (!targetDbName) return false;
-
-        const pool = connectionPools.get(targetHostId);
-        if (!pool) return false;
-
-        try {
-            const [result]: any = await pool.query(
-                `UPDATE \`${targetDbName}\`.m_odp SET latitude = ?, longitude = ?, total_port = ?, coverage_odp = ?, remark = ? WHERE UPPER(code_odp) = ?`,
-                [data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '', codeOdp.toUpperCase()]
-            );
-            
-            // Jika ODP belum ada di tabel m_odp (hanya ada di customer), INSERT data baru
-            if (result && result.affectedRows === 0) {
-                await pool.query(
-                    `INSERT INTO \`${targetDbName}\`.m_odp 
-                    (code_odp, latitude, longitude, total_port, coverage_odp, remark, code_odc, no_port_odc, color_tube_fo, no_pole, document, created, create_by, role_id) 
-                    VALUES (?, ?, ?, ?, ?, ?, 1, 1, '', '', '', UNIX_TIMESTAMP(), 1, 1)`,
-                    [codeOdp.toUpperCase(), data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '']
-                );
-            }
-        } catch (e) {
-            console.error(`Error updating ODP in ${targetDbName}:`, e);
-            return false;
-        }
+        await Promise.all(
+            targetDbs.map(async ({ pool, dbName }) => {
+                try {
+                    const [result]: any = await pool.query(
+                        `UPDATE \`${dbName}\`.m_odp SET latitude = ?, longitude = ?, total_port = ?, coverage_odp = ?, remark = ? WHERE UPPER(code_odp) = ?`,
+                        [data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '', codeOdp.toUpperCase()]
+                    );
+                    
+                    // Jika ODP belum ada di tabel m_odp (hanya ada di customer), INSERT data baru
+                    if (result && result.affectedRows === 0) {
+                        await pool.query(
+                            `INSERT INTO \`${dbName}\`.m_odp 
+                            (code_odp, latitude, longitude, total_port, coverage_odp, remark, code_odc, no_port_odc, color_tube_fo, no_pole, document, created, create_by, role_id) 
+                            VALUES (?, ?, ?, ?, ?, ?, 1, 1, '', '', '', UNIX_TIMESTAMP(), 1, 1)`,
+                            [codeOdp.toUpperCase(), data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '']
+                        );
+                    }
+                } catch (e) {
+                    // Silently ignore access denied errors for databases the user shouldn't touch
+                }
+            })
+        );
         
         invalidateOdpCache();
         return true;
