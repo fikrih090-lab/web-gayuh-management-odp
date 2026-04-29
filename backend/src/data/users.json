@@ -3,8 +3,16 @@
     "id": 1,
     "email": "admin",
     "name": "Super Admin",
-    "password": "$2b$10$vj5aCm2Xqh8IlxF.VBkG0OBfOjydUu44VW0X7ki5HGKkvsRFq1ytO",
+    "password": "$2b$10$RrZtaXdSOXLUe.A6Cu3rMe7dOkDZQtMB4xzRxMe9dtpEYD6F1yJYa",
     "phone": "08123456789",
+    "roleId": "1"
+  },
+  {
+    "id": 1777427905732,
+    "email": "fikrih090@gmail.com",
+    "password": "$2b$10$3cOFg1257n0/j2T1vqldbeGdiEvqaMldaGpzUQwJ/EOUpoQQ7HBeO",
+    "name": "Mochamad Fikri Haikal",
+    "phone": "085781680704",
     "roleId": "1"
   }
 ]
