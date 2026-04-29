@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { readUsers } from '../utils/userDb';
+import { readUsers, writeUsers } from '../utils/userDb';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'gayuh_secret_key_123!';
+const SETUP_SECRET = process.env.SETUP_SECRET || 'gayuh-reset-2024';
 
 export const login = async (req: Request, res: Response) => {
     try {
@@ -51,5 +52,46 @@ export const login = async (req: Request, res: Response) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Terjadi kesalahan pada server' });
+    }
+};
+
+// Endpoint reset admin — akses via POST /api/auth/reset-admin
+// Body: { secret: "gayuh-reset-2024", newPassword: "admin" }
+export const resetAdmin = async (req: Request, res: Response) => {
+    try {
+        const { secret, newPassword } = req.body;
+
+        if (!secret || secret !== SETUP_SECRET) {
+            return res.status(403).json({ error: 'Secret key salah' });
+        }
+
+        const password = newPassword || 'admin';
+        const hash = await bcrypt.hash(password, 10);
+
+        const users = readUsers();
+        const adminIdx = users.findIndex((u: any) => u.email === 'admin');
+
+        if (adminIdx >= 0) {
+            users[adminIdx].password = hash;
+        } else {
+            users.push({
+                id: 1,
+                email: 'admin',
+                name: 'Super Admin',
+                password: hash,
+                phone: '08123456789',
+                roleId: '1'
+            });
+        }
+
+        writeUsers(users);
+
+        res.json({ 
+            success: true, 
+            message: `Password admin berhasil direset ke: "${password}"` 
+        });
+    } catch (error) {
+        console.error('Reset error:', error);
+        res.status(500).json({ error: 'Gagal reset password' });
     }
 };
