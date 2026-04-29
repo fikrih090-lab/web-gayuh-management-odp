@@ -193,11 +193,23 @@ export class NetworkService {
         await Promise.all(
             targetDbs.map(async ({ pool, dbName }) => {
                 try {
-                    await pool.query(
+                    const [result]: any = await pool.query(
                         `UPDATE \`${dbName}\`.m_odp SET latitude = ?, longitude = ?, total_port = ?, coverage_odp = ?, remark = ? WHERE UPPER(code_odp) = ?`,
                         [data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '', codeOdp.toUpperCase()]
                     );
-                } catch (e) {}
+                    
+                    // Jika ODP belum ada di tabel m_odp (hanya ada di customer), INSERT data baru
+                    if (result && result.affectedRows === 0) {
+                        await pool.query(
+                            `INSERT INTO \`${dbName}\`.m_odp 
+                            (code_odp, latitude, longitude, total_port, coverage_odp, remark, code_odc, no_port_odc, color_tube_fo, no_pole, document, created, create_by, role_id) 
+                            VALUES (?, ?, ?, ?, ?, ?, 1, 1, '', '', '', UNIX_TIMESTAMP(), 1, 1)`,
+                            [codeOdp.toUpperCase(), data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '']
+                        );
+                    }
+                } catch (e) {
+                    console.error(`Error updating ODP in ${dbName}:`, e);
+                }
             })
         );
         
