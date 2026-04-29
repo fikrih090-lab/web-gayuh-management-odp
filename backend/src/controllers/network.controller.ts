@@ -29,6 +29,10 @@ export const getOdps = async (req: Request, res: Response) => {
         const total = filtered.length;
         const data  = filtered.slice((page - 1) * limit, page * limit);
 
+        // Pastikan browser tidak cache response ODP agar perubahan langsung tampil
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate');
+        res.setHeader('Pragma', 'no-cache');
+        res.setHeader('Expires', '0');
         res.json({ data, total, page, limit, totalPages: Math.ceil(total / limit) });
     } catch (error) {
         res.status(500).json({ error: 'Failed to fetch ODPs' });
