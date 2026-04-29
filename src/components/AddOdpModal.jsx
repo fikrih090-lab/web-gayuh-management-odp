@@ -1,6 +1,7 @@
 import { useState } from 'react'
-import { X, MapPin, HardDrive } from 'lucide-react'
+import { X, MapPin, HardDrive, Navigation, Loader2 } from 'lucide-react'
 import { createOdp } from '../api'
+import { useGeolocation } from '../hooks/useGeolocation'
 
 export default function AddOdpModal({ isOpen, onClose, onAdd }) {
   const [formData, setFormData] = useState({
@@ -10,6 +11,16 @@ export default function AddOdpModal({ isOpen, onClose, onAdd }) {
     longitude: ''
   })
   const [loading, setLoading] = useState(false)
+  const { loading: gpsLoading, error: gpsError, getLocation } = useGeolocation()
+
+  const handleUseGPS = async () => {
+    try {
+      const loc = await getLocation()
+      setFormData(prev => ({ ...prev, latitude: loc.lat.toFixed(7), longitude: loc.lng.toFixed(7) }))
+    } catch (e) {
+      // error sudah di-handle oleh hook
+    }
+  }
 
   if (!isOpen) return null
 
@@ -66,6 +77,28 @@ export default function AddOdpModal({ isOpen, onClose, onAdd }) {
               <option value={8}>8 Port</option>
               <option value={16}>16 Port</option>
             </select>
+          </div>
+
+          {/* GPS Button */}
+          <div className="space-y-1.5">
+            <label className="text-sm font-medium text-text-secondary flex items-center gap-1.5">
+              <MapPin size={14} className="text-text-muted" /> Koordinat Lokasi
+            </label>
+            <button
+              type="button"
+              onClick={handleUseGPS}
+              disabled={gpsLoading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border-2 border-dashed border-accent/40 bg-accent/5 hover:bg-accent/10 hover:border-accent/70 text-accent text-sm font-semibold transition-all duration-200 disabled:opacity-60"
+            >
+              {gpsLoading
+                ? <><Loader2 size={16} className="animate-spin" /> Mendapatkan lokasi GPS...</>
+                : <><Navigation size={16} /> Gunakan Lokasi GPS Saya</>}
+            </button>
+            {gpsError && (
+              <p className="text-xs text-danger flex items-center gap-1 mt-1">
+                ⚠️ {gpsError}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

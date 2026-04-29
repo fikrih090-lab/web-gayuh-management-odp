@@ -1,12 +1,14 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { MapContainer, TileLayer, Marker } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
-import { Search, Plus, Radio, Filter } from 'lucide-react'
-import { getOdpsPaged } from '../api'
+import { Search, Plus, Radio, Filter, Navigation, MapPin, Loader2, Crosshair, SortAsc } from 'lucide-react'
+import { getOdpsPaged, deleteOdp } from '../api'
 import AddOdpModal from '../components/AddOdpModal'
 import EditOdpModal from '../components/EditOdpModal'
 import { useDarkMode } from '../hooks/useDarkMode'
+import { useGeolocation } from '../hooks/useGeolocation'
+import { getDistanceKm, formatDistance, openGoogleMaps, openWaze } from '../utils/geo'
 
 function getODPColor(odp) {
   const ratio = (odp.usedPorts || 0) / (odp.totalPorts || 1)
@@ -31,28 +33,76 @@ function createMiniIcon(color) {
   })
 }
 
+function createUserIcon() {
+  return L.divIcon({
+    className: '',
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+    html: `
+      <div style="position:relative;width:24px;height:24px;">
+        <div style="
+          position:absolute;inset:0;border-radius:50%;
+          background:rgba(59,130,246,0.25);
+          animation:pulse-ring 2s ease-out infinite;
+        "></div>
+        <div style="
+          position:absolute;inset:4px;border-radius:50%;
+          background:#3b82f6;border:2.5px solid white;
+          box-shadow:0 0 10px rgba(59,130,246,0.7);
+        "></div>
+      </div>
+      <style>
+        @keyframes pulse-ring {
+          0%{transform:scale(1);opacity:0.8}
+          100%{transform:scale(2.5);opacity:0}
+        }
+      </style>
+    `
+  })
+}
+
+// Komponen untuk fly-to map
+function MapFlyTo({ center, zoom }) {
+  const map = useMap()
+  const prevCenter = useRef(null)
+  useEffect(() => {
+    if (center && JSON.stringify(center) !== JSON.stringify(prevCenter.current)) {
+      map.flyTo(center, zoom || map.getZoom(), { duration: 1.2 })
+      prevCenter.current = center
+    }
+  }, [center, zoom, map])
+  return null
+}
+
 export default function ODPPage() {
-  const [odpData, setOdpData]       = useState([])
-  const [total, setTotal]           = useState(0)
-  const [totalPages, setTotalPages] = useState(1)
-  const [page, setPage]             = useState(1)
-  const [loading, setLoading]       = useState(true)
+  const [odpData, setOdpData]         = useState([])
+  const [total, setTotal]             = useState(0)
+  const [totalPages, setTotalPages]   = useState(1)
+  const [page, setPage]               = useState(1)
+  const [loading, setLoading]         = useState(true)
   const [searchInput, setSearchInput] = useState('')
-  const [search, setSearch]         = useState('')
+  const [search, setSearch]           = useState('')
   const [selectedODP, setSelectedODP] = useState(null)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isAddModalOpen, setIsAddModalOpen]   = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [editingOdp, setEditingOdp] = useState(null)
-  const [selectedLetter, setSelectedLetter] = useState('')
+  const [editingOdp, setEditingOdp]   = useState(null)
+  const [deletingOdpId, setDeletingOdpId] = useState(null)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+  const [selectedLetter, setSelectedLetter]   = useState('')
+  const [sortNearest, setSortNearest] = useState(false)
+  const [flyTarget, setFlyTarget]     = useState(null)
   const PAGE_SIZE = 50
-  const navigate = useNavigate()
-  const isDark = useDarkMode()
+  const navigate  = useNavigate()
+  const isDark    = useDarkMode()
+
+  const { location: userLocation, loading: gpsLoading, error: gpsError, getLocation, startWatching, stopWatching } = useGeolocation()
+  const [isTracking, setIsTracking] = useState(false)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const isFullAccess = user.roleId === '1' || user.roleId === 1
 
-  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('');
-  const doubleAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => `A${l}`);
+  const alphabet       = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('')
+  const doubleAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split('').map(l => `A${l}`)
 
   const fetchOdps = useCallback(async (p, q, l) => {
     const pg  = p ?? page
@@ -75,7 +125,6 @@ export default function ODPPage() {
 
   useEffect(() => { fetchOdps(1, '', '') }, [])
 
-  // Debounce search 400ms
   useEffect(() => {
     const t = setTimeout(() => {
       setSearch(searchInput)
@@ -84,10 +133,60 @@ export default function ODPPage() {
     return () => clearTimeout(t)
   }, [searchInput])
 
-  const mapCenter = selectedODP && selectedODP.lat && selectedODP.lng
-    ? [Number(selectedODP.lat), Number(selectedODP.lng)]
-    : [-6.905, 107.610]
-  const mapZoom = selectedODP ? 16 : 13
+  // Hitung jarak ODP dari user, sort jika aktif
+  const displayData = (() => {
+    if (!userLocation) return odpData
+    const withDist = odpData.map(odp => {
+      const lat = Number(odp.lat), lng = Number(odp.lng)
+      const dist = (lat && lng) ? getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) : Infinity
+      return { ...odp, _dist: dist }
+    })
+    return sortNearest ? [...withDist].sort((a, b) => a._dist - b._dist) : withDist
+  })()
+
+  // Lokasi Saya handler
+  const handleMyLocation = async () => {
+    try {
+      const loc = await getLocation()
+      setFlyTarget([loc.lat, loc.lng])
+    } catch {}
+  }
+
+  // Toggle live tracking
+  const handleToggleTracking = () => {
+    if (isTracking) {
+      stopWatching()
+      setIsTracking(false)
+    } else {
+      startWatching()
+      setIsTracking(true)
+    }
+  }
+
+  // Klik ODP → fly ke marker
+  const handleSelectODP = (odp) => {
+    setSelectedODP(odp)
+    if (odp.lat && odp.lng) setFlyTarget([Number(odp.lat), Number(odp.lng)])
+  }
+
+  // Delete ODP handler
+  const handleDeleteOdp = async (id) => {
+    setDeleteLoading(true)
+    try {
+      await deleteOdp(id)
+      setDeletingOdpId(null)
+      if (selectedODP?.id === id) setSelectedODP(null)
+      fetchOdps(page, search, selectedLetter)
+    } catch (e) {
+      alert('Gagal menghapus ODP: ' + (e?.response?.data?.error || e.message))
+    } finally {
+      setDeleteLoading(false)
+    }
+  }
+
+  const mapCenter = userLocation
+    ? [userLocation.lat, userLocation.lng]
+    : (selectedODP?.lat && selectedODP?.lng ? [Number(selectedODP.lat), Number(selectedODP.lng)] : [-6.905, 107.610])
 
   return (
     <div className="h-full flex flex-col lg:flex-row animate-fade-in relative z-0">
@@ -124,8 +223,8 @@ export default function ODPPage() {
           </div>
         </div>
 
-        {/* Filter Bar — compact dropdown */}
-        <div className="px-5 md:px-6 py-3 border-b border-border bg-bg-secondary flex items-center gap-3">
+        {/* Filter Bar */}
+        <div className="px-5 md:px-6 py-3 border-b border-border bg-bg-secondary flex items-center gap-3 flex-wrap">
           <Filter size={14} className="text-text-muted shrink-0" />
           <span className="text-xs font-semibold text-text-muted uppercase tracking-wider shrink-0">Filter</span>
           <select
@@ -147,14 +246,30 @@ export default function ODPPage() {
           </select>
           {selectedLetter && (
             <button
-              onClick={() => { setSelectedLetter(''); fetchOdps(1, searchInput, ''); }}
+              onClick={() => { setSelectedLetter(''); fetchOdps(1, searchInput, '') }}
               className="text-xs text-text-muted hover:text-text-primary transition-colors shrink-0"
-            >
-              Reset
-            </button>
+            >Reset</button>
           )}
+
+          {/* Sort ODP Terdekat */}
+          <button
+            onClick={() => {
+              if (!userLocation) { handleMyLocation().then(() => setSortNearest(true)); return }
+              setSortNearest(v => !v)
+            }}
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${sortNearest ? 'bg-accent text-white border-accent shadow-lg shadow-accent/20' : 'border-border text-text-muted hover:text-text-primary hover:border-accent/50'}`}
+          >
+            <SortAsc size={13} />
+            ODP Terdekat
+          </button>
         </div>
 
+        {/* GPS Error notice */}
+        {gpsError && (
+          <div className="px-5 py-2 bg-danger/5 border-b border-danger/20 text-xs text-danger font-medium flex items-center gap-2">
+            <MapPin size={13} /> {gpsError}
+          </div>
+        )}
 
         {/* Table */}
         <div className="flex-1 overflow-auto">
@@ -165,25 +280,26 @@ export default function ODPPage() {
                 <th className="px-5 py-4 hidden md:table-cell">Tipe</th>
                 <th className="px-5 py-4">Port</th>
                 <th className="px-5 py-4">Status</th>
+                {userLocation && <th className="px-5 py-4 hidden lg:table-cell">Jarak</th>}
               </tr>
             </thead>
             <tbody className="divide-y divide-border/30">
               {loading ? (
                 <tr>
-                  <td colSpan={4}>
+                  <td colSpan={5}>
                     <div className="flex items-center justify-center py-16 text-text-muted">
                       <div className="w-5 h-5 border-2 border-border border-t-text-primary rounded-full animate-spin mr-2" />
                       <span className="text-sm">Memuat data...</span>
                     </div>
                   </td>
                 </tr>
-              ) : odpData.map((odp) => {
+              ) : displayData.map((odp) => {
                 const status = getStatusLabel(odp)
                 const color  = getODPColor(odp)
                 return (
                   <tr
                     key={odp.id}
-                    onClick={() => setSelectedODP(odp)}
+                    onClick={() => handleSelectODP(odp)}
                     onDoubleClick={() => navigate(`/odp/${encodeURIComponent(odp.id)}`)}
                     className={`cursor-pointer table-row-hover ${selectedODP?.id === odp.id ? 'bg-accent/5 shadow-[inset_2px_0_0_#3b82f6]' : ''}`}
                   >
@@ -213,20 +329,32 @@ export default function ODPPage() {
                           {status.text}
                         </span>
                         {isFullAccess && (
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              setEditingOdp(odp)
-                              setIsEditModalOpen(true)
-                            }}
-                            className="p-1.5 text-text-muted hover:text-accent hover:bg-accent/10 rounded-lg transition-colors ml-2"
-                            title="Edit ODP"
-                          >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
-                          </button>
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setEditingOdp(odp); setIsEditModalOpen(true) }}
+                              className="p-1.5 text-text-muted hover:text-accent hover:bg-accent/10 rounded-lg transition-colors"
+                              title="Edit ODP"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>
+                            </button>
+                            <button
+                              onClick={(e) => { e.stopPropagation(); setDeletingOdpId(odp.id) }}
+                              className="p-1.5 text-text-muted hover:text-danger hover:bg-danger/10 rounded-lg transition-colors"
+                              title="Hapus ODP"
+                            >
+                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+                            </button>
+                          </div>
                         )}
                       </div>
                     </td>
+                    {userLocation && (
+                      <td className="px-5 py-4 hidden lg:table-cell">
+                        <span className="text-xs font-mono text-text-muted">
+                          {odp._dist !== Infinity ? formatDistance(odp._dist) : '—'}
+                        </span>
+                      </td>
+                    )}
                   </tr>
                 )
               })}
@@ -262,33 +390,72 @@ export default function ODPPage() {
         </div>
       </div>
 
-      {/* Mini map */}
+      {/* Map panel */}
       <div className="hidden lg:block w-[400px] xl:w-[480px] relative">
         <MapContainer
-          key={`${mapCenter[0]}-${mapCenter[1]}-${mapZoom}`}
+          key={`map`}
           center={mapCenter}
-          zoom={mapZoom}
+          zoom={13}
           className="w-full h-full border-l border-border"
           zoomControl={false}
           attributionControl={false}
         >
-          <TileLayer 
+          <TileLayer
             key={isDark ? 'dark' : 'light'}
-            url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+            url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`}
           />
-          {odpData.map(odp => {
-            const lat = Number(odp.lat)
-            const lng = Number(odp.lng)
+
+          {/* Fly to target */}
+          {flyTarget && <MapFlyTo center={flyTarget} zoom={selectedODP ? 16 : 15} />}
+
+          {/* ODP markers */}
+          {displayData.map(odp => {
+            const lat = Number(odp.lat), lng = Number(odp.lng)
             if (!lat || !lng) return null
             return (
               <Marker
                 key={odp.id}
                 position={[lat, lng]}
                 icon={createMiniIcon(selectedODP?.id === odp.id ? '#ffffff' : getODPColor(odp))}
+                eventHandlers={{ click: () => handleSelectODP(odp) }}
               />
             )
           })}
+
+          {/* User location marker */}
+          {userLocation && (
+            <>
+              <Marker
+                position={[userLocation.lat, userLocation.lng]}
+                icon={createUserIcon()}
+              />
+              <Circle
+                center={[userLocation.lat, userLocation.lng]}
+                radius={userLocation.accuracy || 20}
+                pathOptions={{ color: '#3b82f6', fillColor: '#3b82f6', fillOpacity: 0.08, weight: 1.5, dashArray: '4' }}
+              />
+            </>
+          )}
         </MapContainer>
+
+        {/* GPS Buttons overlay (top right) */}
+        <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
+          <button
+            onClick={handleMyLocation}
+            disabled={gpsLoading}
+            title="Lokasi Saya"
+            className="w-10 h-10 flex items-center justify-center rounded-xl bg-bg-primary/90 backdrop-blur-sm border border-border shadow-lg text-accent hover:bg-accent hover:text-white transition-all duration-200 disabled:opacity-60"
+          >
+            {gpsLoading ? <Loader2 size={18} className="animate-spin" /> : <Crosshair size={18} />}
+          </button>
+          <button
+            onClick={handleToggleTracking}
+            title={isTracking ? 'Stop Tracking' : 'Live Tracking'}
+            className={`w-10 h-10 flex items-center justify-center rounded-xl backdrop-blur-sm border shadow-lg transition-all duration-200 ${isTracking ? 'bg-accent text-white border-accent shadow-accent/30 animate-pulse' : 'bg-bg-primary/90 border-border text-text-muted hover:text-accent'}`}
+          >
+            <Navigation size={18} />
+          </button>
+        </div>
 
         {/* Selected ODP info overlay */}
         {selectedODP && (
@@ -298,7 +465,32 @@ export default function ODPPage() {
               <span className="text-xs font-mono bg-bg-tertiary px-2 py-0.5 rounded text-text-secondary border border-border">{selectedODP.type}</span>
             </div>
             <p className="text-sm text-text-secondary mb-1">{selectedODP.address}</p>
-            <p className="text-xs text-text-muted mb-4">{selectedODP.note}</p>
+            <p className="text-xs text-text-muted mb-1">{selectedODP.note}</p>
+
+            {/* Jarak dari user */}
+            {userLocation && selectedODP._dist !== undefined && selectedODP._dist !== Infinity && (
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-accent bg-accent/10 px-2.5 py-1.5 rounded-lg mb-3 w-max">
+                <MapPin size={12} />
+                {formatDistance(selectedODP._dist)} dari lokasi kamu
+              </div>
+            )}
+
+            {/* Action buttons */}
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <button
+                onClick={() => openGoogleMaps(selectedODP.lat, selectedODP.lng, selectedODP.name)}
+                className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg bg-blue-500/10 text-blue-500 border border-blue-500/20 hover:bg-blue-500 hover:text-white transition-all"
+              >
+                <Navigation size={13} /> Google Maps
+              </button>
+              <button
+                onClick={() => openWaze(selectedODP.lat, selectedODP.lng)}
+                className="flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg bg-[#33ccff]/10 text-[#33ccff] border border-[#33ccff]/20 hover:bg-[#33ccff] hover:text-white transition-all"
+              >
+                <Navigation size={13} /> Waze
+              </button>
+            </div>
+
             <button
               onClick={() => navigate(`/odp/${encodeURIComponent(selectedODP.id)}`)}
               className="w-full py-2 text-sm font-medium text-bg-primary bg-text-primary hover:bg-zinc-200 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
@@ -321,6 +513,52 @@ export default function ODPPage() {
         onSuccess={() => fetchOdps(1, search, selectedLetter)}
         odpData={editingOdp}
       />
+
+      {/* Delete Confirmation Modal */}
+      {deletingOdpId && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm bg-bg-primary rounded-2xl border border-border shadow-2xl overflow-hidden">
+            <div className="px-6 py-5 border-b border-border bg-danger/5">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-danger/10 flex items-center justify-center shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-text-primary">Hapus ODP</h3>
+                  <p className="text-xs text-text-muted mt-0.5">Tindakan ini tidak dapat dibatalkan</p>
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-sm text-text-secondary mb-1">
+                Kamu akan menghapus ODP:
+              </p>
+              <p className="text-base font-bold text-danger mb-4 font-mono">{deletingOdpId}</p>
+              <p className="text-xs text-text-muted mb-6 bg-warning/5 border border-warning/20 rounded-lg px-3 py-2">
+                ⚠️ Semua data pelanggan yang terhubung ke ODP ini mungkin terpengaruh.
+              </p>
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setDeletingOdpId(null)}
+                  disabled={deleteLoading}
+                  className="flex-1 px-4 py-2.5 bg-bg-secondary hover:bg-bg-tertiary text-text-secondary border border-border rounded-xl text-sm font-medium transition-colors disabled:opacity-50"
+                >
+                  Batal
+                </button>
+                <button
+                  onClick={() => handleDeleteOdp(deletingOdpId)}
+                  disabled={deleteLoading}
+                  className="flex-1 px-4 py-2.5 bg-danger hover:bg-danger/90 text-white rounded-xl text-sm font-bold shadow-lg shadow-danger/20 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                >
+                  {deleteLoading
+                    ? <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Menghapus...</>
+                    : '🗑️ Ya, Hapus ODP'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
