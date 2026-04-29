@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db, connectionPools } from '../config/db';
 import { mOdp, mOdc } from '../db/schema';
 import { getAllowedDatabases, toCamelCase } from '../utils/db.utils';
+import { readOdpOverrides, writeOdpOverrides } from '../utils/odpDb';
 
 // Result cache: 2 minutes TTL
 let odpCache: any[] | null = null;
@@ -140,6 +141,17 @@ export class NetworkService {
 
         odpCache = Array.from(odpMap.values())
             .sort((a, b) => String(a.codeOdp || '').localeCompare(String(b.codeOdp || ''), 'id', { sensitivity: 'base' }));
+            
+        // Terapkan override lokasi/remark dari file JSON lokal
+        const overrides = readOdpOverrides();
+        odpCache = odpCache.map(odp => {
+            const override = overrides[odp.codeOdp] || overrides[odp.idOdp];
+            if (override) {
+                return { ...odp, ...override };
+            }
+            return odp;
+        });
+            
         odpCacheExpiry = Date.now() + 2 * 60 * 1000;
         console.log(`[ODP Cache] Cached ${odpCache.length} ODP unik dari ${targetDbs.length} database (sorted A-Z)`);
         return odpCache;
@@ -201,30 +213,21 @@ export class NetworkService {
     static async updateOdp(codeOdp: string, data: { latitude: string, longitude: string, totalPort: number, coverageOdp: number, remark?: string }) {
         if (!codeOdp) return false;
         
-        const targetDbs = await getAllowedDatabases();
+        const normalizedCode = codeOdp.toUpperCase().trim();
         
-        await Promise.all(
-            targetDbs.map(async ({ pool, dbName }) => {
-                try {
-                    const [result]: any = await pool.query(
-                        `UPDATE \`${dbName}\`.m_odp SET latitude = ?, longitude = ?, total_port = ?, coverage_odp = ?, remark = ? WHERE UPPER(code_odp) = ?`,
-                        [data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '', codeOdp.toUpperCase()]
-                    );
-                    
-                    // Jika ODP belum ada di tabel m_odp (hanya ada di customer), INSERT data baru
-                    if (result && result.affectedRows === 0) {
-                        await pool.query(
-                            `INSERT INTO \`${dbName}\`.m_odp 
-                            (code_odp, latitude, longitude, total_port, coverage_odp, remark, code_odc, no_port_odc, color_tube_fo, no_pole, document, created, create_by, role_id) 
-                            VALUES (?, ?, ?, ?, ?, ?, 1, 1, '', '', '', UNIX_TIMESTAMP(), 1, 1)`,
-                            [codeOdp.toUpperCase(), data.latitude, data.longitude, data.totalPort, data.coverageOdp, data.remark || '']
-                        );
-                    }
-                } catch (e) {
-                    // Silently ignore access denied errors for databases the user shouldn't touch
-                }
-            })
-        );
+        // Simpan perubahan ke file JSON lokal agar tidak mengubah MySQL
+        const overrides = readOdpOverrides();
+        
+        overrides[normalizedCode] = {
+            ...overrides[normalizedCode], // Pertahankan override lama jika ada
+            latitude: data.latitude,
+            longitude: data.longitude,
+            totalPort: data.totalPort,
+            coverageOdp: data.coverageOdp,
+            remark: data.remark || ''
+        };
+        
+        writeOdpOverrides(overrides);
         
         invalidateOdpCache();
         return true;
