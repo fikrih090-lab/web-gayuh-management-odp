@@ -248,32 +248,34 @@ export default function DashboardPage() {
       </MapContainer>
 
       {/* Stats overlay */}
-      <div className="absolute top-6 left-6 z-[1000] space-y-3">
+      <div className="absolute top-3 left-3 sm:top-6 sm:left-6 z-[1000] space-y-1.5 sm:space-y-3">
         {statCards.map((card, i) => (
           <div 
             key={card.label} 
-            className={`card px-5 py-4 flex items-center gap-4 min-w-[200px] cursor-pointer animate-slide-left`}
+            className={`card px-3 py-2 sm:px-5 sm:py-4 flex items-center gap-2 sm:gap-4 min-w-[140px] sm:min-w-[200px] cursor-pointer animate-slide-left`}
             style={{ animationDelay: `${i * 100}ms`, animationFillMode: 'both' }}
           >
-            <div className={`w-10 h-10 rounded-lg ${card.bg} flex items-center justify-center`}>
-              <card.icon size={20} className={card.color} />
+            <div className={`w-7 h-7 sm:w-10 sm:h-10 rounded-lg ${card.bg} flex items-center justify-center shrink-0`}>
+              <card.icon size={14} className={`sm:hidden ${card.color}`} />
+              <card.icon size={20} className={`hidden sm:block ${card.color}`} />
             </div>
             <div>
-              <p className="text-xs text-text-secondary font-medium mb-0.5 uppercase tracking-wide">{card.label}</p>
-              <p className="text-2xl font-bold text-text-primary tracking-tight leading-none">{card.value}</p>
+              <p className="text-[10px] sm:text-xs text-text-secondary font-medium mb-0 sm:mb-0.5 uppercase tracking-wide">{card.label}</p>
+              <p className="text-lg sm:text-2xl font-bold text-text-primary tracking-tight leading-none">{card.value}</p>
             </div>
           </div>
         ))}
       </div>
 
       {/* Layer toggle */}
-      <div className="absolute top-6 right-6 z-[1000] animate-slide-right stagger-1">
-        <div className="card p-4 space-y-2.5 min-w-[160px]">
-          <div className="flex items-center gap-2 px-1 pb-3 border-b border-border">
-            <Layers size={16} className="text-text-muted" />
-            <span className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Layer Peta</span>
+      <div className="absolute top-3 right-3 sm:top-6 sm:right-6 z-[1000] animate-slide-right stagger-1">
+        <div className="card p-2.5 sm:p-4 space-y-1.5 sm:space-y-2.5 min-w-[130px] sm:min-w-[160px]">
+          <div className="flex items-center gap-1.5 sm:gap-2 px-1 pb-2 sm:pb-3 border-b border-border">
+            <Layers size={13} className="sm:hidden text-text-muted" />
+            <Layers size={16} className="hidden sm:block text-text-muted" />
+            <span className="text-[10px] sm:text-xs font-semibold text-text-secondary uppercase tracking-wider">Layer Peta</span>
           </div>
-          <div className="space-y-1 pt-1">
+          <div className="space-y-0.5 sm:space-y-1 pt-0.5 sm:pt-1">
             {[
               { key: 'odp', label: 'ODP', color: 'text-success' },
               { key: 'clients', label: 'Pelanggan', color: 'text-purple-400' },
@@ -282,13 +284,14 @@ export default function DashboardPage() {
               <button
                 key={item.key}
                 onClick={() => toggleLayer(item.key)}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium w-full transition-all duration-200 ${
+                className={`flex items-center gap-2 sm:gap-3 px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium w-full transition-all duration-200 ${
                   layers[item.key]
                     ? 'text-text-primary bg-bg-tertiary'
                     : 'text-text-muted hover:text-text-secondary hover:bg-bg-tertiary/50'
                 }`}
               >
-                {layers[item.key] ? <Eye size={16} className={item.color} /> : <EyeOff size={16} />}
+                {layers[item.key] ? <Eye size={13} className={`sm:hidden ${item.color}`} /> : <EyeOff size={13} className="sm:hidden" />}
+                {layers[item.key] ? <Eye size={16} className={`hidden sm:block ${item.color}`} /> : <EyeOff size={16} className="hidden sm:block" />}
                 {item.label}
               </button>
             ))}
