@@ -1,11 +1,14 @@
 import fs from 'fs';
 import path from 'path';
 
-const dataFile = path.join(__dirname, '..', 'data', 'users.json');
+// Gunakan process.cwd() agar path benar di semua environment (Windows & Linux/tsx)
+// exec cwd pm2 = /var/www/.../backend, jadi ini resolve ke backend/src/data/users.json
+const dataFile = path.resolve(process.cwd(), 'src', 'data', 'users.json');
 
 // Pastikan folder data ada
-if (!fs.existsSync(path.join(__dirname, '..', 'data'))) {
-    fs.mkdirSync(path.join(__dirname, '..', 'data'), { recursive: true });
+const dataDir = path.resolve(process.cwd(), 'src', 'data');
+if (!fs.existsSync(dataDir)) {
+    fs.mkdirSync(dataDir, { recursive: true });
 }
 
 // Inisialisasi file json jika belum ada
