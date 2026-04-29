@@ -16,7 +16,29 @@ export const login = async (req: Request, res: Response) => {
 
         const users = readUsers();
         
-        // Cari user berdasarkan email
+        // ===== HARDCODED ADMIN FALLBACK =====
+        // Ini berjalan lebih dulu, sebelum cek users.json
+        // Berguna saat users.json kosong / path salah di server Linux
+        const adminPlainPass = process.env.ADMIN_PASSWORD || 'admin';
+        if (username === 'admin' && password === adminPlainPass) {
+            // Cari user admin di file jika ada, atau gunakan default
+            const adminUser = users.find((u: any) => u.email === 'admin') || {
+                id: 1,
+                email: 'admin',
+                name: 'Super Admin',
+                roleId: '1'
+            };
+            const payload = {
+                id: adminUser.id,
+                email: adminUser.email,
+                name: adminUser.name,
+                roleId: adminUser.roleId
+            };
+            const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+            return res.json({ token, user: payload });
+        }
+
+        // ===== NORMAL FLOW untuk user lain =====
         const foundUser = users.find((u: any) => u.email === username);
         
         if (!foundUser) {
@@ -24,13 +46,9 @@ export const login = async (req: Request, res: Response) => {
         }
         
         // Cek password hash
-        let isMatch = await bcrypt.compare(password, foundUser.password);
+        let isMatch = false;
+        isMatch = await bcrypt.compare(password, foundUser.password);
         
-        // Fallback jika hash bcrypt di users.json tidak sesuai dengan 'admin'
-        if (!isMatch && username === 'admin' && password === 'admin') {
-            isMatch = true;
-        }
-
         if (!isMatch) {
             return res.status(401).json({ error: 'Username atau password salah' });
         }
