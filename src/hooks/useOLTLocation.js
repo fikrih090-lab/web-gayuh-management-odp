@@ -15,8 +15,10 @@ export function useOLTLocation() {
     return defaultOltLocation;
   });
 
-  const updateLocation = (lat, lng) => {
+  const updateLocation = (lat, lng, name, address) => {
     const newLoc = { ...location, lat, lng };
+    if (name !== undefined) newLoc.name = name;
+    if (address !== undefined) newLoc.address = address;
     setLocation(newLoc);
     localStorage.setItem('custom_olt_location', JSON.stringify(newLoc));
     // Trigger custom event so other components that use this hook update immediately

@@ -74,6 +74,22 @@ export default function PathsPage() {
   const [newPathName, setNewPathName] = useState('')
   const [newPathCable, setNewPathCable] = useState('FO 12 Core')
 
+  // Server config state
+  const [showServerConfig, setShowServerConfig] = useState(false)
+  const [serverNameInput, setServerNameInput] = useState(oltLoc.name || '')
+  const [serverAddressInput, setServerAddressInput] = useState(oltLoc.address || '')
+
+  useEffect(() => {
+    setServerNameInput(oltLoc.name || '')
+    setServerAddressInput(oltLoc.address || '')
+  }, [oltLoc.name, oltLoc.address])
+
+  const handleSaveServerConfig = () => {
+    updateLocation(oltLoc.lat, oltLoc.lng, serverNameInput, serverAddressInput)
+    alert('Informasi server berhasil diperbarui!')
+    setShowServerConfig(false)
+  }
+
   useEffect(() => {
     getOdps().then(data => { setOdpData(data); setLoading(false) }).catch(() => setLoading(false))
   }, [])
@@ -139,6 +155,38 @@ export default function PathsPage() {
             </button>
           )}
         </div>
+
+        {/* Server Config Form */}
+        {!isDrawing && isFullAccess && (
+          <div className="px-5 py-3 border-b border-border bg-bg-secondary">
+            <button 
+              onClick={() => setShowServerConfig(!showServerConfig)}
+              className="text-xs font-semibold text-accent flex items-center gap-1 hover:underline w-full"
+            >
+              {showServerConfig ? 'Tutup Pengaturan Server' : '⚙️ Edit Nama & Info Server Pusat'}
+            </button>
+            {showServerConfig && (
+              <div className="mt-3 space-y-3 p-3 bg-bg-primary border border-border rounded-lg animate-fade-in">
+                <div>
+                  <label className="text-xs text-text-muted mb-1 block">Nama Server</label>
+                  <input type="text" value={serverNameInput} onChange={e => setServerNameInput(e.target.value)} className="w-full px-2.5 py-1.5 text-sm bg-bg-secondary border border-border rounded-md outline-none focus:border-accent" />
+                </div>
+                <div>
+                  <label className="text-xs text-text-muted mb-1 block">Alamat (Opsional)</label>
+                  <input type="text" value={serverAddressInput} onChange={e => setServerAddressInput(e.target.value)} className="w-full px-2.5 py-1.5 text-sm bg-bg-secondary border border-border rounded-md outline-none focus:border-accent" />
+                </div>
+                <div className="text-[10px] text-text-muted italic bg-warning/10 p-2 rounded border border-warning/20">
+                  Tip: Untuk menggeser lokasi titik koordinatnya, Anda cukup men-drag & drop langsung lambang petir (⚡) di dalam peta.
+                </div>
+                <div className="flex gap-2 pt-1">
+                   <button onClick={handleSaveServerConfig} className="flex-1 py-1.5 bg-accent text-white rounded-md text-xs font-semibold shadow-md shadow-accent/20 hover:bg-accent/90 transition-colors">
+                     Simpan Perubahan
+                   </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Drawing form */}
         {isDrawing && (
