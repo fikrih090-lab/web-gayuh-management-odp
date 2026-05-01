@@ -228,10 +228,10 @@ export const alertData = [
 
 // OLT (Pusat) location
 export const oltLocation = {
-  name: 'OLT Pusat - NOC Bandung',
-  lat: -6.9100,
-  lng: 107.6150,
-  address: 'Jl. Soekarno-Hatta No. 500, Bandung'
+  name: import.meta.env.VITE_OLT_NAME || 'OLT Pusat - NOC Bandung',
+  lat: Number(import.meta.env.VITE_OLT_LAT) || -6.9100,
+  lng: Number(import.meta.env.VITE_OLT_LNG) || 107.6150,
+  address: import.meta.env.VITE_OLT_ADDRESS || 'Jl. Soekarno-Hatta No. 500, Bandung'
 }
 
 // Stats helper

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { Search, Plus, Radio, Filter, Navigation, MapPin, Loader2, Crosshair, SortAsc } from 'lucide-react'
@@ -409,18 +410,20 @@ export default function ODPPage() {
           {flyTarget && <MapFlyTo center={flyTarget} zoom={selectedODP ? 16 : 15} />}
 
           {/* ODP markers */}
-          {displayData.map(odp => {
-            const lat = Number(odp.lat), lng = Number(odp.lng)
-            if (!lat || !lng) return null
-            return (
-              <Marker
-                key={odp.id}
-                position={[lat, lng]}
-                icon={createMiniIcon(selectedODP?.id === odp.id ? '#ffffff' : getODPColor(odp))}
-                eventHandlers={{ click: () => handleSelectODP(odp) }}
-              />
-            )
-          })}
+          <MarkerClusterGroup chunkedLoading maxClusterRadius={40}>
+            {displayData.map(odp => {
+              const lat = Number(odp.lat), lng = Number(odp.lng)
+              if (!lat || !lng) return null
+              return (
+                <Marker
+                  key={odp.id}
+                  position={[lat, lng]}
+                  icon={createMiniIcon(selectedODP?.id === odp.id ? '#ffffff' : getODPColor(odp))}
+                  eventHandlers={{ click: () => handleSelectODP(odp) }}
+                />
+              )
+            })}
+          </MarkerClusterGroup>
 
           {/* User location marker */}
           {userLocation && (

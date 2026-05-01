@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMapEvents } from 'react-leaflet'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import { Cable, Plus, Trash2, Save, X, MousePointer, MapPin } from 'lucide-react'
 import { getOdps } from '../api'
-import { oltLocation } from '../data/mockData'
+import { useOLTLocation } from '../hooks/useOLTLocation'
 import { useDarkMode } from '../hooks/useDarkMode'
 
 const pathColors = ['#3b82f6', '#8b5cf6', '#06b6d4', '#f59e0b', '#ec4899', '#10b981', '#ef4444']
@@ -62,6 +63,7 @@ export default function PathsPage() {
   const [customPaths, setCustomPaths] = useState(loadPaths)
   const [selectedPath, setSelectedPath] = useState(null)
   const isDark = useDarkMode()
+  const { location: oltLoc, updateLocation } = useOLTLocation()
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const isFullAccess = user.roleId === '1' || user.roleId === 1
@@ -236,16 +238,35 @@ export default function PathsPage() {
           <MapClickHandler isDrawing={isDrawing} onMapClick={handleMapClick} />
 
           {/* OLT */}
-          <Marker position={[oltLocation.lat, oltLocation.lng]} icon={oltIcon}>
-            <Popup><div className="text-center"><p className="font-bold text-sm">{oltLocation.name}</p><p className="text-xs text-gray-500 mt-1">Pusat Jaringan</p></div></Popup>
+          <Marker 
+            position={[oltLoc.lat, oltLoc.lng]} 
+            icon={oltIcon}
+            draggable={isFullAccess && !isDrawing}
+            eventHandlers={{
+              dragend: (e) => {
+                const marker = e.target;
+                const position = marker.getLatLng();
+                updateLocation(position.lat, position.lng);
+              }
+            }}
+          >
+            <Popup>
+              <div className="text-center">
+                <p className="font-bold text-sm">{oltLoc.name}</p>
+                <p className="text-xs text-gray-500 mt-1">Pusat Jaringan</p>
+                {isFullAccess && !isDrawing && <p className="text-[10px] text-text-muted mt-1 italic">Dapat digeser</p>}
+              </div>
+            </Popup>
           </Marker>
 
           {/* ODP markers */}
-          {odpData.map(odp => (
-            <Marker key={odp.id} position={[odp.lat, odp.lng]} icon={createIcon('#10b981', 16)}>
-              <Popup><div className="text-center"><p className="font-bold text-sm">{odp.name}</p><p className="text-xs text-gray-500 mt-0.5">{odp.id}</p></div></Popup>
-            </Marker>
-          ))}
+          <MarkerClusterGroup chunkedLoading maxClusterRadius={40}>
+            {odpData.map(odp => (
+              <Marker key={odp.id} position={[odp.lat, odp.lng]} icon={createIcon('#10b981', 16)}>
+                <Popup><div className="text-center"><p className="font-bold text-sm">{odp.name}</p><p className="text-xs text-gray-500 mt-0.5">{odp.id}</p></div></Popup>
+              </Marker>
+            ))}
+          </MarkerClusterGroup>
 
           {/* Saved paths */}
           {customPaths.map((path, i) => (

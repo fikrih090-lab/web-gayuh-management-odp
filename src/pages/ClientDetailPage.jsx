@@ -7,7 +7,7 @@ import {
   Phone, Mail, Calendar, Clock, Trash2
 } from 'lucide-react'
 import { getClients, getOdps, getPaths, deleteClient } from '../api'
-import { oltLocation } from '../data/mockData'
+import { useOLTLocation } from '../hooks/useOLTLocation'
 import { useDarkMode } from '../hooks/useDarkMode'
 
 function createIcon(color, size = 20) {
@@ -31,6 +31,7 @@ export default function ClientDetailPage() {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
   const isDark = useDarkMode()
+  const { location: oltLoc } = useOLTLocation()
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
   const isFullAccess = user.roleId === '1' || user.roleId === 1
@@ -77,7 +78,7 @@ export default function ClientDetailPage() {
   if (odp) {
     traceLine.push([client.lat, client.lng])
     traceLine.push([odp.lat, odp.lng])
-    traceLine.push([oltLocation.lat, oltLocation.lng])
+    traceLine.push([oltLoc.lat, oltLoc.lng])
   }
 
   const billingHistory = [
@@ -239,7 +240,7 @@ export default function ClientDetailPage() {
                 )}
                 <Marker position={[client.lat, client.lng]} icon={createIcon('#818cf8', 20)} />
                 {odp && <Marker position={[odp.lat, odp.lng]} icon={createIcon('#22c55e', 20)} />}
-                <Marker position={[oltLocation.lat, oltLocation.lng]} icon={createIcon('#3b82f6', 24)} />
+                <Marker position={[oltLoc.lat, oltLoc.lng]} icon={createIcon('#3b82f6', 24)} />
               </MapContainer>
             </div>
           </div>

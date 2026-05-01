@@ -2,8 +2,9 @@ import { useMemo, useState, useEffect } from 'react'
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { useNavigate } from 'react-router-dom'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import { Radio, Users, Plug, AlertTriangle, Layers, LocateFixed, ZoomIn, ZoomOut, Eye, EyeOff } from 'lucide-react'
-import { oltLocation } from '../data/mockData'
+import { useOLTLocation } from '../hooks/useOLTLocation'
 import { getClients, getOdps, getPaths, getAlerts } from '../api'
 import { useDarkMode } from '../hooks/useDarkMode'
 
@@ -66,7 +67,7 @@ const clientIcon = L.divIcon({
   "></div>`
 })
 
-function MapControls() {
+function MapControls({ oltLoc }) {
   const map = useMap()
 
   return (
@@ -84,7 +85,7 @@ function MapControls() {
         <ZoomOut size={18} />
       </button>
       <button
-        onClick={() => map.flyTo([oltLocation.lat, oltLocation.lng], 14)}
+        onClick={() => map.flyTo([oltLoc.lat, oltLoc.lng], 14)}
         className="w-10 h-10 card flex items-center justify-center text-text-secondary hover:text-accent transition-all"
       >
         <LocateFixed size={18} />
@@ -100,6 +101,9 @@ export default function DashboardPage() {
   const [alertData, setAlertData] = useState([]);
   const [loading, setLoading] = useState(true);
   const isDark = useDarkMode();
+  const { location: oltLoc, updateLocation } = useOLTLocation();
+  const user = JSON.parse(localStorage.getItem('user') || '{}');
+  const isFullAccess = user.roleId === '1' || user.roleId === 1;
 
   useEffect(() => {
     Promise.all([getClients(), getOdps(), getPaths(), getAlerts()])
@@ -142,7 +146,7 @@ export default function DashboardPage() {
     <div className="relative h-full">
       {/* Map */}
       <MapContainer
-        center={[oltLocation.lat, oltLocation.lng]}
+        center={[oltLoc.lat, oltLoc.lng]}
         zoom={14}
         style={{ width: '100%', height: '100%' }}
         zoomControl={false}
@@ -156,12 +160,24 @@ export default function DashboardPage() {
         />
 
         {/* OLT marker */}
-        <Marker position={[oltLocation.lat, oltLocation.lng]} icon={oltIcon}>
+        <Marker 
+          position={[oltLoc.lat, oltLoc.lng]} 
+          icon={oltIcon}
+          draggable={isFullAccess}
+          eventHandlers={{
+            dragend: (e) => {
+              const marker = e.target;
+              const position = marker.getLatLng();
+              updateLocation(position.lat, position.lng);
+            }
+          }}
+        >
           <Popup>
             <div className="min-w-[200px]">
-              <p className="font-bold text-sm">{oltLocation.name}</p>
-              <p className="text-xs text-text-secondary mt-1">{oltLocation.address}</p>
+              <p className="font-bold text-sm">{oltLoc.name}</p>
+              <p className="text-xs text-text-secondary mt-1">{oltLoc.address}</p>
               <p className="text-xs text-accent mt-1 font-medium">Pusat Jaringan (OLT)</p>
+              {isFullAccess && <p className="text-[10px] text-text-muted mt-2 italic">Dapat digeser (drag & drop)</p>}
             </div>
           </Popup>
         </Marker>
@@ -194,57 +210,65 @@ export default function DashboardPage() {
         ))}
 
         {/* ODP markers */}
-        {layers.odp && odpData.map(odp => (
-          <Marker
-            key={odp.id}
-            position={[odp.lat, odp.lng]}
-            icon={createIcon(getODPColor(odp))}
-            eventHandlers={{
-              click: () => navigate(`/odp/${odp.id}`)
-            }}
-          >
-            <Popup>
-              <div className="min-w-[200px]">
-                <div className="flex items-center justify-between">
-                  <p className="font-bold text-sm">{odp.id}</p>
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                    background: getODPColor(odp) + '22',
-                    color: getODPColor(odp)
-                  }}>
-                    {odp.usedPorts}/{odp.totalPorts} Port
-                  </span>
-                </div>
-                <p className="text-xs text-text-secondary mt-1">{odp.name}</p>
-                <p className="text-xs text-text-muted mt-1">{odp.address}</p>
-                <p className="text-xs text-text-muted mt-1">Tipe: {odp.type}</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {layers.odp && (
+          <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
+            {odpData.map(odp => (
+              <Marker
+                key={odp.id}
+                position={[odp.lat, odp.lng]}
+                icon={createIcon(getODPColor(odp))}
+                eventHandlers={{
+                  click: () => navigate(`/odp/${odp.id}`)
+                }}
+              >
+                <Popup>
+                  <div className="min-w-[200px]">
+                    <div className="flex items-center justify-between">
+                      <p className="font-bold text-sm">{odp.id}</p>
+                      <span className="text-xs px-2 py-0.5 rounded-full" style={{
+                        background: getODPColor(odp) + '22',
+                        color: getODPColor(odp)
+                      }}>
+                        {odp.usedPorts}/{odp.totalPorts} Port
+                      </span>
+                    </div>
+                    <p className="text-xs text-text-secondary mt-1">{odp.name}</p>
+                    <p className="text-xs text-text-muted mt-1">{odp.address}</p>
+                    <p className="text-xs text-text-muted mt-1">Tipe: {odp.type}</p>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MarkerClusterGroup>
+        )}
 
         {/* Client markers */}
-        {layers.clients && clientData.map(client => (
-          <Marker
-            key={client.id}
-            position={[client.lat, client.lng]}
-            icon={clientIcon}
-          >
-            <Popup>
-              <div className="min-w-[180px]">
-                <p className="font-bold text-sm">{client.name}</p>
-                <p className="text-xs text-text-secondary mt-1">{client.package} • {client.odpId}</p>
-                <p className="text-xs mt-1">
-                  {client.status === 'online'
-                    ? <span className="text-success">● Online</span>
-                    : <span className="text-danger">● Offline</span>
-                  }
-                </p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+        {layers.clients && (
+          <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
+            {clientData.map(client => (
+              <Marker
+                key={client.id}
+                position={[client.lat, client.lng]}
+                icon={clientIcon}
+              >
+                <Popup>
+                  <div className="min-w-[180px]">
+                    <p className="font-bold text-sm">{client.name}</p>
+                    <p className="text-xs text-text-secondary mt-1">{client.package} • {client.odpId}</p>
+                    <p className="text-xs mt-1">
+                      {client.status === 'online'
+                        ? <span className="text-success">● Online</span>
+                        : <span className="text-danger">● Offline</span>
+                      }
+                    </p>
+                  </div>
+                </Popup>
+              </Marker>
+            ))}
+          </MarkerClusterGroup>
+        )}
 
-        <MapControls />
+        <MapControls oltLoc={oltLoc} />
       </MapContainer>
 
       {/* Stats overlay */}

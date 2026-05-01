@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "email": "admin",
+    "name": "Super Admin",
+    "password": "$2b$10$vj5aCm2Xqh8IlxF.VBkG0OBfOjydUu44VW0X7ki5HGKkvsRFq1ytO",
+    "phone": "08123456789",
+    "roleId": "1"
+  }
+]

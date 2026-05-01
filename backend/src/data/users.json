@@ -14,5 +14,13 @@
     "name": "Mochamad Fikri Haikal",
     "phone": "085781680704",
     "roleId": "1"
+  },
+  {
+    "id": 1777436729121,
+    "email": "hendrik@gmail.com",
+    "password": "$2b$10$6KvLGL7pJlFRiGhNPwq9l.TdatVRY9EXLmKUwv4h6BLN0UgMlPndS",
+    "name": "hendrik",
+    "phone": "089789723",
+    "roleId": "2"
   }
 ]
