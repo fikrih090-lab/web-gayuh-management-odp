@@ -26,6 +26,26 @@ export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
     }
   }, [odpData, isOpen])
 
+  const handleLocationPaste = (e) => {
+    const text = e.target.value;
+    
+    // Pattern 1: Google maps URL containing @-6.9175,107.6191
+    const urlMatch = text.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (urlMatch) {
+      setFormData(prev => ({ ...prev, lat: urlMatch[1], lng: urlMatch[2] }));
+      e.target.value = '';
+      return;
+    }
+
+    // Pattern 2: -6.9175, 107.6191
+    const coordMatch = text.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+    if (coordMatch) {
+      setFormData(prev => ({ ...prev, lat: coordMatch[1], lng: coordMatch[2] }));
+      e.target.value = '';
+      return;
+    }
+  };
+
   if (!isOpen) return null
 
   const handleSubmit = async (e) => {
@@ -69,6 +89,19 @@ export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
               className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded-lg text-sm text-text-muted cursor-not-allowed"
             />
             <p className="text-[10px] text-text-muted mt-1">Nama ODP tidak dapat diubah karena menjadi identifier unik.</p>
+          </div>
+
+          <div className="bg-accent/5 p-3 rounded-lg border border-accent/20">
+            <label className="block text-xs font-semibold text-accent mb-1 flex items-center gap-1.5"><MapPin size={12} /> Auto Ekstrak Koordinat</label>
+            <input
+              type="text"
+              placeholder="Paste Link Google Maps (Full) atau Titik Koordinat (Misal: -6.91, 107.61)"
+              onChange={handleLocationPaste}
+              className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm outline-none focus:border-accent"
+            />
+            <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
+              Paste koordinat atau <b>Full URL</b> Google Maps (yang mengandung @lat,lng) ke sini. Latitude dan Longitude di bawah akan otomatis terisi.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

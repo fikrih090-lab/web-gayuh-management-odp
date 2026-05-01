@@ -22,6 +22,26 @@ export default function AddOdpModal({ isOpen, onClose, onAdd }) {
     }
   }
 
+  const handleLocationPaste = (e) => {
+    const text = e.target.value;
+    
+    // Pattern 1: Google maps URL containing @-6.9175,107.6191
+    const urlMatch = text.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (urlMatch) {
+      setFormData(prev => ({ ...prev, latitude: urlMatch[1], longitude: urlMatch[2] }));
+      e.target.value = '';
+      return;
+    }
+
+    // Pattern 2: -6.9175, 107.6191
+    const coordMatch = text.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
+    if (coordMatch) {
+      setFormData(prev => ({ ...prev, latitude: coordMatch[1], longitude: coordMatch[2] }));
+      e.target.value = '';
+      return;
+    }
+  };
+
   if (!isOpen) return null
 
   const handleSubmit = async (e) => {
@@ -99,6 +119,20 @@ export default function AddOdpModal({ isOpen, onClose, onAdd }) {
                 ⚠️ {gpsError}
               </p>
             )}
+          </div>
+
+          {/* Auto Extract Input */}
+          <div className="bg-accent/5 p-3 rounded-xl border border-accent/20">
+            <label className="block text-xs font-semibold text-accent mb-1.5 flex items-center gap-1.5"><MapPin size={12} /> Auto Ekstrak Koordinat</label>
+            <input
+              type="text"
+              placeholder="Paste Link Google Maps (Full) atau Titik Koordinat (Misal: -6.91, 107.61)"
+              onChange={handleLocationPaste}
+              className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm outline-none focus:border-accent"
+            />
+            <p className="text-[10px] text-text-muted mt-1.5 leading-relaxed">
+              Punya link maps? Paste koordinat atau <b>Full URL</b> Google Maps (yang ada @lat,lng) ke kotak ini.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">
