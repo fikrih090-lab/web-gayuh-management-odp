@@ -105,31 +105,48 @@ export const deleteOdp = async (req: Request, res: Response) => {
 export const importOdps = async (req: Request, res: Response) => {
     try {
         const importedData = req.body;
-        if (typeof importedData !== 'object' || importedData === null) {
+        if (!importedData || typeof importedData !== 'object') {
             return res.status(400).json({ error: 'Invalid format' });
         }
         
         const overrides = readOdpOverrides();
         
-        // Merge the imported data
-        for (const key of Object.keys(importedData)) {
-            const item = importedData[key];
+        // Normalize input into an array of items
+        let items: any[] = [];
+        if (Array.isArray(importedData)) {
+            items = importedData;
+        } else if (Array.isArray(importedData.data)) {
+            items = importedData.data;
+        } else {
+            // Convert object to array
+            items = Object.entries(importedData).map(([k, v]: [string, any]) => {
+                return typeof v === 'object' ? { codeOdp: k, ...v } : null;
+            }).filter(Boolean);
+        }
+        
+        let count = 0;
+        for (const item of items) {
             if (item && typeof item === 'object') {
-                overrides[key] = {
-                    ...overrides[key],
-                    latitude: item.latitude || item.lat || overrides[key]?.latitude || '',
-                    longitude: item.longitude || item.lng || overrides[key]?.longitude || '',
-                    totalPort: item.totalPort || overrides[key]?.totalPort || 8,
-                    coverageOdp: item.coverageOdp || overrides[key]?.coverageOdp || 0,
-                    remark: item.remark || overrides[key]?.remark || ''
-                };
+                const key = item.codeOdp || item.idOdp || item.id || item.code_odp || item.name;
+                if (key) {
+                    const normalizedKey = String(key).toUpperCase().trim();
+                    overrides[normalizedKey] = {
+                        ...overrides[normalizedKey],
+                        latitude: item.latitude || item.lat || overrides[normalizedKey]?.latitude || '',
+                        longitude: item.longitude || item.lng || overrides[normalizedKey]?.longitude || '',
+                        totalPort: item.totalPort || item.total_port || overrides[normalizedKey]?.totalPort || 8,
+                        coverageOdp: item.coverageOdp || item.coverage_odp || overrides[normalizedKey]?.coverageOdp || 0,
+                        remark: item.remark || overrides[normalizedKey]?.remark || ''
+                    };
+                    count++;
+                }
             }
         }
         
         writeOdpOverrides(overrides);
         invalidateOdpCache();
         
-        res.json({ message: 'ODP data imported successfully', count: Object.keys(importedData).length });
+        res.json({ message: 'ODP data imported successfully', count });
     } catch (error) {
         res.status(500).json({ error: 'Failed to import ODPs' });
     }

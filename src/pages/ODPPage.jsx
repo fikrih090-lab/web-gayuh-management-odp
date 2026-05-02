@@ -225,17 +225,14 @@ export default function ODPPage() {
     reader.onload = async (event) => {
       try {
         const parsed = JSON.parse(event.target.result);
-        if (typeof parsed === 'object' && !Array.isArray(parsed)) {
-          setLoading(true);
-          await importOdpsData(parsed);
-          alert('Berhasil mengimpor data backup ODP!');
-          fetchOdps(1, search, selectedLetter);
-          fetchAllMapOdps();
-        } else {
-          alert('Format file backup ODP tidak sesuai (harus object)!');
-        }
+        setLoading(true);
+        await importOdpsData(parsed);
+        alert('Berhasil mengimpor data backup ODP!');
+        fetchOdps(1, search, selectedLetter);
+        fetchAllMapOdps();
       } catch (err) {
-        alert('Gagal membaca file backup JSON!');
+        alert('Gagal membaca atau memproses file backup JSON!');
+        console.error(err);
       } finally {
         setLoading(false);
       }
