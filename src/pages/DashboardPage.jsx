@@ -210,37 +210,33 @@ export default function DashboardPage() {
         ))}
 
         {/* ODP markers */}
-        {layers.odp && (
-          <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
-            {odpData.map(odp => (
-              <Marker
-                key={odp.id}
-                position={[odp.lat, odp.lng]}
-                icon={createIcon(getODPColor(odp))}
-                eventHandlers={{
-                  click: () => navigate(`/odp/${odp.id}`)
-                }}
-              >
-                <Popup>
-                  <div className="min-w-[200px]">
-                    <div className="flex items-center justify-between">
-                      <p className="font-bold text-sm">{odp.id}</p>
-                      <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                        background: getODPColor(odp) + '22',
-                        color: getODPColor(odp)
-                      }}>
-                        {odp.usedPorts}/{odp.totalPorts} Port
-                      </span>
-                    </div>
-                    <p className="text-xs text-text-secondary mt-1">{odp.name}</p>
-                    <p className="text-xs text-text-muted mt-1">{odp.address}</p>
-                    <p className="text-xs text-text-muted mt-1">Tipe: {odp.type}</p>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
-        )}
+        {layers.odp && odpData.map(odp => (
+          <Marker
+            key={odp.id}
+            position={[odp.lat, odp.lng]}
+            icon={createIcon(getODPColor(odp))}
+            eventHandlers={{
+              click: () => navigate(`/odp/${odp.id}`)
+            }}
+          >
+            <Popup>
+              <div className="min-w-[200px]">
+                <div className="flex items-center justify-between">
+                  <p className="font-bold text-sm">{odp.id}</p>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{
+                    background: getODPColor(odp) + '22',
+                    color: getODPColor(odp)
+                  }}>
+                    {odp.usedPorts}/{odp.totalPorts} Port
+                  </span>
+                </div>
+                <p className="text-xs text-text-secondary mt-1">{odp.name}</p>
+                <p className="text-xs text-text-muted mt-1">{odp.address}</p>
+                <p className="text-xs text-text-muted mt-1">Tipe: {odp.type}</p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
 
         {/* Client markers */}
         {layers.clients && (

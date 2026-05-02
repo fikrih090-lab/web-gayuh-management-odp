@@ -417,20 +417,18 @@ export default function ODPPage() {
           {flyTarget && <MapFlyTo center={flyTarget} zoom={selectedODP ? 16 : 15} />}
 
           {/* ODP markers */}
-          <MarkerClusterGroup chunkedLoading maxClusterRadius={40}>
-            {displayData.map(odp => {
-              const lat = Number(odp.lat), lng = Number(odp.lng)
-              if (!lat || !lng) return null
-              return (
-                <Marker
-                  key={odp.id}
-                  position={[lat, lng]}
-                  icon={createMiniIcon(selectedODP?.id === odp.id ? '#ffffff' : getODPColor(odp))}
-                  eventHandlers={{ click: () => handleSelectODP(odp) }}
-                />
-              )
-            })}
-          </MarkerClusterGroup>
+          {displayData.map(odp => {
+            const lat = Number(odp.lat), lng = Number(odp.lng)
+            if (!lat || !lng) return null
+            return (
+              <Marker
+                key={odp.id}
+                position={[lat, lng]}
+                icon={createMiniIcon(selectedODP?.id === odp.id ? '#ffffff' : getODPColor(odp))}
+                eventHandlers={{ click: () => handleSelectODP(odp) }}
+              />
+            )
+          })}
 
           {/* User location marker */}
           {userLocation && (

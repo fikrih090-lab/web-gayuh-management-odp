@@ -308,13 +308,11 @@ export default function PathsPage() {
           </Marker>
 
           {/* ODP markers */}
-          <MarkerClusterGroup chunkedLoading maxClusterRadius={40}>
-            {odpData.map(odp => (
-              <Marker key={odp.id} position={[odp.lat, odp.lng]} icon={createIcon('#10b981', 16)}>
-                <Popup><div className="text-center"><p className="font-bold text-sm">{odp.name}</p><p className="text-xs text-gray-500 mt-0.5">{odp.id}</p></div></Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
+          {odpData.map(odp => (
+            <Marker key={odp.id} position={[odp.lat, odp.lng]} icon={createIcon('#10b981', 16)}>
+              <Popup><div className="text-center"><p className="font-bold text-sm">{odp.name}</p><p className="text-xs text-gray-500 mt-0.5">{odp.id}</p></div></Popup>
+            </Marker>
+          ))}
 
           {/* Saved paths */}
           {customPaths.map((path, i) => (
