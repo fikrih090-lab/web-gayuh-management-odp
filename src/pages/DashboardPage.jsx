@@ -239,30 +239,26 @@ export default function DashboardPage() {
         ))}
 
         {/* Client markers */}
-        {layers.clients && (
-          <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
-            {clientData.map(client => (
-              <Marker
-                key={client.id}
-                position={[client.lat, client.lng]}
-                icon={clientIcon}
-              >
-                <Popup>
-                  <div className="min-w-[180px]">
-                    <p className="font-bold text-sm">{client.name}</p>
-                    <p className="text-xs text-text-secondary mt-1">{client.package} • {client.odpId}</p>
-                    <p className="text-xs mt-1">
-                      {client.status === 'online'
-                        ? <span className="text-success">● Online</span>
-                        : <span className="text-danger">● Offline</span>
-                      }
-                    </p>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MarkerClusterGroup>
-        )}
+        {layers.clients && clientData.map(client => (
+          <Marker
+            key={client.id}
+            position={[client.lat, client.lng]}
+            icon={clientIcon}
+          >
+            <Popup>
+              <div className="min-w-[180px]">
+                <p className="font-bold text-sm">{client.name}</p>
+                <p className="text-xs text-text-secondary mt-1">{client.package} • {client.odpId}</p>
+                <p className="text-xs mt-1">
+                  {client.status === 'online'
+                    ? <span className="text-success">● Online</span>
+                    : <span className="text-danger">● Offline</span>
+                  }
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
 
         <MapControls oltLoc={oltLoc} />
       </MapContainer>
