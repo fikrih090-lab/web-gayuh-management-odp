@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
-import { NetworkService } from '../services/network.service';
+import { NetworkService, invalidateOdpCache } from '../services/network.service';
+import { readOdpOverrides, writeOdpOverrides } from '../utils/odpDb';
 
 export const getOdps = async (req: Request, res: Response) => {
     try {
@@ -98,5 +99,38 @@ export const deleteOdp = async (req: Request, res: Response) => {
         }
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete ODP' });
+    }
+};
+
+export const importOdps = async (req: Request, res: Response) => {
+    try {
+        const importedData = req.body;
+        if (typeof importedData !== 'object' || importedData === null) {
+            return res.status(400).json({ error: 'Invalid format' });
+        }
+        
+        const overrides = readOdpOverrides();
+        
+        // Merge the imported data
+        for (const key of Object.keys(importedData)) {
+            const item = importedData[key];
+            if (item && typeof item === 'object') {
+                overrides[key] = {
+                    ...overrides[key],
+                    latitude: item.latitude || item.lat || overrides[key]?.latitude || '',
+                    longitude: item.longitude || item.lng || overrides[key]?.longitude || '',
+                    totalPort: item.totalPort || overrides[key]?.totalPort || 8,
+                    coverageOdp: item.coverageOdp || overrides[key]?.coverageOdp || 0,
+                    remark: item.remark || overrides[key]?.remark || ''
+                };
+            }
+        }
+        
+        writeOdpOverrides(overrides);
+        invalidateOdpCache();
+        
+        res.json({ message: 'ODP data imported successfully', count: Object.keys(importedData).length });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to import ODPs' });
     }
 };

@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
-import { Search, Plus, Radio, Filter, Navigation, MapPin, Loader2, Crosshair, SortAsc } from 'lucide-react'
-import { getOdpsPaged, getOdps, deleteOdp } from '../api'
+import { Search, Plus, Radio, Filter, Navigation, MapPin, Loader2, Crosshair, SortAsc, Upload } from 'lucide-react'
+import { getOdpsPaged, getOdps, deleteOdp, importOdpsData } from '../api'
 import AddOdpModal from '../components/AddOdpModal'
 import EditOdpModal from '../components/EditOdpModal'
 import { useDarkMode } from '../hooks/useDarkMode'
@@ -208,12 +208,41 @@ export default function ODPPage() {
       setDeletingOdpId(null)
       if (selectedODP?.id === id) setSelectedODP(null)
       fetchOdps(page, search, selectedLetter)
+      fetchAllMapOdps()
     } catch (e) {
       alert('Gagal menghapus ODP: ' + (e?.response?.data?.error || e.message))
     } finally {
       setDeleteLoading(false)
     }
   }
+
+  const odpFileInputRef = useRef(null)
+
+  const handleImportOdps = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        if (typeof parsed === 'object' && !Array.isArray(parsed)) {
+          setLoading(true);
+          await importOdpsData(parsed);
+          alert('Berhasil mengimpor data backup ODP!');
+          fetchOdps(1, search, selectedLetter);
+          fetchAllMapOdps();
+        } else {
+          alert('Format file backup ODP tidak sesuai (harus object)!');
+        }
+      } catch (err) {
+        alert('Gagal membaca file backup JSON!');
+      } finally {
+        setLoading(false);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // reset
+  };
 
   const mapCenter = userLocation
     ? [userLocation.lat, userLocation.lng]
@@ -233,10 +262,17 @@ export default function ODPPage() {
               </p>
             </div>
             {isFullAccess && (
-              <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
-                <Plus size={16} />
-                <span className="hidden sm:inline">Tambah ODP</span>
-              </button>
+              <div className="flex items-center gap-2">
+                <button onClick={() => odpFileInputRef.current?.click()} className="btn-secondary px-4 py-2 text-sm flex items-center justify-center gap-2 border border-border hover:bg-bg-secondary text-text-secondary transition-colors rounded-xl font-semibold">
+                  <Upload size={16} />
+                  <span className="hidden sm:inline">Import ODP</span>
+                </button>
+                <input type="file" accept=".json" className="hidden" ref={odpFileInputRef} onChange={handleImportOdps} />
+                <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2 rounded-xl">
+                  <Plus size={16} />
+                  <span className="hidden sm:inline">Tambah ODP</span>
+                </button>
+              </div>
             )}
           </div>
 

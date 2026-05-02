@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { getOdps, getOdpById, createOdp, getOdcs, deleteOdp, updateOdp } from '../controllers/network.controller';
+import { getOdps, getOdpById, createOdp, getOdcs, deleteOdp, updateOdp, importOdps } from '../controllers/network.controller';
 
 const router = Router();
 
+router.post('/odps/import', importOdps);
 router.get('/odps', getOdps);
 router.get('/odps/:id', getOdpById);
 router.post('/odps', createOdp);

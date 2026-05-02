@@ -71,6 +71,11 @@ export const updateOdp = async (id, odpData) => {
   return data;
 };
 
+export const importOdpsData = async (odpData) => {
+  const { data } = await api.post('/network/odps/import', odpData);
+  return data;
+};
+
 export const getAlerts = async () => {
   const { data } = await api.get('/alerts');
   return data.map(mapAlert);
