@@ -5,5 +5,138 @@
     "totalPort": 16,
     "coverageOdp": 1,
     "remark": ""
+  },
+  "L14": {
+    "latitude": "-6.141177",
+    "longitude": "106.668196",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L15": {
+    "latitude": "-6.140598",
+    "longitude": "106.668180",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L16": {
+    "latitude": "-6.140184",
+    "longitude": "106.668722",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L13": {
+    "latitude": "-6.142691",
+    "longitude": "106.667350",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L12": {
+    "latitude": "-6.142627",
+    "longitude": "106.665711",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L10": {
+    "latitude": "-6.142773",
+    "longitude": "106.666279",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L7": {
+    "latitude": "-6.147539",
+    "longitude": "106.666285",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L8": {
+    "latitude": "-6.147362",
+    "longitude": "106.665502",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L1": {
+    "latitude": "-6.145329",
+    "longitude": "106.663794",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L2": {
+    "latitude": "-6.146738",
+    "longitude": "106.663250",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L4": {
+    "latitude": "-6.145876",
+    "longitude": "106.662165",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L3": {
+    "latitude": "-6.146241",
+    "longitude": "106.663434",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L6": {
+    "latitude": "-6.145168",
+    "longitude": "106.663857",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L5": {
+    "latitude": "-6.146301",
+    "longitude": "106.663975",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L9": {
+    "latitude": "-6.144044",
+    "longitude": "106.665884",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L10 B": {
+    "latitude": "-6.142262",
+    "longitude": "106.665824",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L11": {
+    "latitude": "-6.140344",
+    "longitude": "106.668183",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L11 A": {
+    "latitude": "-6.140344",
+    "longitude": "106.668183",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
+  },
+  "L14B": {
+    "latitude": "-6.141934",
+    "longitude": "106.668091",
+    "totalPort": 16,
+    "coverageOdp": 3,
+    "remark": "PAJANG-RW ROSIDI-BANG JABRIK"
   }
 }

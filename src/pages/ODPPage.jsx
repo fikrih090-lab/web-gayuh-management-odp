@@ -164,8 +164,15 @@ export default function ODPPage() {
     }
   }
 
-  // Klik ODP → fly ke marker
+  // Klik ODP → fly ke marker atau pindah halaman (mobile)
   const handleSelectODP = (odp) => {
+    // Di perangkat mobile, langsung pindah ke halaman detail karena panel map disembunyikan
+    if (window.innerWidth < 1024) {
+      navigate(`/odp/${encodeURIComponent(odp.id)}`)
+      return
+    }
+    
+    // Di desktop, tampilkan card di atas map
     setSelectedODP(odp)
     if (odp.lat && odp.lng) setFlyTarget([Number(odp.lat), Number(odp.lng)])
   }
