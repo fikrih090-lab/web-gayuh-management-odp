@@ -4,7 +4,7 @@ import MarkerClusterGroup from 'react-leaflet-cluster'
 import { MapContainer, TileLayer, Marker, Circle, useMap } from 'react-leaflet'
 import L from 'leaflet'
 import { Search, Plus, Radio, Filter, Navigation, MapPin, Loader2, Crosshair, SortAsc } from 'lucide-react'
-import { getOdpsPaged, deleteOdp } from '../api'
+import { getOdpsPaged, getOdps, deleteOdp } from '../api'
 import AddOdpModal from '../components/AddOdpModal'
 import EditOdpModal from '../components/EditOdpModal'
 import { useDarkMode } from '../hooks/useDarkMode'
@@ -77,6 +77,7 @@ function MapFlyTo({ center, zoom }) {
 
 export default function ODPPage() {
   const [odpData, setOdpData]         = useState([])
+  const [allOdpData, setAllOdpData]   = useState([])
   const [total, setTotal]             = useState(0)
   const [totalPages, setTotalPages]   = useState(1)
   const [page, setPage]               = useState(1)
@@ -124,7 +125,19 @@ export default function ODPPage() {
     }
   }, [page, search, selectedLetter])
 
-  useEffect(() => { fetchOdps(1, '', '') }, [])
+  const fetchAllMapOdps = useCallback(async () => {
+    try {
+      const res = await getOdps()
+      setAllOdpData(res || [])
+    } catch (e) {
+      console.error('fetchAllMapOdps error:', e)
+    }
+  }, [])
+
+  useEffect(() => { 
+    fetchOdps(1, '', '')
+    fetchAllMapOdps()
+  }, [])
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -134,7 +147,7 @@ export default function ODPPage() {
     return () => clearTimeout(t)
   }, [searchInput])
 
-  // Hitung jarak ODP dari user, sort jika aktif
+  // Hitung jarak ODP dari user, sort jika aktif (UNTUK TABEL)
   const displayData = (() => {
     if (!userLocation) return odpData
     const withDist = odpData.map(odp => {
@@ -143,6 +156,16 @@ export default function ODPPage() {
       return { ...odp, _dist: dist }
     })
     return sortNearest ? [...withDist].sort((a, b) => a._dist - b._dist) : withDist
+  })()
+
+  // Hitung jarak ODP dari user (UNTUK PETA - SEMUA ODP)
+  const mapDisplayData = (() => {
+    if (!userLocation) return allOdpData
+    return allOdpData.map(odp => {
+      const lat = Number(odp.lat), lng = Number(odp.lng)
+      const dist = (lat && lng) ? getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) : Infinity
+      return { ...odp, _dist: dist }
+    })
   })()
 
   // Lokasi Saya handler
@@ -417,7 +440,7 @@ export default function ODPPage() {
           {flyTarget && <MapFlyTo center={flyTarget} zoom={selectedODP ? 16 : 15} />}
 
           {/* ODP markers */}
-          {displayData.map(odp => {
+          {mapDisplayData.map(odp => {
             const lat = Number(odp.lat), lng = Number(odp.lng)
             if (!lat || !lng) return null
             return (
@@ -512,7 +535,10 @@ export default function ODPPage() {
       <AddOdpModal
         isOpen={isAddModalOpen}
         onClose={() => setIsAddModalOpen(false)}
-        onAdd={() => fetchOdps(1, search, selectedLetter)}
+        onAdd={() => {
+          fetchOdps(1, search, selectedLetter)
+          fetchAllMapOdps()
+        }}
       />
 
       <EditOdpModal
@@ -537,9 +563,25 @@ export default function ODPPage() {
               }
               return o
             }))
+            
+            // Juga perbarui allOdpData agar sinkron di peta
+            setAllOdpData(prev => prev.map(o => {
+              const code = (o.name || o.id || '').toString().toUpperCase().trim()
+              if (code === updatedCode) {
+                return {
+                  ...o,
+                  lat: Number(updatedOdp.latitude) || o.lat,
+                  lng: Number(updatedOdp.longitude) || o.lng,
+                }
+              }
+              return o
+            }))
           }
           // Tetap fetch ulang dari server setelah 500ms untuk sinkronisasi
-          setTimeout(() => fetchOdps(page, search, selectedLetter), 500)
+          setTimeout(() => {
+            fetchOdps(page, search, selectedLetter)
+            fetchAllMapOdps()
+          }, 500)
         }}
         odpData={editingOdp}
       />
