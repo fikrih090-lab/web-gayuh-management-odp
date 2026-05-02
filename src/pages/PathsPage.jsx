@@ -156,9 +156,11 @@ export default function PathsPage() {
           )}
         </div>
 
-        {/* Server Config Form */}
-        {!isDrawing && isFullAccess && (
-          <div className="px-5 py-3 border-b border-border bg-bg-secondary">
+        {/* Scrollable Content Area */}
+        <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
+          {/* Server Config Form */}
+          {!isDrawing && isFullAccess && (
+            <div className="px-5 py-3 border-b border-border bg-bg-secondary shrink-0">
             <button 
               onClick={() => setShowServerConfig(!showServerConfig)}
               className="text-xs font-semibold text-accent flex items-center gap-1 hover:underline w-full"
@@ -232,7 +234,7 @@ export default function PathsPage() {
         )}
 
         {/* Path list */}
-        <div className="flex-1 overflow-auto p-5 space-y-3">
+        <div className="flex-1 p-5 space-y-3">
           {customPaths.length === 0 && !isDrawing && (
             <div className="flex flex-col items-center justify-center py-16 text-text-muted">
               <Cable size={40} className="opacity-30 mb-4" />
@@ -275,9 +277,10 @@ export default function PathsPage() {
           ))}
         </div>
       </div>
+    </div>
 
-      {/* Map */}
-      <div className="flex-1 relative min-h-[400px]">
+    {/* Map */}
+    <div className="flex-1 relative min-h-[400px]">
         <MapContainer center={mapCenter} zoom={13} className="w-full h-full" zoomControl={false} attributionControl={false}>
           <TileLayer 
             key={isDark ? 'dark' : 'light'}
