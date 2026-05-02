@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { MapContainer, TileLayer, Polyline, Marker, Popup, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
-import { Cable, Plus, Trash2, Save, X, MousePointer, MapPin } from 'lucide-react'
+import { Cable, Plus, Trash2, Save, X, MousePointer, MapPin, Download, Upload } from 'lucide-react'
 import { getOdps } from '../api'
 import { useOLTLocation } from '../hooks/useOLTLocation'
 import { useDarkMode } from '../hooks/useDarkMode'
@@ -138,21 +138,69 @@ export default function PathsPage() {
     setDrawPoints(prev => prev.slice(0, -1))
   }
 
+  const handleExportPaths = () => {
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(customPaths));
+    const downloadAnchorNode = document.createElement('a');
+    downloadAnchorNode.setAttribute("href",     dataStr);
+    downloadAnchorNode.setAttribute("download", "jalur_fo_backup.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  }
+
+  const handleImportPaths = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const parsed = JSON.parse(event.target.result);
+        if (Array.isArray(parsed)) {
+          setCustomPaths(parsed);
+          alert('Berhasil mengimpor data jalur kabel!');
+        } else {
+          alert('Format file backup tidak sesuai (harus berupa array jalur)!');
+        }
+      } catch (err) {
+        alert('Gagal membaca file backup, pastikan format JSON valid!');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = ''; // reset input
+  }
+
+  const fileInputRef = useRef(null);
+
   if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
 
   return (
     <div className="h-full flex flex-col lg:flex-row animate-fade-in relative z-0">
       {/* Side panel */}
       <div className="w-full lg:w-[380px] xl:w-[420px] flex flex-col border-r border-border min-h-0 bg-bg-primary z-10">
-        <div className="p-5 md:p-6 border-b border-border bg-bg-primary flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Jalur Kabel FO</h1>
-            <p className="text-sm text-text-muted mt-1 font-medium">{customPaths.length} jalur terdaftar</p>
+        <div className="p-5 md:p-6 border-b border-border bg-bg-primary flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-text-primary tracking-tight">Jalur Kabel FO</h1>
+              <p className="text-sm text-text-muted mt-1 font-medium">{customPaths.length} jalur terdaftar</p>
+            </div>
+            {!isDrawing && isFullAccess && (
+              <button onClick={handleStartDraw} className="btn-primary px-4 py-2 text-sm flex items-center gap-2 shrink-0">
+                <Plus size={16} /> <span className="hidden sm:inline">Gambar Jalur</span>
+              </button>
+            )}
           </div>
+          
+          {/* Import / Export Backup */}
           {!isDrawing && isFullAccess && (
-            <button onClick={handleStartDraw} className="btn-primary px-4 py-2 text-sm flex items-center gap-2">
-              <Plus size={16} /> Gambar Jalur
-            </button>
+            <div className="flex items-center gap-2">
+              <button onClick={handleExportPaths} className="flex-1 py-1.5 px-3 bg-bg-secondary border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                <Download size={14} /> Backup (Export)
+              </button>
+              <button onClick={() => fileInputRef.current?.click()} className="flex-1 py-1.5 px-3 bg-bg-secondary border border-border text-text-secondary hover:text-text-primary hover:bg-bg-tertiary rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors">
+                <Upload size={14} /> Restore (Import)
+              </button>
+              <input type="file" accept=".json" className="hidden" ref={fileInputRef} onChange={handleImportPaths} />
+            </div>
           )}
         </div>
 
