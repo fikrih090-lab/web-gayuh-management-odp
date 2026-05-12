@@ -3,7 +3,7 @@ import { db, connectionPools } from '../config/db';
 import { customer } from '../db/schema';
 import { getAllowedDatabases, toCamelCase, toSnakeCase } from '../utils/db.utils';
 
-// Result cache: 2 minutes TTL
+// Result cache: 5 seconds TTL
 let clientCache: any[] | null = null;
 let clientCacheExpiry = 0;
 export function invalidateClientCache() { clientCache = null; clientCacheExpiry = 0; }
@@ -56,7 +56,7 @@ export class ClientService {
         
         clientCache = allCustomers
             .sort((a, b) => String(a.name || '').localeCompare(String(b.name || ''), 'id', { sensitivity: 'base' }));
-        clientCacheExpiry = Date.now() + 2 * 60 * 1000;
+        clientCacheExpiry = Date.now() + 5 * 1000;
         console.log(`[Client Cache] Cached ${clientCache.length} clients dari ${new Set(allCustomers.map(c => c.hostId)).size} host (sorted)`);
         return clientCache;
     }

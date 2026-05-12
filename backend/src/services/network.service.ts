@@ -4,7 +4,7 @@ import { mOdp, mOdc } from '../db/schema';
 import { getAllowedDatabases, toCamelCase } from '../utils/db.utils';
 import { readOdpOverrides, writeOdpOverrides } from '../utils/odpDb';
 
-// Result cache: 2 minutes TTL
+// Result cache: 5 seconds TTL
 let odpCache: any[] | null = null;
 let odpCacheExpiry = 0;
 export function invalidateOdpCache() { odpCache = null; odpCacheExpiry = 0; }
@@ -152,7 +152,7 @@ export class NetworkService {
             return odp;
         });
             
-        odpCacheExpiry = Date.now() + 2 * 60 * 1000;
+        odpCacheExpiry = Date.now() + 5 * 1000;
         console.log(`[ODP Cache] Cached ${odpCache.length} ODP unik dari ${targetDbs.length} database (sorted A-Z)`);
         return odpCache;
     }

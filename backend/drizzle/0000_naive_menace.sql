@@ -1,16 +1,16 @@
 -- Current sql file was generated after introspecting the database
 -- If you want to run this migration please uncomment this code before executing migrations
-/*
-CREATE TABLE `bank` (
-	`bank_id` int(11) AUTO_INCREMENT NOT NULL,
+
+CREATE TABLE IF NOT EXISTS `bank` (
+	`bank_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(128) NOT NULL,
 	`no_rek` varchar(128) NOT NULL,
 	`owner` varchar(128) NOT NULL,
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `bot_telegram` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `bot_telegram` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`token` varchar(128) NOT NULL,
 	`username_bot` varchar(128) NOT NULL,
 	`username_owner` varchar(128) NOT NULL,
@@ -19,21 +19,21 @@ CREATE TABLE `bot_telegram` (
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `cat_expenditure` (
-	`category_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `cat_expenditure` (
+	`category_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(50) NOT NULL,
 	`remark` text NOT NULL,
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `cat_income` (
-	`category_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `cat_income` (
+	`category_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(50) NOT NULL,
 	`remark` text NOT NULL,
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `company` (
+CREATE TABLE IF NOT EXISTS `company` (
 	`id` int(11) NOT NULL,
 	`company_name` varchar(100) NOT NULL,
 	`sub_name` varchar(128) NOT NULL,
@@ -76,8 +76,8 @@ CREATE TABLE `company` (
 	`licence` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `confirm_payment` (
-	`confirm_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `confirm_payment` (
+	`confirm_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`invoice_id` int(11) NOT NULL,
 	`no_services` varchar(25) NOT NULL,
 	`metode_payment` varchar(50) NOT NULL,
@@ -88,18 +88,18 @@ CREATE TABLE `confirm_payment` (
 	`picture` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `country` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `country` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`iso` char(2) NOT NULL,
 	`name` varchar(80) NOT NULL,
 	`nicename` varchar(80) NOT NULL,
-	`iso3` char(3) DEFAULT 'NULL',
-	`numcode` smallint(6) DEFAULT 'NULL',
+	`iso3` char(3) DEFAULT NULL,
+	`numcode` smallint(6) DEFAULT NULL,
 	`phonecode` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `coupon` (
-	`coupon_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `coupon` (
+	`coupon_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`code` varchar(20) NOT NULL,
 	`is_active` int(11) NOT NULL,
 	`percent` int(11) NOT NULL,
@@ -112,8 +112,8 @@ CREATE TABLE `coupon` (
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `coverage` (
-	`coverage_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `coverage` (
+	`coverage_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`c_name` varchar(128) NOT NULL,
 	`address` text NOT NULL,
 	`id_prov` varchar(50) NOT NULL,
@@ -130,23 +130,23 @@ CREATE TABLE `coverage` (
 	`coverage_mitra` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `cover_operator` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `cover_operator` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`role_id` int(11) NOT NULL,
 	`coverage_id` int(11) NOT NULL,
 	`operator` int(11) NOT NULL,
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `cover_package` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `cover_package` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`coverage_id` int(11) NOT NULL,
 	`package_id` int(11) NOT NULL,
 	`created` int(11) NOT NULL,
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `currencies` (
+CREATE TABLE IF NOT EXISTS `currencies` (
 	`code` varchar(15) NOT NULL,
 	`name` varchar(100) NOT NULL,
 	`number` char(5) NOT NULL,
@@ -154,8 +154,8 @@ CREATE TABLE `currencies` (
 	`countries` longtext NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `customer` (
-	`customer_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `customer` (
+	`customer_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(128) NOT NULL,
 	`no_services` varchar(128) NOT NULL,
 	`email` varchar(128) NOT NULL,
@@ -209,16 +209,16 @@ CREATE TABLE `customer` (
 	`createby` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `customer_chart` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `customer_chart` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`id_chart` varchar(50) NOT NULL,
 	`fromcs` varchar(50) NOT NULL,
 	`tocs` varchar(128) NOT NULL,
 	`type` varchar(50) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `customer_line` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `customer_line` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`id_line` varchar(50) NOT NULL,
 	`customer_id` varchar(50) NOT NULL,
 	`width` int(11) NOT NULL,
@@ -226,22 +226,22 @@ CREATE TABLE `customer_line` (
 	`dir` varchar(50) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `customer_status` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `customer_status` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`status` text NOT NULL,
 	`remark` text NOT NULL,
 	`active_bill` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `customer_usage` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `customer_usage` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`no_services` varchar(50) NOT NULL,
 	`count_usage` varchar(100) NOT NULL,
 	`date_usage` varchar(50) NOT NULL,
 	`last_update` varchar(40) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `email` (
+CREATE TABLE IF NOT EXISTS `email` (
 	`id` int(11) NOT NULL,
 	`protocol` varchar(50) NOT NULL,
 	`host` varchar(50) NOT NULL,
@@ -259,8 +259,8 @@ CREATE TABLE `email` (
 	`create_invoice` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `expenditure` (
-	`expenditure_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `expenditure` (
+	`expenditure_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`date_payment` varchar(125) NOT NULL,
 	`nominal` varchar(125) NOT NULL,
 	`remark` text NOT NULL,
@@ -269,8 +269,8 @@ CREATE TABLE `expenditure` (
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `help` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `help` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`no_ticket` varchar(50) NOT NULL,
 	`help_type` int(11) NOT NULL,
 	`help_solution` int(11) NOT NULL,
@@ -286,20 +286,20 @@ CREATE TABLE `help` (
 	`ticket_password` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `help_action` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `help_action` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`action` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `help_solution` (
-	`hs_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `help_solution` (
+	`hs_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`hs_help_id` int(11) NOT NULL,
 	`hs_name` varchar(110) NOT NULL,
 	`solution` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `help_timeline` (
-	`ht_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `help_timeline` (
+	`ht_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`help_id` int(11) NOT NULL,
 	`date_update` int(11) NOT NULL,
 	`remark` text NOT NULL,
@@ -309,14 +309,14 @@ CREATE TABLE `help_timeline` (
 	`action` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `help_type` (
-	`help_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `help_type` (
+	`help_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`help_type` varchar(50) NOT NULL,
 	`help_remark` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `income` (
-	`income_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `income` (
+	`income_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`date_payment` varchar(125) NOT NULL,
 	`nominal` varchar(125) NOT NULL,
 	`remark` text NOT NULL,
@@ -330,8 +330,8 @@ CREATE TABLE `income` (
 	`coverage` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `invoice` (
-	`invoice_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `invoice` (
+	`invoice_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`invoice` varchar(128) NOT NULL,
 	`code_unique` int(11) NOT NULL,
 	`month` varchar(11) NOT NULL,
@@ -341,7 +341,7 @@ CREATE TABLE `invoice` (
 	`i_ppn` int(11) NOT NULL,
 	`created` int(11) NOT NULL,
 	`create_by` int(11) NOT NULL,
-	`date_payment` int(11) DEFAULT 'NULL',
+	`date_payment` int(11) DEFAULT NULL,
 	`metode_payment` varchar(100) NOT NULL,
 	`admin_fee` int(11) NOT NULL,
 	`amount` int(11) NOT NULL,
@@ -388,8 +388,8 @@ CREATE TABLE `invoice` (
 	CONSTRAINT `invoice` UNIQUE(`invoice`)
 );
 --> statement-breakpoint
-CREATE TABLE `invoice_detail` (
-	`detail_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `invoice_detail` (
+	`detail_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`invoice_id` varchar(128) NOT NULL,
 	`price` varchar(125) NOT NULL,
 	`qty` varchar(125) NOT NULL,
@@ -403,8 +403,8 @@ CREATE TABLE `invoice_detail` (
 	`d_no_services` varchar(50) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `logs` (
-	`log_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `logs` (
+	`log_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(50) NOT NULL,
 	`datetime` int(11) NOT NULL,
 	`date_log` varchar(40) NOT NULL,
@@ -414,14 +414,14 @@ CREATE TABLE `logs` (
 	`remark` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `maps` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `maps` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`vendor` text NOT NULL,
 	`token` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `modem` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `modem` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`type` int(11) NOT NULL,
 	`name` varchar(50) NOT NULL,
 	`customer_id` int(11) NOT NULL,
@@ -439,8 +439,8 @@ CREATE TABLE `modem` (
 	`updateby` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `moota` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `moota` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`is_active` int(11) NOT NULL,
 	`token` text NOT NULL,
 	`send_whatsapp` text NOT NULL,
@@ -452,16 +452,16 @@ CREATE TABLE `moota` (
 	`change_bill` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `m_brand_device` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `m_brand_device` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`onu_type` int(11) NOT NULL,
 	`name` text NOT NULL,
 	`remark` text NOT NULL,
 	`created` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `m_odc` (
-	`id_odc` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `m_odc` (
+	`id_odc` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`code_odc` text NOT NULL,
 	`coverage_odc` int(11) NOT NULL,
 	`no_port_olt` int(11) NOT NULL,
@@ -477,8 +477,8 @@ CREATE TABLE `m_odc` (
 	`role_id` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `m_odp` (
-	`id_odp` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `m_odp` (
+	`id_odp` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`code_odp` text NOT NULL,
 	`code_odc` int(11) NOT NULL,
 	`coverage_odp` int(11) NOT NULL,
@@ -495,8 +495,8 @@ CREATE TABLE `m_odp` (
 	`role_id` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `olt` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `olt` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`is_active` int(11) NOT NULL,
 	`ip_address` text NOT NULL,
 	`alias` varchar(40) NOT NULL,
@@ -510,8 +510,8 @@ CREATE TABLE `olt` (
 	`type` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `other` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `other` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`say_wa` text NOT NULL,
 	`body_wa` text NOT NULL,
 	`footer_wa` text NOT NULL,
@@ -553,7 +553,7 @@ CREATE TABLE `other` (
 	`package` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `package` (
+CREATE TABLE IF NOT EXISTS `package` (
 	`id` int(11) NOT NULL,
 	`payment_gateway` int(11) NOT NULL,
 	`router` int(11) NOT NULL,
@@ -579,8 +579,8 @@ CREATE TABLE `package` (
 	`bcava` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `package_category` (
-	`p_category_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `package_category` (
+	`p_category_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(125) NOT NULL,
 	`description` text NOT NULL,
 	`date_created` int(11) NOT NULL,
@@ -588,8 +588,8 @@ CREATE TABLE `package_category` (
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `package_item` (
-	`p_item_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `package_item` (
+	`p_item_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(125) NOT NULL,
 	`price` varchar(125) NOT NULL,
 	`picture` text NOT NULL,
@@ -604,7 +604,7 @@ CREATE TABLE `package_item` (
 	`package_mitra` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `payment_gateway` (
+CREATE TABLE IF NOT EXISTS `payment_gateway` (
 	`id` int(11) NOT NULL,
 	`vendor` varchar(50) NOT NULL,
 	`api_key` text NOT NULL,
@@ -638,8 +638,8 @@ CREATE TABLE `payment_gateway` (
 	`linkaja` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `payment_gateway_transaction` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `payment_gateway_transaction` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`vendor` text NOT NULL,
 	`external_id` text NOT NULL,
 	`method` text NOT NULL,
@@ -653,8 +653,8 @@ CREATE TABLE `payment_gateway_transaction` (
 	`date_created` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `product` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `product` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(225) NOT NULL,
 	`picture` text NOT NULL,
 	`remark` text NOT NULL,
@@ -664,8 +664,8 @@ CREATE TABLE `product` (
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `promo` (
-	`promo_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `promo` (
+	`promo_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`picture` text NOT NULL,
 	`remark` text NOT NULL,
@@ -673,8 +673,8 @@ CREATE TABLE `promo` (
 	`description` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `report_transaction` (
-	`report_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `report_transaction` (
+	`report_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`date` varchar(128) NOT NULL,
 	`income` varchar(128) NOT NULL,
 	`expenditure` varchar(128) NOT NULL,
@@ -682,16 +682,16 @@ CREATE TABLE `report_transaction` (
 	`created` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `role_group` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `role_group` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`role_id` int(11) NOT NULL,
 	`role_name` text NOT NULL,
 	`remark` text NOT NULL,
 	`profit_sharing` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `role_management` (
-	`role_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `role_management` (
+	`role_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`show_customer` int(11) NOT NULL,
 	`add_customer` int(11) NOT NULL,
 	`edit_customer` int(11) NOT NULL,
@@ -771,7 +771,7 @@ CREATE TABLE `role_management` (
 	`pay_bill` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `role_menu` (
+CREATE TABLE IF NOT EXISTS `role_menu` (
 	`role_id` int(11) NOT NULL,
 	`customer` int(11) NOT NULL,
 	`customer_menu` int(11) NOT NULL,
@@ -865,8 +865,8 @@ CREATE TABLE `role_menu` (
 	`master_script` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `router` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `router` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`is_active` int(11) NOT NULL,
 	`alias` varchar(50) NOT NULL,
 	`ip_address` text NOT NULL,
@@ -878,31 +878,31 @@ CREATE TABLE `router` (
 	`router_mitra` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `script` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `script` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` text NOT NULL,
 	`vendor` text NOT NULL,
 	`onu_type` text NOT NULL,
 	`script` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `services` (
-	`services_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `services` (
+	`services_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`email` varchar(50) NOT NULL,
 	`item_id` int(11) NOT NULL,
 	`category_id` int(11) NOT NULL,
 	`no_services` varchar(125) NOT NULL,
 	`qty` varchar(128) NOT NULL,
 	`price` varchar(128) NOT NULL,
-	`disc` varchar(128) DEFAULT 'NULL',
+	`disc` varchar(128) DEFAULT NULL,
 	`total` varchar(128) NOT NULL,
 	`remark` text NOT NULL,
 	`services_create` int(11) NOT NULL,
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `slide` (
-	`slide_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `slide` (
+	`slide_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`name` varchar(225) NOT NULL,
 	`picture` text NOT NULL,
 	`description` text NOT NULL,
@@ -910,8 +910,8 @@ CREATE TABLE `slide` (
 	`create_by` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `sms_gateway` (
-	`sms_id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `sms_gateway` (
+	`sms_id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`sms_name` text NOT NULL,
 	`sms_url` text NOT NULL,
 	`sms_token` text NOT NULL,
@@ -934,22 +934,22 @@ CREATE TABLE `sms_gateway` (
 	`text_add_customer` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `theme` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `theme` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`user_id` int(11) NOT NULL,
 	`dark_mode` int(11) NOT NULL,
 	`nav_active` text NOT NULL,
 	`primary-color` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `timezone` (
-	`timezid` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `timezone` (
+	`timezid` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`tz` varchar(255) NOT NULL,
 	`gmt` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `user` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `user` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`email` varchar(128) NOT NULL,
 	`password` varchar(100) NOT NULL,
 	`name` varchar(128) NOT NULL,
@@ -972,16 +972,16 @@ CREATE TABLE `user` (
 	`lang` text NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `user_token` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `user_token` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`type` int(11) NOT NULL,
 	`email` varchar(128) NOT NULL,
 	`token` varchar(128) NOT NULL,
 	`date_created` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `whatsapp` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `whatsapp` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`is_active` int(11) NOT NULL,
 	`api_key` text NOT NULL,
 	`token` text NOT NULL,
@@ -1012,8 +1012,8 @@ CREATE TABLE `whatsapp` (
 	`send_isolir` int(11) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE `whatsapp_schedule` (
-	`id` int(11) AUTO_INCREMENT NOT NULL,
+CREATE TABLE IF NOT EXISTS `whatsapp_schedule` (
+	`id` int(11) AUTO_INCREMENT PRIMARY KEY NOT NULL,
 	`target` text NOT NULL,
 	`message` text NOT NULL,
 	`customer_id` int(11) NOT NULL,
@@ -1035,4 +1035,3 @@ CREATE INDEX `item_id` ON `invoice_detail` (`item_id`);--> statement-breakpoint
 CREATE INDEX `category_id` ON `package_item` (`category_id`);--> statement-breakpoint
 CREATE INDEX `item_id` ON `services` (`item_id`);--> statement-breakpoint
 CREATE INDEX `category_id` ON `services` (`category_id`);
-*/

@@ -106,18 +106,34 @@ export default function DashboardPage() {
   const isFullAccess = user.roleId === '1' || user.roleId === 1;
 
   useEffect(() => {
-    Promise.all([getClients(), getOdps(), getPaths(), getAlerts()])
-      .then(([clients, odps, paths, alerts]) => {
-        setClientData(clients);
-        setOdpData(odps);
-        setPathData(paths);
-        setAlertData(alerts);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error("Failed to fetch dashboard data:", err);
-        setLoading(false);
-      });
+    let isMounted = true;
+    
+    const fetchData = () => {
+      Promise.all([getClients(), getOdps(), getPaths(), getAlerts()])
+        .then(([clients, odps, paths, alerts]) => {
+          if (!isMounted) return;
+          setClientData(clients);
+          setOdpData(odps);
+          setPathData(paths);
+          setAlertData(alerts);
+          setLoading(false);
+        })
+        .catch(err => {
+          console.error("Failed to fetch dashboard data:", err);
+          if (isMounted) setLoading(false);
+        });
+    };
+
+    // Initial fetch
+    fetchData();
+
+    // Set up auto-refresh polling every 10 seconds
+    const intervalId = setInterval(fetchData, 10000);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, []);
 
   const stats = useMemo(() => ({

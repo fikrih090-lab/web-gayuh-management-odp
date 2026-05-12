@@ -38,7 +38,13 @@ export default function ClientsPage() {
     }
   }, [search])
 
-  useEffect(() => { fetchClients(1) }, [])
+  useEffect(() => {
+    fetchClients(page)
+    const intervalId = setInterval(() => {
+      fetchClients(page)
+    }, 10000)
+    return () => clearInterval(intervalId)
+  }, [page, fetchClients])
 
   // Debounce search — kirim ke API setelah 400ms berhenti mengetik
   useEffect(() => {
