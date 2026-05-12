@@ -2,9 +2,9 @@ module.exports = {
   apps: [
     {
       name: "gayuh-backend",
-      // Pakai tsx dari node_modules lokal backend
-      script: "src/app.ts",
-      interpreter: "./node_modules/.bin/tsx",
+      // Menjalankan via npm run dev untuk menghindari error bin wrapper di Linux
+      script: "npm",
+      args: "run dev",
       cwd: "./backend",
       watch: false,
       env: {
