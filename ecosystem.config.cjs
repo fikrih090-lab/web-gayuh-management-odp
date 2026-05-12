@@ -3,8 +3,8 @@ module.exports = {
     {
       name: "gayuh-backend",
       // Pakai tsx dari node_modules lokal backend
-      script: "./node_modules/.bin/tsx",
-      args: "src/app.ts",
+      script: "src/app.ts",
+      interpreter: "./node_modules/.bin/tsx",
       cwd: "./backend",
       watch: false,
       env: {
