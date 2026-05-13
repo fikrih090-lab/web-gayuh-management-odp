@@ -9,19 +9,18 @@ const SETUP_SECRET = process.env.SETUP_SECRET || 'gayuh-reset-2024';
 export const login = async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
-        
+
         if (!username || !password) {
-            return res.status(400).json({ error: 'Username dan password wajib diisi' });
+            res.status(400).json({ error: 'Username dan password wajib diisi' });
+            return;
         }
 
         const users = readUsers();
-        
+
         // ===== HARDCODED ADMIN FALLBACK =====
-        // Ini berjalan lebih dulu, sebelum cek users.json
-        // Berguna saat users.json kosong / path salah di server Linux
+        // Berjalan lebih dulu, sebelum cek users.json
         const adminPlainPass = process.env.ADMIN_PASSWORD || 'admin';
         if (username === 'admin' && password === adminPlainPass) {
-            // Cari user admin di file jika ada, atau gunakan default
             const adminUser = users.find((u: any) => u.email === 'admin') || {
                 id: 1,
                 email: 'admin',
@@ -35,22 +34,24 @@ export const login = async (req: Request, res: Response) => {
                 roleId: adminUser.roleId
             };
             const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
-            return res.json({ token, user: payload });
+            res.json({ token, user: payload });
+            return;
         }
 
         // ===== NORMAL FLOW untuk user lain =====
         const foundUser = users.find((u: any) => u.email === username);
-        
+
         if (!foundUser) {
-            return res.status(401).json({ error: 'Username atau password salah' });
+            res.status(401).json({ error: 'Username atau password salah' });
+            return;
         }
-        
+
         // Cek password hash
-        let isMatch = false;
-        isMatch = await bcrypt.compare(password, foundUser.password);
-        
+        const isMatch = await bcrypt.compare(password, foundUser.password);
+
         if (!isMatch) {
-            return res.status(401).json({ error: 'Username atau password salah' });
+            res.status(401).json({ error: 'Username atau password salah' });
+            return;
         }
 
         // Buat JWT Token
@@ -63,10 +64,8 @@ export const login = async (req: Request, res: Response) => {
 
         const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
 
-        res.json({
-            token,
-            user: payload
-        });
+        res.json({ token, user: payload });
+
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Terjadi kesalahan pada server' });
@@ -80,7 +79,8 @@ export const resetAdmin = async (req: Request, res: Response) => {
         const { secret, newPassword } = req.body;
 
         if (!secret || secret !== SETUP_SECRET) {
-            return res.status(403).json({ error: 'Secret key salah' });
+            res.status(403).json({ error: 'Secret key salah' });
+            return;
         }
 
         const password = newPassword || 'admin';
@@ -104,9 +104,9 @@ export const resetAdmin = async (req: Request, res: Response) => {
 
         writeUsers(users);
 
-        res.json({ 
-            success: true, 
-            message: `Password admin berhasil direset ke: "${password}"` 
+        res.json({
+            success: true,
+            message: `Password admin berhasil direset ke: "${password}"`
         });
     } catch (error) {
         console.error('Reset error:', error);
