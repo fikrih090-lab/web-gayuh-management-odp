@@ -22,7 +22,7 @@ export const getDbResolvedTickets = async (req: Request, res: Response) => {
     try {
         const rows = await db.select()
             .from(help)
-            .where(or(eq(help.status, 'resolved'), eq(help.status, 'closed')));
+            .where(eq(help.status, 'close'));
             
         res.json(rows);
     } catch (error) {
