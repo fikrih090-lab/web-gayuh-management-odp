@@ -8,6 +8,7 @@ import ClientsPage from './pages/ClientsPage'
 import ClientDetailPage from './pages/ClientDetailPage'
 import PathsPage from './pages/PathsPage'
 import MonitoringPage from './pages/MonitoringPage'
+import TicketStatsPage from './pages/TicketStatsPage'
 import SettingsPage from './pages/SettingsPage'
 import UsersPage from './pages/UsersPage'
 
@@ -36,6 +37,7 @@ export default function App() {
         <Route path="clients/:id" element={<ClientDetailPage />} />
         <Route path="paths" element={<PathsPage />} />
         <Route path="monitoring" element={<MonitoringPage />} />
+        <Route path="ticket-stats" element={<TicketStatsPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="users" element={<UsersPage />} />
       </Route>

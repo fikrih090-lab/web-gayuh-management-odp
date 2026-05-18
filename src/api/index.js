@@ -172,3 +172,8 @@ export const getDbTicketStats = async () => {
   const { data } = await api.get('/tickets/db-stats');
   return data;
 };
+
+export const getDbResolvedTickets = async () => {
+  const { data } = await api.get('/tickets/db-resolved');
+  return data;
+};
