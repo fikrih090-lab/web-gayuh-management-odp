@@ -1,5 +1,22 @@
 import { Request, Response } from 'express';
 import { readTickets, writeTickets } from '../utils/ticketDb';
+import { db } from '../config/db';
+import { help } from '../db/schema';
+import { sql } from 'drizzle-orm';
+
+export const getDbTicketStats = async (req: Request, res: Response) => {
+    try {
+        const rows = await db.select({
+            status: help.status,
+            count: sql<number>`count(*)`
+        }).from(help).groupBy(help.status);
+        
+        res.json(rows);
+    } catch (error) {
+        console.error('Error fetching DB ticket stats:', error);
+        res.status(500).json({ error: 'Gagal mengambil statistik tiket dari database' });
+    }
+};
 
 export const getTickets = async (req: Request, res: Response) => {
     try {

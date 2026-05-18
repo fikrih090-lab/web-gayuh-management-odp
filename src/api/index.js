@@ -167,3 +167,8 @@ export const deleteTicket = async (id) => {
   const { data } = await api.delete(`/tickets/${id}`);
   return data;
 };
+
+export const getDbTicketStats = async () => {
+  const { data } = await api.get('/tickets/db-stats');
+  return data;
+};

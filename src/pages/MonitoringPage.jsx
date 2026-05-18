@@ -1,9 +1,9 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
   Clipboard, Plus, Trash2, Edit, CheckCircle, AlertCircle,
-  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield
+  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database
 } from 'lucide-react'
-import { getTickets, createTicket, updateTicket, deleteTicket, getClients } from '../api'
+import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats } from '../api'
 
 function getStatusStyle(status) {
   switch (status) {
@@ -18,6 +18,7 @@ function getStatusStyle(status) {
 export default function MonitoringPage() {
   const [tickets, setTickets] = useState([])
   const [clients, setClients] = useState([])
+  const [dbStats, setDbStats] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('Semua')
@@ -53,14 +54,16 @@ export default function MonitoringPage() {
   const fetchTicketsAndClients = async () => {
     setLoading(true)
     try {
-      const [ticketData, clientData] = await Promise.all([
+      const [ticketData, clientData, dbStatData] = await Promise.all([
         getTickets(),
-        getClients()
+        getClients(),
+        getDbTicketStats()
       ])
       setTickets(ticketData)
       setClients(clientData)
+      setDbStats(dbStatData || [])
     } catch (error) {
-      console.error('Error fetching tickets/clients:', error)
+      console.error('Error fetching tickets/clients/stats:', error)
     } finally {
       setLoading(false)
     }
@@ -237,6 +240,53 @@ export default function MonitoringPage() {
           <div className="card p-5 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
             <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Selesai</p>
             <p className="text-3xl font-extrabold text-success tracking-tight mt-2">{stats.resolved}</p>
+          </div>
+        </div>
+
+        {/* Database Ticket Stats Grid */}
+        <div className="card p-6 bg-gradient-to-br from-bg-secondary to-bg-tertiary border-accent/20 animate-slide-up" style={{ animationDelay: '200ms', animationFillMode: 'both' }}>
+          <div className="flex items-center gap-3 border-b border-border/40 pb-4 mb-4">
+            <div className="p-2 rounded-lg bg-accent/10 text-accent">
+              <Database size={20} />
+            </div>
+            <div>
+              <h2 className="text-base font-bold text-text-primary">Statistik Tiket Masuk (Database MySQL)</h2>
+              <p className="text-xs text-text-secondary mt-0.5">Real-time sinkronisasi dari tabel database 'help'</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="p-4 rounded-xl bg-bg-primary/50 border border-border/30 flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">Total Masuk</p>
+                <p className="text-2xl font-extrabold text-text-primary mt-1">
+                  {dbStats.reduce((acc, curr) => acc + Number(curr.count || 0), 0)}
+                </p>
+              </div>
+              <div className="text-text-muted text-xs font-semibold">Tiket</div>
+            </div>
+
+            {['open', 'progress', 'resolved'].map((statusKey, i) => {
+              const displayLabel = statusKey === 'open' ? 'Belum Diambil' : statusKey === 'progress' ? 'Sedang Diproses' : 'Selesai / Teratasi';
+              const colorClass = statusKey === 'open' ? 'text-danger' : statusKey === 'progress' ? 'text-warning' : 'text-success';
+              const bgClass = statusKey === 'open' ? 'bg-danger/10' : statusKey === 'progress' ? 'bg-warning/10' : 'bg-success/10';
+              const borderClass = statusKey === 'open' ? 'border-danger/20' : statusKey === 'progress' ? 'border-warning/20' : 'border-success/20';
+
+              const matchingStat = dbStats.find(s => String(s.status || '').toLowerCase() === statusKey);
+              const countValue = matchingStat ? Number(matchingStat.count || 0) : 0;
+
+              return (
+                <div key={statusKey} className={`p-4 rounded-xl bg-bg-primary/50 border ${borderClass} flex items-center justify-between`}>
+                  <div>
+                    <p className="text-[10px] font-bold text-text-muted uppercase tracking-wider">{displayLabel}</p>
+                    <p className={`text-2xl font-extrabold ${colorClass} mt-1`}>{countValue}</p>
+                  </div>
+                  <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${bgClass} ${colorClass}`}>
+                    {statusKey}
+                  </span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
