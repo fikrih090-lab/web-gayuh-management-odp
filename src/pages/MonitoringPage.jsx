@@ -126,7 +126,7 @@ export default function MonitoringPage() {
     try {
       await updateTicket(ticket.id, {
         status: 'In Progress',
-        assignedTo: currentUser.name || 'Teknisi'
+        assignedTo: currentUser.username
       })
       fetchTicketsAndClients()
     } catch (error) {
@@ -191,6 +191,13 @@ export default function MonitoringPage() {
     return users.filter(u => String(u.roleId || '') === '4')
   }, [users])
 
+  // Helper to show technician real name in display
+  const getTechnicianDisplayName = (assignedToUsername) => {
+    if (!assignedToUsername) return ''
+    const tech = users.find(u => u.username === assignedToUsername || u.name === assignedToUsername)
+    return tech ? (tech.name || tech.username) : assignedToUsername
+  }
+
   // Filtered tickets - Technicians only see tickets assigned to them
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
@@ -201,20 +208,21 @@ export default function MonitoringPage() {
       
       const matchesStatus = statusFilter === 'Semua' || t.status === statusFilter
       const matchesCategory = categoryFilter === 'Semua' || t.category === categoryFilter
-      const matchesAssignee = !isTeknisi || t.assignedTo === currentUser.username
+      const matchesAssignee = !isTeknisi || t.assignedTo === currentUser.username || t.assignedTo === currentUser.name
       
       return matchesSearch && matchesStatus && matchesCategory && matchesAssignee
     })
-  }, [tickets, search, statusFilter, categoryFilter, isTeknisi, currentUser.username])
+  }, [tickets, search, statusFilter, categoryFilter, isTeknisi, currentUser.username, currentUser.name])
 
-  // Ticket stats
+  // Ticket stats - Technicians only see stats for their own tickets
   const stats = useMemo(() => {
-    const total = tickets.length
-    const open = tickets.filter(t => t.status === 'Open').length
-    const progress = tickets.filter(t => t.status === 'In Progress').length
-    const resolved = tickets.filter(t => t.status === 'Resolved' || t.status === 'Closed').length
+    const visibleTickets = tickets.filter(t => !isTeknisi || t.assignedTo === currentUser.username || t.assignedTo === currentUser.name)
+    const total = visibleTickets.length
+    const open = visibleTickets.filter(t => t.status === 'Open').length
+    const progress = visibleTickets.filter(t => t.status === 'In Progress').length
+    const resolved = visibleTickets.filter(t => t.status === 'Resolved' || t.status === 'Closed').length
     return { total, open, progress, resolved }
-  }, [tickets])
+  }, [tickets, isTeknisi, currentUser.username, currentUser.name])
 
   return (
     <div className="h-full overflow-auto animate-fade-in bg-bg-primary">
@@ -349,9 +357,9 @@ export default function MonitoringPage() {
                     <div className="bg-bg-secondary border border-border/50 rounded-lg p-2 flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <div className="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[10px] font-bold">
-                          {ticket.assignedTo.substring(0, 2).toUpperCase()}
+                          {getTechnicianDisplayName(ticket.assignedTo).substring(0, 2).toUpperCase()}
                         </div>
-                        <span className="text-xs font-semibold text-text-primary truncate">Ditugaskan: {ticket.assignedTo}</span>
+                        <span className="text-xs font-semibold text-text-primary truncate">Ditugaskan: {getTechnicianDisplayName(ticket.assignedTo)}</span>
                       </div>
                     </div>
                   )}
