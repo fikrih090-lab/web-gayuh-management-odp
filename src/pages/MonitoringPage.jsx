@@ -229,13 +229,13 @@ export default function MonitoringPage() {
       <div className="p-5 md:p-6 max-w-7xl mx-auto space-y-6">
         
         {/* Header */}
-        <div className="bg-bg-primary -mx-5 -mt-5 p-5 md:p-6 md:-mx-6 md:-mt-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="bg-bg-primary -mx-5 -mt-5 p-4 md:p-6 md:-mx-6 md:-mt-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Management Tiket Gangguan</h1>
-            <p className="text-sm text-text-muted mt-1 font-medium">Kelola aduan pelanggan dan penugasan teknisi lapangan</p>
+            <h1 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">Management Tiket Gangguan</h1>
+            <p className="text-xs md:text-sm text-text-muted mt-1 font-medium">Kelola aduan pelanggan dan penugasan teknisi</p>
           </div>
           {canCreateOrDelete && (
-            <button onClick={() => openModal()} className="btn-primary px-5 py-2.5 text-sm flex items-center justify-center gap-2">
+            <button onClick={() => openModal()} className="btn-primary px-4 py-2.5 text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
               <Plus size={16} />
               <span>Tambah Tiket</span>
             </button>
@@ -243,33 +243,33 @@ export default function MonitoringPage() {
         </div>
 
         {/* Stats grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="card p-5 animate-slide-up" style={{ animationDelay: '0ms', animationFillMode: 'both' }}>
-            <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Total Tiket</p>
-            <p className="text-3xl font-extrabold text-text-primary tracking-tight mt-2">{stats.total}</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          <div className="card p-3 md:p-5 animate-slide-up" style={{ animationDelay: '0ms', animationFillMode: 'both' }}>
+            <p className="text-[10px] md:text-xs font-semibold text-text-secondary uppercase tracking-wider">Total Tiket</p>
+            <p className="text-2xl md:text-3xl font-extrabold text-text-primary tracking-tight mt-1 md:mt-2">{stats.total}</p>
           </div>
 
-          <div className="card p-5 animate-slide-up" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
+          <div className="card p-3 md:p-5 animate-slide-up" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
             <div className="flex items-center justify-between">
-              <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Belum Diambil (Open)</p>
-              <span className="w-2.5 h-2.5 rounded-full bg-danger animate-pulse" />
+              <p className="text-[10px] md:text-xs font-semibold text-text-secondary uppercase tracking-wider">Open</p>
+              <span className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full bg-danger animate-pulse" />
             </div>
-            <p className="text-3xl font-extrabold text-danger tracking-tight mt-2">{stats.open}</p>
+            <p className="text-2xl md:text-3xl font-extrabold text-danger tracking-tight mt-1 md:mt-2">{stats.open}</p>
           </div>
 
-          <div className="card p-5 animate-slide-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
-            <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Dalam Proses</p>
-            <p className="text-3xl font-extrabold text-warning tracking-tight mt-2">{stats.progress}</p>
+          <div className="card p-3 md:p-5 animate-slide-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
+            <p className="text-[10px] md:text-xs font-semibold text-text-secondary uppercase tracking-wider">Dalam Proses</p>
+            <p className="text-2xl md:text-3xl font-extrabold text-warning tracking-tight mt-1 md:mt-2">{stats.progress}</p>
           </div>
 
-          <div className="card p-5 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
-            <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Selesai</p>
-            <p className="text-3xl font-extrabold text-success tracking-tight mt-2">{stats.resolved}</p>
+          <div className="card p-3 md:p-5 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
+            <p className="text-[10px] md:text-xs font-semibold text-text-secondary uppercase tracking-wider">Selesai</p>
+            <p className="text-2xl md:text-3xl font-extrabold text-success tracking-tight mt-1 md:mt-2">{stats.resolved}</p>
           </div>
         </div>
 
         {/* Filters and Search */}
-        <div className="card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="card p-3 md:p-5 flex flex-col gap-3 md:gap-4 md:flex-row md:items-center md:justify-between">
           <div className="relative flex-1 w-full md:max-w-md">
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
@@ -281,14 +281,14 @@ export default function MonitoringPage() {
             />
           </div>
 
-          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-            {/* Status Pills */}
-            <div className="flex border border-border rounded-lg p-0.5 bg-bg-secondary overflow-hidden">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full md:w-auto">
+            {/* Status Pills — horizontally scrollable on mobile */}
+            <div className="flex border border-border rounded-lg p-0.5 bg-bg-secondary overflow-x-auto mobile-scroll-x">
               {['Semua', 'Open', 'In Progress', 'Resolved', 'Closed'].map((st) => (
                 <button
                   key={st}
                   onClick={() => setStatusFilter(st)}
-                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all whitespace-nowrap ${
                     statusFilter === st 
                       ? 'bg-bg-primary text-text-primary shadow-sm' 
                       : 'text-text-secondary hover:text-text-primary'
@@ -324,7 +324,7 @@ export default function MonitoringPage() {
             return (
               <div 
                 key={ticket.id} 
-                className="card p-6 flex flex-col justify-between hover:border-border/80 transition-all duration-200 animate-slide-up"
+                className="card p-4 md:p-6 flex flex-col justify-between hover:border-border/80 transition-all duration-200 animate-slide-up"
                 style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}
               >
                 <div>
@@ -446,8 +446,8 @@ export default function MonitoringPage() {
 
       {/* Add / Edit Ticket Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-bg-secondary w-full max-w-md rounded-2xl shadow-xl border border-border overflow-hidden animate-fade-in-scale">
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-bg-secondary w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-xl border border-border overflow-hidden animate-fade-in-scale max-h-[90vh] sm:max-h-[85vh] flex flex-col mobile-safe-bottom">
             <div className="flex items-center justify-between p-5 border-b border-border bg-bg-primary">
               <h3 className="text-lg font-bold text-text-primary">{editingTicket ? 'Edit Tiket' : 'Buat Tiket Gangguan'}</h3>
               <button onClick={() => setIsModalOpen(false)} className="text-text-muted hover:text-text-primary transition-colors">
@@ -455,7 +455,7 @@ export default function MonitoringPage() {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+            <form onSubmit={handleSubmit} className="p-4 md:p-5 space-y-4 overflow-y-auto flex-1">
               <div>
                 <label className="block text-xs font-semibold text-text-secondary mb-1">Judul Gangguan / Keluhan</label>
                 <input 
