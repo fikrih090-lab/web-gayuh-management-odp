@@ -11,8 +11,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icons.svg', 'logo.png'],
       manifest: {
-        name: 'NetManager — ISP Network Management',
-        short_name: 'NetManager',
+        name: 'GayuhMediaInformatika',
+        short_name: 'GayuhMediaInformatika',
         description: 'Aplikasi manajemen pelanggan dan jaringan ODP',
         theme_color: '#0f172a',
         background_color: '#0f172a',
