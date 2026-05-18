@@ -201,7 +201,7 @@ export default function TicketStatsPage() {
                     <div 
                       key={m.key} 
                       onClick={() => setSelectedMonthKey(m.key)}
-                      className="flex-1 flex flex-col items-center group cursor-pointer"
+                      className="flex-1 h-full flex flex-col justify-end items-center group cursor-pointer"
                     >
                       {/* Tooltip on hover */}
                       <div className={`mb-2 px-2.5 py-1 bg-zinc-900 border border-zinc-800 text-[10px] font-bold text-white rounded shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-200 ${isActive ? 'opacity-100' : ''}`}>
