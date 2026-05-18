@@ -483,7 +483,7 @@ export default function MonitoringPage() {
                 />
               </div>
 
-              {isSuperAdmin && (
+              {canCreateOrDelete && (
                 <div>
                   <label className="block text-xs font-semibold text-text-secondary mb-1">Tugaskan ke Teknisi</label>
                   <select 
@@ -560,6 +560,12 @@ export default function MonitoringPage() {
                           setSelectedClient(c)
                           setClientSearch(c.name)
                           setShowClientDropdown(false)
+                          if (c.latitude && c.longitude && c.latitude !== '0' && c.longitude !== '0' && c.latitude !== '' && c.longitude !== '') {
+                            setFormData(prev => ({
+                              ...prev,
+                              shareloc: `https://www.google.com/maps?q=${c.latitude},${c.longitude}`
+                            }))
+                          }
                         }}
                         className="w-full text-left px-4 py-2.5 text-xs hover:bg-bg-tertiary transition-colors flex items-center justify-between"
                       >

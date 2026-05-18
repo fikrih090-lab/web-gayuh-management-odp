@@ -1,15 +1,28 @@
 [
   {
-    "id": 1777427905002,
-    "title": "LOS Merah / Red di Modem",
-    "description": "Lampu LOS merah berkedip di modem pelanggan Ibu Siti. Sudah coba restart modem tetap sama.",
+    "id": 1779143441087,
+    "title": "plerr",
+    "description": "pleerrr",
     "category": "Koneksi",
-    "status": "In Progress",
-    "clientName": "Siti Rahma",
-    "clientId": "G-10293",
-    "createdAt": "2026-05-18T20:41:38.443Z",
-    "updatedAt": "2026-05-18T21:41:38.443Z",
-    "createdBy": "Helpdesk Gayuh",
-    "assignedTo": "Teknisi Hendrik"
+    "status": "Open",
+    "clientName": "ADELIA DWI PUTRI(BG ZEBIR)-(Q12A)",
+    "clientId": "CL-default_sales_998",
+    "createdAt": "2026-05-18T22:30:41.087Z",
+    "updatedAt": "2026-05-18T22:30:41.087Z",
+    "createdBy": "Super Admin",
+    "assignedTo": ""
+  },
+  {
+    "id": 1779143410490,
+    "title": "KONTOLNYA MATI",
+    "description": "NGACENG GAK BERHENTI HENTI",
+    "category": "Kabel",
+    "status": "Resolved",
+    "clientName": "-",
+    "clientId": "-",
+    "createdAt": "2026-05-18T22:30:10.490Z",
+    "updatedAt": "2026-05-18T22:30:19.233Z",
+    "createdBy": "Super Admin",
+    "assignedTo": "Super Admin"
   }
 ]
