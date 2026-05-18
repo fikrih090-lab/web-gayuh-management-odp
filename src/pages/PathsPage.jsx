@@ -176,12 +176,12 @@ export default function PathsPage() {
   return (
     <div className="h-full flex flex-col lg:flex-row animate-fade-in relative z-0">
       {/* Side panel */}
-      <div className="w-full lg:w-[380px] xl:w-[420px] flex flex-col border-r border-border min-h-0 bg-bg-primary z-10">
-        <div className="p-5 md:p-6 border-b border-border bg-bg-primary flex flex-col gap-4">
+      <div className="w-full lg:w-[380px] xl:w-[420px] flex flex-col border-r border-border min-h-0 bg-bg-primary z-10 max-h-[40vh] lg:max-h-full">
+        <div className="p-4 md:p-6 border-b border-border bg-bg-primary flex flex-col gap-3 md:gap-4">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-text-primary tracking-tight">Jalur Kabel FO</h1>
-              <p className="text-sm text-text-muted mt-1 font-medium">{customPaths.length} jalur terdaftar</p>
+              <h1 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">Jalur Kabel FO</h1>
+              <p className="text-xs md:text-sm text-text-muted mt-1 font-medium">{customPaths.length} jalur terdaftar</p>
             </div>
             {!isDrawing && isFullAccess && (
               <button onClick={handleStartDraw} className="btn-primary px-4 py-2 text-sm flex items-center gap-2 shrink-0">
@@ -328,7 +328,7 @@ export default function PathsPage() {
     </div>
 
     {/* Map */}
-    <div className="flex-1 relative min-h-[400px]">
+    <div className="flex-1 relative min-h-[300px] lg:min-h-[400px]">
         <MapContainer center={mapCenter} zoom={13} className="w-full h-full" zoomControl={false} attributionControl={false}>
           <TileLayer 
             key={isDark ? 'dark' : 'light'}

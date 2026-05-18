@@ -67,41 +67,41 @@ export default function ClientsPage() {
   return (
     <div className="h-full flex flex-col animate-fade-in relative z-0">
       {/* Header */}
-      <div className="p-5 md:p-6 border-b border-border space-y-5 bg-bg-primary">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-4 md:p-6 border-b border-border space-y-4 md:space-y-5 bg-bg-primary">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Manajemen Pelanggan</h1>
-            <p className="text-sm text-text-muted mt-1 font-medium">
+            <h1 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">Manajemen Pelanggan</h1>
+            <p className="text-xs md:text-sm text-text-muted mt-1 font-medium">
               {loading ? 'Memuat...' : `${total} pelanggan terdaftar`}
             </p>
           </div>
           {isFullAccess && (
-            <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2 text-sm flex items-center justify-center gap-2">
+            <button onClick={() => setIsAddModalOpen(true)} className="btn-primary px-5 py-2.5 text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
               <Plus size={16} />
-              <span className="hidden sm:inline">Tambah Pelanggan</span>
+              <span>Tambah Pelanggan</span>
             </button>
           )}
         </div>
 
         {/* Quick stats */}
-        <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-bg-secondary border border-border rounded-lg shrink-0">
+        <div className="flex gap-2 overflow-x-auto pb-1 mobile-scroll-x">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-bg-secondary border border-border rounded-lg shrink-0">
             <span className="w-2 h-2 rounded-full bg-success" />
-            <span className="text-sm font-medium text-text-primary">{onlineCount} <span className="text-text-muted">Online</span></span>
+            <span className="text-xs md:text-sm font-medium text-text-primary whitespace-nowrap">{onlineCount} <span className="text-text-muted">Online</span></span>
           </div>
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-bg-secondary border border-border rounded-lg shrink-0">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-bg-secondary border border-border rounded-lg shrink-0">
             <span className="w-2 h-2 rounded-full bg-danger" />
-            <span className="text-sm font-medium text-text-primary">{offlineCount} <span className="text-text-muted">Offline</span></span>
+            <span className="text-xs md:text-sm font-medium text-text-primary whitespace-nowrap">{offlineCount} <span className="text-text-muted">Offline</span></span>
           </div>
-          <div className="flex items-center gap-2.5 px-4 py-2 bg-bg-secondary border border-border rounded-lg shrink-0">
+          <div className="flex items-center gap-2 px-3 py-1.5 bg-bg-secondary border border-border rounded-lg shrink-0">
             <span className="w-2 h-2 rounded-full bg-warning" />
-            <span className="text-sm font-medium text-text-primary">{overdueCount} <span className="text-text-muted">Tunggakan</span></span>
+            <span className="text-xs md:text-sm font-medium text-text-primary whitespace-nowrap">{overdueCount} <span className="text-text-muted">Tunggakan</span></span>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-3">
-          <div className="relative flex-1 min-w-[200px]">
+        <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+          <div className="relative flex-1">
             <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
             <input
               type="text"
@@ -111,16 +111,18 @@ export default function ClientsPage() {
               className="w-full pl-10 pr-4 py-2.5 text-sm input-modern"
             />
           </div>
-          <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="appearance-none px-4 py-2.5 text-sm input-modern cursor-pointer w-40">
-            <option value="all">Semua Status</option>
-            <option value="online">Online</option>
-            <option value="offline">Offline</option>
-          </select>
-          <select value={filterPayment} onChange={(e) => setFilterPayment(e.target.value)} className="appearance-none px-4 py-2.5 text-sm input-modern cursor-pointer w-40">
-            <option value="all">Semua Bayar</option>
-            <option value="paid">Lunas</option>
-            <option value="overdue">Tunggakan</option>
-          </select>
+          <div className="flex gap-2">
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="appearance-none px-3 py-2.5 text-sm input-modern cursor-pointer flex-1 sm:w-36 sm:flex-none">
+              <option value="all">Semua Status</option>
+              <option value="online">Online</option>
+              <option value="offline">Offline</option>
+            </select>
+            <select value={filterPayment} onChange={(e) => setFilterPayment(e.target.value)} className="appearance-none px-3 py-2.5 text-sm input-modern cursor-pointer flex-1 sm:w-36 sm:flex-none">
+              <option value="all">Semua Bayar</option>
+              <option value="paid">Lunas</option>
+              <option value="overdue">Tunggakan</option>
+            </select>
+          </div>
         </div>
       </div>
 
@@ -190,16 +192,16 @@ export default function ClientsPage() {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-4 border-t border-border bg-bg-primary sticky bottom-0">
-            <span className="text-xs text-text-muted">
-              Halaman {page} dari {totalPages} ({total} total)
+          <div className="flex items-center justify-between px-4 md:px-5 py-3 md:py-4 border-t border-border bg-bg-primary sticky bottom-0">
+            <span className="text-[10px] md:text-xs text-text-muted">
+              Hal {page}/{totalPages} ({total})
             </span>
             <div className="flex items-center gap-2">
               <button onClick={() => fetchClients(page - 1)} disabled={page <= 1}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                 ← Prev
               </button>
-              <span className="text-xs font-mono text-text-secondary px-2">{page} / {totalPages}</span>
+              <span className="text-xs font-mono text-text-secondary px-1 hidden sm:inline">{page} / {totalPages}</span>
               <button onClick={() => fetchClients(page + 1)} disabled={page >= totalPages}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                 Next →

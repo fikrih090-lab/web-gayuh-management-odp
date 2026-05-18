@@ -250,11 +250,11 @@ export default function ODPPage() {
       {/* Table panel */}
       <div className="flex-1 flex flex-col min-h-0 border-r border-border/50 bg-bg-primary">
         {/* Header */}
-        <div className="p-5 md:p-6 border-b border-border space-y-5 bg-bg-primary">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="p-4 md:p-6 border-b border-border space-y-4 md:space-y-5 bg-bg-primary">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
-              <h1 className="text-2xl font-bold text-text-primary tracking-tight">Manajemen ODP</h1>
-              <p className="text-sm text-text-muted mt-1 font-medium">
+              <h1 className="text-xl md:text-2xl font-bold text-text-primary tracking-tight">Manajemen ODP</h1>
+              <p className="text-xs md:text-sm text-text-muted mt-1 font-medium">
                 {loading ? 'Memuat...' : `${total} ODP terdaftar`}
               </p>
             </div>
@@ -288,7 +288,7 @@ export default function ODPPage() {
         </div>
 
         {/* Filter Bar */}
-        <div className="px-5 md:px-6 py-3 border-b border-border bg-bg-secondary flex items-center gap-3 flex-wrap">
+        <div className="px-4 md:px-6 py-2.5 md:py-3 border-b border-border bg-bg-secondary flex items-center gap-2 md:gap-3 overflow-x-auto mobile-scroll-x">
           <Filter size={14} className="text-text-muted shrink-0" />
           <span className="text-xs font-semibold text-text-muted uppercase tracking-wider shrink-0">Filter</span>
           <select
@@ -321,7 +321,7 @@ export default function ODPPage() {
               if (!userLocation) { handleMyLocation().then(() => setSortNearest(true)); return }
               setSortNearest(v => !v)
             }}
-            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all ${sortNearest ? 'bg-accent text-white border-accent shadow-lg shadow-accent/20' : 'border-border text-text-muted hover:text-text-primary hover:border-accent/50'}`}
+            className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg border transition-all whitespace-nowrap shrink-0 ${sortNearest ? 'bg-accent text-white border-accent shadow-lg shadow-accent/20' : 'border-border text-text-muted hover:text-text-primary hover:border-accent/50'}`}
           >
             <SortAsc size={13} />
             ODP Terdekat
@@ -436,14 +436,14 @@ export default function ODPPage() {
 
           {/* Pagination */}
           {totalPages > 1 && (
-            <div className="flex items-center justify-between px-5 py-4 border-t border-border bg-bg-primary sticky bottom-0">
-              <span className="text-xs text-text-muted">Halaman {page} dari {totalPages} ({total} ODP)</span>
+            <div className="flex items-center justify-between px-4 md:px-5 py-3 md:py-4 border-t border-border bg-bg-primary sticky bottom-0">
+              <span className="text-[10px] md:text-xs text-text-muted">Hal {page}/{totalPages} ({total} ODP)</span>
               <div className="flex items-center gap-2">
                 <button onClick={() => fetchOdps(page - 1, search, selectedLetter)} disabled={page <= 1}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                   ← Prev
                 </button>
-                <span className="text-xs font-mono text-text-secondary px-2">{page} / {totalPages}</span>
+                <span className="text-xs font-mono text-text-secondary px-1 hidden sm:inline">{page} / {totalPages}</span>
                 <button onClick={() => fetchOdps(page + 1, search, selectedLetter)} disabled={page >= totalPages}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                   Next →
