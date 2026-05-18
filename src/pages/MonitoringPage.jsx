@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
   Clipboard, Plus, Trash2, Edit, CheckCircle, AlertCircle,
-  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database, MapPin
+  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database, MapPin, FileText
 } from 'lucide-react'
 import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats, getUsers } from '../api'
 
@@ -27,6 +27,11 @@ export default function MonitoringPage() {
   
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [editingTicket, setEditingTicket] = useState(null)
+  
+  // Notes modal (keterangan giat)
+  const [isNotesModalOpen, setIsNotesModalOpen] = useState(false)
+  const [notesInput, setNotesInput] = useState('')
+  const [notesAction, setNotesAction] = useState(null) // { ticket, action: 'take' | 'resolve' }
   
   // Client selection for tickets
   const [clientSearch, setClientSearch] = useState('')
@@ -122,12 +127,23 @@ export default function MonitoringPage() {
     }
   }
 
+  // Open notes modal before taking ticket
+  const openNotesModal = (ticket, action) => {
+    setNotesAction({ ticket, action })
+    setNotesInput(ticket.notes || '')
+    setIsNotesModalOpen(true)
+  }
+
   const handleTakeTicket = async (ticket) => {
     try {
       await updateTicket(ticket.id, {
         status: 'In Progress',
-        assignedTo: currentUser.username
+        assignedTo: currentUser.username,
+        notes: notesInput
       })
+      setIsNotesModalOpen(false)
+      setNotesInput('')
+      setNotesAction(null)
       fetchTicketsAndClients()
     } catch (error) {
       alert('Gagal mengambil tiket')
@@ -137,11 +153,27 @@ export default function MonitoringPage() {
   const handleProcessTicket = async (ticket, nextStatus) => {
     try {
       await updateTicket(ticket.id, {
-        status: nextStatus
+        status: nextStatus,
+        notes: notesInput
       })
+      setIsNotesModalOpen(false)
+      setNotesInput('')
+      setNotesAction(null)
       fetchTicketsAndClients()
     } catch (error) {
       alert('Gagal memproses tiket')
+    }
+  }
+
+  const handleSubmitNotes = () => {
+    if (!notesAction) return
+    const { ticket, action } = notesAction
+    if (action === 'take') {
+      handleTakeTicket(ticket)
+    } else if (action === 'resolve') {
+      handleProcessTicket(ticket, 'Resolved')
+    } else if (action === 'close') {
+      handleProcessTicket(ticket, 'Closed')
     }
   }
 
@@ -376,6 +408,17 @@ export default function MonitoringPage() {
                     </a>
                   )}
 
+                  {/* Keterangan Giat / Notes */}
+                  {ticket.notes && (
+                    <div className="bg-accent/5 border border-accent/15 rounded-lg p-2.5">
+                      <div className="flex items-center gap-1.5 mb-1">
+                        <FileText size={12} className="text-accent" />
+                        <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Keterangan Giat</span>
+                      </div>
+                      <p className="text-xs text-text-secondary leading-relaxed">{ticket.notes}</p>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between gap-2 pt-2">
                     <span className="text-[10px] text-text-muted font-medium flex items-center gap-1">
                       <Clock size={12} />
@@ -398,7 +441,7 @@ export default function MonitoringPage() {
                       {/* Technician Actions */}
                       {canTakeOrProcess && ticket.status === 'Open' && (
                         <button 
-                          onClick={() => handleTakeTicket(ticket)} 
+                          onClick={() => openNotesModal(ticket, 'take')} 
                           className="px-3 py-1.5 bg-accent hover:bg-accent/90 text-white rounded-md text-xs font-semibold flex items-center gap-1.5 transition-colors"
                         >
                           <Play size={12} />
@@ -409,7 +452,7 @@ export default function MonitoringPage() {
                       {canTakeOrProcess && ticket.status === 'In Progress' && (
                         <div className="flex gap-1.5">
                           <button 
-                            onClick={() => handleProcessTicket(ticket, 'Resolved')} 
+                            onClick={() => openNotesModal(ticket, 'resolve')} 
                             className="px-2.5 py-1.5 bg-success hover:bg-success/90 text-white rounded-md text-xs font-semibold flex items-center gap-1 transition-colors"
                             title="Selesaikan Tiket"
                           >
@@ -418,7 +461,7 @@ export default function MonitoringPage() {
                           </button>
                           {isSuperAdmin && (
                             <button 
-                              onClick={() => handleProcessTicket(ticket, 'Closed')} 
+                              onClick={() => openNotesModal(ticket, 'close')} 
                               className="px-2.5 py-1.5 bg-bg-tertiary hover:bg-bg-tertiary/80 text-text-primary border border-border rounded-md text-xs font-semibold transition-colors"
                               title="Tutup Tiket"
                             >
@@ -604,6 +647,76 @@ export default function MonitoringPage() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Notes / Keterangan Giat Modal */}
+      {isNotesModalOpen && notesAction && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center sm:p-4">
+          <div className="bg-bg-secondary w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl shadow-xl border border-border overflow-hidden animate-fade-in-scale mobile-safe-bottom">
+            <div className="flex items-center justify-between p-5 border-b border-border bg-bg-primary">
+              <div className="flex items-center gap-3">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
+                  notesAction.action === 'take' ? 'bg-accent/10 text-accent' :
+                  notesAction.action === 'resolve' ? 'bg-success/10 text-success' :
+                  'bg-bg-tertiary text-text-muted'
+                }`}>
+                  {notesAction.action === 'take' ? <Play size={20} /> : <Check size={20} />}
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-text-primary">
+                    {notesAction.action === 'take' ? 'Ambil Tiket' :
+                     notesAction.action === 'resolve' ? 'Selesaikan Tiket' : 'Tutup Tiket'}
+                  </h3>
+                  <p className="text-xs text-text-muted mt-0.5 line-clamp-1">{notesAction.ticket.title}</p>
+                </div>
+              </div>
+              <button onClick={() => { setIsNotesModalOpen(false); setNotesAction(null) }} className="text-text-muted hover:text-text-primary transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <div className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary mb-1.5">
+                  <FileText size={12} className="inline mr-1" />
+                  Keterangan Giat <span className="text-text-muted font-normal">(opsional)</span>
+                </label>
+                <textarea
+                  rows={4}
+                  placeholder="Tulis keterangan kegiatan, misalnya: Penggantian kabel FO dari ODP-12 ke rumah pelanggan..."
+                  value={notesInput}
+                  onChange={e => setNotesInput(e.target.value)}
+                  className="w-full px-3 py-2.5 bg-bg-primary border border-border rounded-lg text-sm resize-none focus:outline-none focus:border-accent transition-colors"
+                  autoFocus
+                />
+                <p className="text-[10px] text-text-muted mt-1">Catatan ini akan muncul di kartu tiket sebagai laporan kegiatan teknisi.</p>
+              </div>
+
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => { setIsNotesModalOpen(false); setNotesAction(null) }}
+                  className="flex-1 px-4 py-2.5 border border-border text-text-secondary rounded-lg text-sm font-medium hover:bg-bg-tertiary transition-colors"
+                >
+                  Batal
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSubmitNotes}
+                  className={`flex-1 px-4 py-2.5 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors ${
+                    notesAction.action === 'take' ? 'bg-accent hover:bg-accent/90 text-white' :
+                    notesAction.action === 'resolve' ? 'bg-success hover:bg-success/90 text-white' :
+                    'bg-text-primary hover:bg-zinc-200 text-bg-primary'
+                  }`}
+                >
+                  {notesAction.action === 'take' ? <><Play size={14} /> Ambil Tiket</> :
+                   notesAction.action === 'resolve' ? <><Check size={14} /> Selesaikan</> :
+                   'Tutup Tiket'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}
