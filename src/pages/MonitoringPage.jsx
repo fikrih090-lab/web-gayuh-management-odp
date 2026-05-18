@@ -1,9 +1,9 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
   Clipboard, Plus, Trash2, Edit, CheckCircle, AlertCircle,
-  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database
+  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database, MapPin
 } from 'lucide-react'
-import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats } from '../api'
+import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats, getUsers } from '../api'
 
 function getStatusStyle(status) {
   switch (status) {
@@ -19,6 +19,7 @@ export default function MonitoringPage() {
   const [tickets, setTickets] = useState([])
   const [clients, setClients] = useState([])
   const [dbStats, setDbStats] = useState([])
+  const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('Semua')
@@ -36,6 +37,8 @@ export default function MonitoringPage() {
     title: '',
     description: '',
     category: 'Koneksi',
+    shareloc: '',
+    assignedTo: ''
   })
 
   // Get current logged in user and permissions
@@ -54,14 +57,16 @@ export default function MonitoringPage() {
   const fetchTicketsAndClients = async () => {
     setLoading(true)
     try {
-      const [ticketData, clientData, dbStatData] = await Promise.all([
+      const [ticketData, clientData, dbStatData, userData] = await Promise.all([
         getTickets(),
         getClients(),
-        getDbTicketStats()
+        getDbTicketStats(),
+        getUsers()
       ])
       setTickets(ticketData)
       setClients(clientData)
       setDbStats(dbStatData || [])
+      setUsers(userData || [])
     } catch (error) {
       console.error('Error fetching tickets/clients/stats:', error)
     } finally {
@@ -87,7 +92,9 @@ export default function MonitoringPage() {
         category: formData.category,
         clientName: selectedClient ? selectedClient.name : '-',
         clientId: selectedClient ? selectedClient.id : '-',
-        createdBy: currentUser.name || 'Staff'
+        createdBy: currentUser.name || 'Staff',
+        shareloc: formData.shareloc,
+        assignedTo: formData.assignedTo
       }
 
       if (editingTicket) {
@@ -144,7 +151,9 @@ export default function MonitoringPage() {
       setFormData({
         title: ticket.title,
         description: ticket.description,
-        category: ticket.category || 'Koneksi'
+        category: ticket.category || 'Koneksi',
+        shareloc: ticket.shareloc || '',
+        assignedTo: ticket.assignedTo || ''
       })
       const matchingClient = clients.find(c => c.id === ticket.clientId)
       setSelectedClient(matchingClient || { name: ticket.clientName, id: ticket.clientId })
@@ -160,6 +169,8 @@ export default function MonitoringPage() {
       title: '',
       description: '',
       category: 'Koneksi',
+      shareloc: '',
+      assignedTo: ''
     })
     setSelectedClient(null)
     setClientSearch('')
@@ -175,7 +186,12 @@ export default function MonitoringPage() {
     ).slice(0, 5) // limit to 5 results for sleek look
   }, [clients, clientSearch])
 
-  // Filtered tickets
+  // List of all technicians (roleId === '4')
+  const technicians = useMemo(() => {
+    return users.filter(u => String(u.roleId || '') === '4')
+  }, [users])
+
+  // Filtered tickets - Technicians only see tickets assigned to them
   const filteredTickets = useMemo(() => {
     return tickets.filter(t => {
       const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || 
@@ -185,10 +201,11 @@ export default function MonitoringPage() {
       
       const matchesStatus = statusFilter === 'Semua' || t.status === statusFilter
       const matchesCategory = categoryFilter === 'Semua' || t.category === categoryFilter
+      const matchesAssignee = !isTeknisi || t.assignedTo === currentUser.username
       
-      return matchesSearch && matchesStatus && matchesCategory
+      return matchesSearch && matchesStatus && matchesCategory && matchesAssignee
     })
-  }, [tickets, search, statusFilter, categoryFilter])
+  }, [tickets, search, statusFilter, categoryFilter, isTeknisi, currentUser.username])
 
   // Ticket stats
   const stats = useMemo(() => {
@@ -339,6 +356,18 @@ export default function MonitoringPage() {
                     </div>
                   )}
 
+                  {ticket.shareloc && (
+                    <a 
+                      href={ticket.shareloc} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 rounded-xl text-xs font-bold transition-all duration-200"
+                    >
+                      <MapPin size={14} />
+                      <span>Arahkan ke Maps</span>
+                    </a>
+                  )}
+
                   <div className="flex items-center justify-between gap-2 pt-2">
                     <span className="text-[10px] text-text-muted font-medium flex items-center gap-1">
                       <Clock size={12} />
@@ -442,6 +471,33 @@ export default function MonitoringPage() {
                   className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm resize-none" 
                 />
               </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary mb-1">Link Share Location / Google Maps</label>
+                <input 
+                  type="text" 
+                  placeholder="Contoh: https://maps.app.goo.gl/..."
+                  value={formData.shareloc} 
+                  onChange={e => setFormData({...formData, shareloc: e.target.value})} 
+                  className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm" 
+                />
+              </div>
+
+              {isSuperAdmin && (
+                <div>
+                  <label className="block text-xs font-semibold text-text-secondary mb-1">Tugaskan ke Teknisi</label>
+                  <select 
+                    value={formData.assignedTo} 
+                    onChange={e => setFormData({...formData, assignedTo: e.target.value})} 
+                    className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm"
+                  >
+                    <option value="">-- Pilih Teknisi (Belum Ditugaskan) --</option>
+                    {technicians.map(tech => (
+                      <option key={tech.id} value={tech.username}>{tech.name || tech.username}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-4">
                 <div>

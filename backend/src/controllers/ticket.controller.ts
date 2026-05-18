@@ -42,7 +42,7 @@ export const getTickets = async (req: Request, res: Response) => {
 
 export const createTicket = async (req: Request, res: Response) => {
     try {
-        const { title, description, category, clientName, clientId, createdBy } = req.body;
+        const { title, description, category, clientName, clientId, createdBy, shareloc, assignedTo } = req.body;
         
         if (!title || !description || !category) {
             return res.status(400).json({ error: 'Judul, deskripsi, dan kategori wajib diisi' });
@@ -60,7 +60,8 @@ export const createTicket = async (req: Request, res: Response) => {
             createdAt: new Date().toISOString(),
             updatedAt: new Date().toISOString(),
             createdBy: createdBy || 'Helpdesk',
-            assignedTo: ''
+            shareloc: shareloc || '',
+            assignedTo: assignedTo || ''
         };
 
         tickets.unshift(newTicket); // Tambahkan ke paling atas
@@ -75,7 +76,7 @@ export const createTicket = async (req: Request, res: Response) => {
 export const updateTicket = async (req: Request, res: Response) => {
     try {
         const id = Number(req.params.id);
-        const { title, description, category, status, clientName, clientId, assignedTo } = req.body;
+        const { title, description, category, status, clientName, clientId, assignedTo, shareloc } = req.body;
 
         const tickets = readTickets();
         const ticketIndex = tickets.findIndex((t: any) => t.id === id);
@@ -94,6 +95,7 @@ export const updateTicket = async (req: Request, res: Response) => {
             clientName: clientName !== undefined ? clientName : ticket.clientName,
             clientId: clientId !== undefined ? clientId : ticket.clientId,
             assignedTo: assignedTo !== undefined ? assignedTo : ticket.assignedTo,
+            shareloc: shareloc !== undefined ? shareloc : ticket.shareloc,
             updatedAt: new Date().toISOString()
         };
 
