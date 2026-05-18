@@ -28,6 +28,7 @@ import networkRoutes from './routes/network.routes';
 import alertRoutes from './routes/alert.routes';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
+import ticketRoutes from './routes/ticket.routes';
 
 // Use routes
 app.use('/api/clients', clientRoutes);
@@ -36,6 +37,7 @@ app.use('/api/network', networkRoutes);
 app.use('/api/alerts', alertRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 const PORT = process.env.PORT || 5000;
 

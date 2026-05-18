@@ -3,7 +3,7 @@ import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
   Map, Radio, Users, Cable, Activity, Settings,
   Bell, Search, ChevronLeft, ChevronRight, LogOut,
-  Menu, X
+  Menu, X, Clipboard
 } from 'lucide-react'
 
 const navItems = [
@@ -11,7 +11,7 @@ const navItems = [
   { to: '/odp', icon: Radio, label: 'ODP' },
   { to: '/clients', icon: Users, label: 'Pelanggan' },
   { to: '/paths', icon: Cable, label: 'Jalur Kabel' },
-  { to: '/monitoring', icon: Activity, label: 'Monitoring' },
+  { to: '/monitoring', icon: Clipboard, label: 'Management Tiket' },
   { to: '/settings', icon: Settings, label: 'Pengaturan' },
 ]
 

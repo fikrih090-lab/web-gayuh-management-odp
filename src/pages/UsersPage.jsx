@@ -152,9 +152,13 @@ export default function UsersPage() {
                     <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border ${
                       u.roleId === '1' || u.roleId === 1 
                         ? 'bg-accent/10 text-accent border-accent/20' 
+                        : u.roleId === '3' || u.roleId === 3
+                        ? 'bg-warning/10 text-warning border-warning/20'
+                        : u.roleId === '4' || u.roleId === 4
+                        ? 'bg-success/10 text-success border-success/20'
                         : 'bg-bg-tertiary text-text-secondary border-border'
                     }`}>
-                      {u.roleId === '1' || u.roleId === 1 ? 'Full Access' : 'Read Only'}
+                      {u.roleId === '1' || u.roleId === 1 ? 'Admin' : u.roleId === '3' || u.roleId === 3 ? 'Helpdesk' : u.roleId === '4' || u.roleId === 4 ? 'Teknisi' : 'Staf (Read Only)'}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-right">
@@ -211,8 +215,10 @@ export default function UsersPage() {
               <div>
                 <label className="block text-xs font-semibold text-text-secondary mb-1">Role / Hak Akses</label>
                 <select value={formData.roleId} onChange={e => setFormData({...formData, roleId: e.target.value})} className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm appearance-none">
-                  <option value="1">Full Access (Admin)</option>
-                  <option value="2">Read Only (Staf)</option>
+                  <option value="1">Admin (Full Access)</option>
+                  <option value="3">Helpdesk</option>
+                  <option value="4">Teknisi</option>
+                  <option value="2">Staf (Read Only)</option>
                 </select>
               </div>
               <div className="pt-4 flex gap-3">

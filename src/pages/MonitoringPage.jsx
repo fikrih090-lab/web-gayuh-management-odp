@@ -1,258 +1,539 @@
 import { useMemo, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import {
-  AlertTriangle, AlertCircle, Info, CheckCircle,
-  Activity, Users, Wifi, WifiOff, Clock, Radio
+  Clipboard, Plus, Trash2, Edit, CheckCircle, AlertCircle,
+  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield
 } from 'lucide-react'
-import { getAlerts, getClients, getOdps } from '../api'
+import { getTickets, createTicket, updateTicket, deleteTicket, getClients } from '../api'
 
-function getAlertStyle(severity) {
-  switch (severity) {
-    case 'critical': return { bg: 'bg-danger/10', border: 'border-danger/30', text: 'text-danger', icon: AlertTriangle }
-    case 'warning': return { bg: 'bg-warning/10', border: 'border-warning/30', text: 'text-warning', icon: AlertCircle }
-    case 'info': return { bg: 'bg-accent/10', border: 'border-accent/30', text: 'text-accent', icon: Info }
-    default: return { bg: 'bg-bg-tertiary', border: 'border-border', text: 'text-text-secondary', icon: Info }
+function getStatusStyle(status) {
+  switch (status) {
+    case 'Open': return { bg: 'bg-danger/10', border: 'border-danger/30', text: 'text-danger' }
+    case 'In Progress': return { bg: 'bg-warning/10', border: 'border-warning/30', text: 'text-warning' }
+    case 'Resolved': return { bg: 'bg-success/10', border: 'border-success/30', text: 'text-success' }
+    case 'Closed': return { bg: 'bg-bg-tertiary', border: 'border-border', text: 'text-text-muted' }
+    default: return { bg: 'bg-bg-tertiary', border: 'border-border', text: 'text-text-secondary' }
   }
 }
 
-function timeAgo(dateStr) {
-  const diff = Date.now() - new Date(dateStr).getTime()
-  const hours = Math.floor(diff / 3600000)
-  const days = Math.floor(hours / 24)
-  if (days > 0) return `${days} hari lalu`
-  if (hours > 0) return `${hours} jam lalu`
-  return 'Baru saja'
-}
-
 export default function MonitoringPage() {
-  const [alertData, setAlertData] = useState([])
-  const [clientData, setClientData] = useState([])
-  const [odpData, setOdpData] = useState([])
+  const [tickets, setTickets] = useState([])
+  const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
+  const [search, setSearch] = useState('')
+  const [statusFilter, setStatusFilter] = useState('Semua')
+  const [categoryFilter, setCategoryFilter] = useState('Semua')
+  
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [editingTicket, setEditingTicket] = useState(null)
+  
+  // Client selection for tickets
+  const [clientSearch, setClientSearch] = useState('')
+  const [selectedClient, setSelectedClient] = useState(null)
+  const [showClientDropdown, setShowClientDropdown] = useState(false)
 
-  useEffect(() => {
-    Promise.all([getAlerts(), getClients(), getOdps()]).then(([alerts, clients, odps]) => {
-      setAlertData(alerts)
-      setClientData(clients)
-      setOdpData(odps)
-      setLoading(false)
-    })
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    category: 'Koneksi',
+  })
+
+  // Get current logged in user and permissions
+  const currentUser = useMemo(() => {
+    return JSON.parse(localStorage.getItem('user') || '{}')
   }, [])
 
+  const roleId = String(currentUser.roleId || '2')
+  const isSuperAdmin = roleId === '1'
+  const isHelpdesk = roleId === '3'
+  const isTeknisi = roleId === '4'
+
+  const canCreateOrDelete = isSuperAdmin || isHelpdesk
+  const canTakeOrProcess = isSuperAdmin || isTeknisi
+
+  const fetchTicketsAndClients = async () => {
+    setLoading(true)
+    try {
+      const [ticketData, clientData] = await Promise.all([
+        getTickets(),
+        getClients()
+      ])
+      setTickets(ticketData)
+      setClients(clientData)
+    } catch (error) {
+      console.error('Error fetching tickets/clients:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchTicketsAndClients()
+  }, [])
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+    if (!formData.title || !formData.description) {
+      alert('Mohon isi judul dan deskripsi tiket')
+      return
+    }
+
+    try {
+      const payload = {
+        title: formData.title,
+        description: formData.description,
+        category: formData.category,
+        clientName: selectedClient ? selectedClient.name : '-',
+        clientId: selectedClient ? selectedClient.id : '-',
+        createdBy: currentUser.name || 'Staff'
+      }
+
+      if (editingTicket) {
+        await updateTicket(editingTicket.id, payload)
+      } else {
+        await createTicket(payload)
+      }
+      
+      setIsModalOpen(false)
+      fetchTicketsAndClients()
+      resetForm()
+    } catch (error) {
+      alert('Gagal menyimpan data tiket')
+    }
+  }
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Yakin ingin menghapus tiket ini?')) {
+      try {
+        await deleteTicket(id)
+        fetchTicketsAndClients()
+      } catch (error) {
+        alert('Gagal menghapus tiket')
+      }
+    }
+  }
+
+  const handleTakeTicket = async (ticket) => {
+    try {
+      await updateTicket(ticket.id, {
+        status: 'In Progress',
+        assignedTo: currentUser.name || 'Teknisi'
+      })
+      fetchTicketsAndClients()
+    } catch (error) {
+      alert('Gagal mengambil tiket')
+    }
+  }
+
+  const handleProcessTicket = async (ticket, nextStatus) => {
+    try {
+      await updateTicket(ticket.id, {
+        status: nextStatus
+      })
+      fetchTicketsAndClients()
+    } catch (error) {
+      alert('Gagal memproses tiket')
+    }
+  }
+
+  const openModal = (ticket = null) => {
+    setEditingTicket(ticket)
+    if (ticket) {
+      setFormData({
+        title: ticket.title,
+        description: ticket.description,
+        category: ticket.category || 'Koneksi'
+      })
+      const matchingClient = clients.find(c => c.id === ticket.clientId)
+      setSelectedClient(matchingClient || { name: ticket.clientName, id: ticket.clientId })
+      setClientSearch(ticket.clientName || '')
+    } else {
+      resetForm()
+    }
+    setIsModalOpen(true)
+  }
+
+  const resetForm = () => {
+    setFormData({
+      title: '',
+      description: '',
+      category: 'Koneksi',
+    })
+    setSelectedClient(null)
+    setClientSearch('')
+    setShowClientDropdown(false)
+  }
+
+  // Filter clients dynamically as helpdesk searches
+  const filteredClients = useMemo(() => {
+    if (!clientSearch) return []
+    return clients.filter(c => 
+      c.name.toLowerCase().includes(clientSearch.toLowerCase()) || 
+      c.id.toLowerCase().includes(clientSearch.toLowerCase())
+    ).slice(0, 5) // limit to 5 results for sleek look
+  }, [clients, clientSearch])
+
+  // Filtered tickets
+  const filteredTickets = useMemo(() => {
+    return tickets.filter(t => {
+      const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || 
+                            t.clientName.toLowerCase().includes(search.toLowerCase()) ||
+                            t.description.toLowerCase().includes(search.toLowerCase()) ||
+                            t.clientId.toLowerCase().includes(search.toLowerCase())
+      
+      const matchesStatus = statusFilter === 'Semua' || t.status === statusFilter
+      const matchesCategory = categoryFilter === 'Semua' || t.category === categoryFilter
+      
+      return matchesSearch && matchesStatus && matchesCategory
+    })
+  }, [tickets, search, statusFilter, categoryFilter])
+
+  // Ticket stats
   const stats = useMemo(() => {
-    const totalClients = clientData.length || 1
-    const onlineClients = clientData.filter(c => c.status === 'online').length
-    const offlineClients = clientData.filter(c => c.status === 'offline').length
-    const availablePorts = odpData.reduce((acc, odp) => acc + (odp.totalPorts || 8) - (odp.usedPorts || 0), 0)
-    return { totalClients, onlineClients, offlineClients, availablePorts }
-  }, [clientData, odpData])
-
-  const activeAlerts = alertData.filter(a => !a.resolved)
-  const resolvedAlerts = alertData.filter(a => a.resolved)
-
-  const onlinePercent = Math.round((stats.onlineClients / stats.totalClients) * 100)
-
-  if (loading) return <div className="p-8 text-text-secondary">Loading...</div>
+    const total = tickets.length
+    const open = tickets.filter(t => t.status === 'Open').length
+    const progress = tickets.filter(t => t.status === 'In Progress').length
+    const resolved = tickets.filter(t => t.status === 'Resolved' || t.status === 'Closed').length
+    return { total, open, progress, resolved }
+  }, [tickets])
 
   return (
-    <div className="h-full overflow-auto animate-fade-in z-0 relative bg-bg-primary">
+    <div className="h-full overflow-auto animate-fade-in bg-bg-primary">
       <div className="p-5 md:p-6 max-w-7xl mx-auto space-y-6">
+        
         {/* Header */}
-        <div className="bg-bg-primary -mx-5 -mt-5 p-5 md:p-6 md:-mx-6 md:-mt-6 border-b border-border mb-6">
-          <h1 className="text-2xl font-bold text-text-primary tracking-tight">Monitoring Jaringan</h1>
-          <p className="text-sm text-text-muted mt-1 font-medium">Pantau status jaringan dan gangguan secara real-time</p>
+        <div className="bg-bg-primary -mx-5 -mt-5 p-5 md:p-6 md:-mx-6 md:-mt-6 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-text-primary tracking-tight">Management Tiket Gangguan</h1>
+            <p className="text-sm text-text-muted mt-1 font-medium">Kelola aduan pelanggan dan penugasan teknisi lapangan</p>
+          </div>
+          {canCreateOrDelete && (
+            <button onClick={() => openModal()} className="btn-primary px-5 py-2.5 text-sm flex items-center justify-center gap-2">
+              <Plus size={16} />
+              <span>Tambah Tiket</span>
+            </button>
+          )}
         </div>
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="card p-5 animate-slide-up" style={{ animationDelay: '0ms', animationFillMode: 'both' }}>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-success/10 flex items-center justify-center">
-                <Wifi size={24} className="text-success" />
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-text-primary tracking-tight leading-none">{stats.onlineClients}</p>
-                <p className="text-sm text-text-muted mt-1 font-medium">Online</p>
-              </div>
-            </div>
-            <div className="h-2 bg-bg-tertiary rounded-full overflow-hidden border border-border">
-              <div className="h-full bg-success rounded-full transition-all duration-1000" style={{ width: `${onlinePercent}%` }} />
-            </div>
-            <p className="text-xs text-text-muted mt-2 font-medium">{onlinePercent}% dari total</p>
+            <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Total Tiket</p>
+            <p className="text-3xl font-extrabold text-text-primary tracking-tight mt-2">{stats.total}</p>
           </div>
 
           <div className="card p-5 animate-slide-up" style={{ animationDelay: '50ms', animationFillMode: 'both' }}>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-danger/10 flex items-center justify-center">
-                <WifiOff size={24} className="text-danger" />
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-text-primary tracking-tight leading-none">{stats.offlineClients}</p>
-                <p className="text-sm text-text-muted mt-1 font-medium">Offline</p>
-              </div>
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Belum Diambil (Open)</p>
+              <span className="w-2.5 h-2.5 rounded-full bg-danger animate-pulse" />
             </div>
+            <p className="text-3xl font-extrabold text-danger tracking-tight mt-2">{stats.open}</p>
           </div>
 
           <div className="card p-5 animate-slide-up" style={{ animationDelay: '100ms', animationFillMode: 'both' }}>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-warning/10 flex items-center justify-center">
-                <AlertTriangle size={24} className="text-warning" />
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-text-primary tracking-tight leading-none">{activeAlerts.length}</p>
-                <p className="text-sm text-text-muted mt-1 font-medium">Gangguan Aktif</p>
-              </div>
-            </div>
+            <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Dalam Proses</p>
+            <p className="text-3xl font-extrabold text-warning tracking-tight mt-2">{stats.progress}</p>
           </div>
 
           <div className="card p-5 animate-slide-up" style={{ animationDelay: '150ms', animationFillMode: 'both' }}>
-            <div className="flex items-center gap-4 mb-4">
-              <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                <Radio size={24} className="text-accent" />
-              </div>
-              <div>
-                <p className="text-3xl font-bold text-text-primary tracking-tight leading-none">{stats.availablePorts}</p>
-                <p className="text-sm text-text-muted mt-1 font-medium">Port Tersedia</p>
-              </div>
-            </div>
+            <p className="text-xs font-semibold text-text-secondary uppercase tracking-wider">Selesai</p>
+            <p className="text-3xl font-extrabold text-success tracking-tight mt-2">{stats.resolved}</p>
           </div>
         </div>
 
-        {/* Alerts */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 animate-slide-up stagger-1">
-          {/* Active alerts */}
-          <div className="card overflow-hidden flex flex-col">
-            <div className="px-6 py-5 border-b border-border flex items-center justify-between bg-bg-secondary">
-              <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
-                <AlertTriangle size={18} className="text-warning" />
-                Gangguan Aktif ({activeAlerts.length})
-              </h3>
-            </div>
-            <div className="divide-y divide-border flex-1">
-              {activeAlerts.map(alert => {
-                const style = getAlertStyle(alert.severity)
-                const Icon = style.icon
-                return (
-                  <div key={alert.id} className={`p-5 ${style.bg.replace('/10', '/5')} border-l-4 ${style.border.replace('/30', '')} transition-all duration-200 hover:bg-bg-tertiary`}>
-                    <div className="flex items-start gap-4">
-                      <div className={`p-2 rounded-lg ${style.bg} ${style.text} shrink-0`}>
-                        <Icon size={20} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <p className="text-base font-bold text-text-primary">{alert.title}</p>
-                          <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded ${style.bg} ${style.text} border border-current/20`}>
-                            {alert.severity}
-                          </span>
-                        </div>
-                        <p className="text-sm text-text-secondary mt-1 leading-relaxed">{alert.description}</p>
-                        <div className="flex items-center gap-4 mt-3 text-xs font-medium text-text-muted">
-                          <span className="flex items-center gap-1.5 bg-bg-primary px-2 py-1 rounded border border-border">
-                            <Clock size={14} className="text-text-secondary" />
-                            {timeAgo(alert.createdAt)}
-                          </span>
-                          {alert.affectedClients > 0 && (
-                            <span className="flex items-center gap-1.5 bg-bg-primary px-2 py-1 rounded border border-border">
-                              <Users size={14} className="text-text-secondary" />
-                              {alert.affectedClients} pelanggan terdampak
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )
-              })}
-              {activeAlerts.length === 0 && (
-                <div className="p-16 text-center text-text-muted">
-                  <div className="w-16 h-16 mx-auto bg-success/5 rounded-full flex items-center justify-center mb-4">
-                    <CheckCircle size={32} className="text-success opacity-50" />
-                  </div>
-                  <p className="text-base font-medium">Tidak ada gangguan aktif</p>
-                </div>
-              )}
-            </div>
+        {/* Filters and Search */}
+        <div className="card p-5 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative flex-1 w-full md:max-w-md">
+            <Search size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
+            <input
+              type="text"
+              placeholder="Cari judul tiket, nama, ID pelanggan..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 text-sm input-modern"
+            />
           </div>
 
-          {/* Resolved alerts */}
-          <div className="card overflow-hidden flex flex-col">
-            <div className="px-6 py-5 border-b border-border bg-bg-secondary">
-              <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
-                <CheckCircle size={18} className="text-success" />
-                Riwayat Selesai ({resolvedAlerts.length})
-              </h3>
-            </div>
-            <div className="divide-y divide-border flex-1">
-              {[...resolvedAlerts]
-                .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-                .map(alert => (
-                <div key={alert.id} className="p-5 opacity-70 hover:opacity-100 hover:bg-bg-tertiary transition-all duration-200">
-                  <div className="flex items-start gap-4">
-                    <div className="p-2 rounded-lg bg-success/10 text-success shrink-0">
-                      <CheckCircle size={20} />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-base font-semibold text-text-primary line-through decoration-text-muted">{alert.title}</p>
-                      <p className="text-sm text-text-secondary mt-1">{alert.description}</p>
-                      <span className="text-xs font-medium text-text-muted flex items-center gap-1.5 mt-2 bg-bg-primary px-2 py-1 rounded border border-border w-max">
-                        <Clock size={14} />
-                        {timeAgo(alert.createdAt)}
-                      </span>
-                    </div>
-                  </div>
-                </div>
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            {/* Status Pills */}
+            <div className="flex border border-border rounded-lg p-0.5 bg-bg-secondary overflow-hidden">
+              {['Semua', 'Open', 'In Progress', 'Resolved', 'Closed'].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setStatusFilter(st)}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md transition-all ${
+                    statusFilter === st 
+                      ? 'bg-bg-primary text-text-primary shadow-sm' 
+                      : 'text-text-secondary hover:text-text-primary'
+                  }`}
+                >
+                  {st}
+                </button>
               ))}
             </div>
+
+            {/* Category Select */}
+            <div className="relative">
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="pl-3 pr-8 py-2 bg-bg-secondary border border-border rounded-lg text-xs font-semibold text-text-primary appearance-none focus:outline-none focus:border-accent"
+              >
+                <option value="Semua">Semua Kategori</option>
+                <option value="Koneksi">Koneksi</option>
+                <option value="Kabel">Kabel</option>
+                <option value="Perangkat">Perangkat</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+              <Filter size={12} className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none" />
+            </div>
           </div>
         </div>
 
-        {/* Offline clients list */}
-        <div className="card overflow-hidden animate-slide-up stagger-2">
-          <div className="px-6 py-5 border-b border-border bg-bg-secondary">
-            <h3 className="text-sm font-bold text-text-primary uppercase tracking-wider flex items-center gap-2">
-              <WifiOff size={18} className="text-danger" />
-              Pelanggan Offline
-            </h3>
-          </div>
-          <div className="overflow-auto max-h-[400px]">
-            <table className="w-full">
-              <thead className="sticky top-0 bg-bg-secondary z-10 border-b border-border">
-                <tr className="text-left text-xs text-text-secondary uppercase tracking-wider font-semibold">
-                  <th className="px-6 py-4">Pelanggan</th>
-                  <th className="px-6 py-4 hidden sm:table-cell">ODP</th>
-                  <th className="px-6 py-4 hidden md:table-cell">Paket</th>
-                  <th className="px-6 py-4">Terakhir Online</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {clientData.filter(c => c.status === 'offline').map(client => (
-                  <tr
-                    key={client.id}
-                    className="table-row-hover cursor-pointer"
-                    onClick={() => navigate(`/clients/${client.id}`)}
-                  >
-                    <td className="px-6 py-4">
-                      <p className="text-sm font-semibold text-text-primary">{client.name}</p>
-                      <p className="text-xs text-text-muted mt-0.5">{client.address}</p>
-                    </td>
-                    <td className="px-6 py-4 text-sm font-medium text-accent hidden sm:table-cell">{client.odpId}</td>
-                    <td className="px-6 py-4 text-sm text-text-secondary hidden md:table-cell">
-                      <span className="bg-bg-tertiary px-2 py-1 rounded border border-border">{client.package}</span>
-                    </td>
-                    <td className="px-6 py-4">
-                      <span className="text-xs font-medium text-text-secondary bg-bg-tertiary px-2 py-1 rounded border border-border flex items-center gap-1.5 w-max">
-                        <Clock size={12} className="text-text-muted" />
-                        {new Date(client.lastOnline).toLocaleString('id-ID')}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {/* Tickets Grid / List */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {filteredTickets.map((ticket, index) => {
+            const style = getStatusStyle(ticket.status)
+            return (
+              <div 
+                key={ticket.id} 
+                className="card p-6 flex flex-col justify-between hover:border-border/80 transition-all duration-200 animate-slide-up"
+                style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}
+              >
+                <div>
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-current/25 ${style.bg} ${style.text}`}>
+                      {ticket.status}
+                    </span>
+                    <span className="text-xs font-semibold text-text-muted">{ticket.category}</span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-text-primary mb-2 line-clamp-1">{ticket.title}</h3>
+                  <p className="text-sm text-text-secondary line-clamp-3 mb-4 min-h-[60px] leading-relaxed">
+                    {ticket.description}
+                  </p>
+                </div>
+
+                <div className="border-t border-border/40 pt-4 mt-2 space-y-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div>
+                      <p className="text-[10px] font-semibold text-text-muted uppercase">Pelanggan</p>
+                      <p className="text-text-primary font-medium mt-0.5 truncate">{ticket.clientName} ({ticket.clientId})</p>
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-semibold text-text-muted uppercase">Staf Pembuat</p>
+                      <p className="text-text-primary font-medium mt-0.5 truncate">{ticket.createdBy}</p>
+                    </div>
+                  </div>
+
+                  {ticket.assignedTo && (
+                    <div className="bg-bg-secondary border border-border/50 rounded-lg p-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[10px] font-bold">
+                          {ticket.assignedTo.substring(0, 2).toUpperCase()}
+                        </div>
+                        <span className="text-xs font-semibold text-text-primary truncate">Ditugaskan: {ticket.assignedTo}</span>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="flex items-center justify-between gap-2 pt-2">
+                    <span className="text-[10px] text-text-muted font-medium flex items-center gap-1">
+                      <Clock size={12} />
+                      {new Date(ticket.createdAt).toLocaleDateString('id-ID', { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+
+                    <div className="flex items-center gap-2">
+                      {/* Helpdesk/Admin Actions */}
+                      {canCreateOrDelete && (
+                        <>
+                          <button onClick={() => openModal(ticket)} className="p-1.5 text-text-muted hover:text-accent hover:bg-accent/10 rounded-md transition-colors" title="Edit Tiket">
+                            <Edit size={14} />
+                          </button>
+                          <button onClick={() => handleDelete(ticket.id)} className="p-1.5 text-text-muted hover:text-danger hover:bg-danger/10 rounded-md transition-colors" title="Hapus Tiket">
+                            <Trash2 size={14} />
+                          </button>
+                        </>
+                      )}
+
+                      {/* Technician Actions */}
+                      {canTakeOrProcess && ticket.status === 'Open' && (
+                        <button 
+                          onClick={() => handleTakeTicket(ticket)} 
+                          className="px-3 py-1.5 bg-accent hover:bg-accent/90 text-white rounded-md text-xs font-semibold flex items-center gap-1.5 transition-colors"
+                        >
+                          <Play size={12} />
+                          <span>Ambil Tiket</span>
+                        </button>
+                      )}
+
+                      {canTakeOrProcess && ticket.status === 'In Progress' && (
+                        <div className="flex gap-1.5">
+                          <button 
+                            onClick={() => handleProcessTicket(ticket, 'Resolved')} 
+                            className="px-2.5 py-1.5 bg-success hover:bg-success/90 text-white rounded-md text-xs font-semibold flex items-center gap-1 transition-colors"
+                            title="Selesaikan Tiket"
+                          >
+                            <Check size={12} />
+                            <span>Selesai</span>
+                          </button>
+                          {isSuperAdmin && (
+                            <button 
+                              onClick={() => handleProcessTicket(ticket, 'Closed')} 
+                              className="px-2.5 py-1.5 bg-bg-tertiary hover:bg-bg-tertiary/80 text-text-primary border border-border rounded-md text-xs font-semibold transition-colors"
+                              title="Tutup Tiket"
+                            >
+                              Tutup
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+
+          {filteredTickets.length === 0 && (
+            <div className="col-span-2 card p-16 flex flex-col items-center justify-center text-text-muted">
+              <Clipboard size={48} className="opacity-30 mb-4" />
+              <p className="text-base font-semibold">Tidak ada tiket gangguan ditemukan</p>
+              <p className="text-xs mt-1">Coba gunakan filter lain atau buat tiket baru</p>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Add / Edit Ticket Modal */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-bg-secondary w-full max-w-md rounded-2xl shadow-xl border border-border overflow-hidden animate-fade-in-scale">
+            <div className="flex items-center justify-between p-5 border-b border-border bg-bg-primary">
+              <h3 className="text-lg font-bold text-text-primary">{editingTicket ? 'Edit Tiket' : 'Buat Tiket Gangguan'}</h3>
+              <button onClick={() => setIsModalOpen(false)} className="text-text-muted hover:text-text-primary transition-colors">
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-5 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary mb-1">Judul Gangguan / Keluhan</label>
+                <input 
+                  required 
+                  type="text" 
+                  placeholder="Contoh: Lampu LOS Merah di ODP-12"
+                  value={formData.title} 
+                  onChange={e => setFormData({...formData, title: e.target.value})} 
+                  className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm" 
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-text-secondary mb-1">Deskripsi Detail</label>
+                <textarea 
+                  required 
+                  rows={4}
+                  placeholder="Detail keluhan pelanggan atau kronologi putusnya kabel..."
+                  value={formData.description} 
+                  onChange={e => setFormData({...formData, description: e.target.value})} 
+                  className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm resize-none" 
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-text-secondary mb-1">Kategori</label>
+                  <select 
+                    value={formData.category} 
+                    onChange={e => setFormData({...formData, category: e.target.value})} 
+                    className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm appearance-none"
+                  >
+                    <option value="Koneksi">Koneksi</option>
+                    <option value="Kabel">Kabel</option>
+                    <option value="Perangkat">Perangkat</option>
+                    <option value="Lainnya">Lainnya</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-text-secondary mb-1">Status Tiket</label>
+                  <input 
+                    type="text" 
+                    readOnly
+                    value={editingTicket ? editingTicket.status : 'Open'} 
+                    className="w-full px-3 py-2 bg-bg-tertiary border border-border rounded-lg text-sm text-text-muted cursor-not-allowed font-semibold"
+                  />
+                </div>
+              </div>
+
+              {/* Searchable Client Selector */}
+              <div className="relative">
+                <label className="block text-xs font-semibold text-text-secondary mb-1">Hubungkan ke Pelanggan (Opsional)</label>
+                <div className="relative">
+                  <input 
+                    type="text" 
+                    placeholder="Ketik nama atau ID pelanggan..."
+                    value={clientSearch}
+                    onChange={(e) => {
+                      setClientSearch(e.target.value)
+                      setShowClientDropdown(true)
+                      if (selectedClient && selectedClient.name !== e.target.value) {
+                        setSelectedClient(null)
+                      }
+                    }}
+                    onFocus={() => setShowClientDropdown(true)}
+                    className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm" 
+                  />
+                  {selectedClient && (
+                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-success font-semibold text-[10px] bg-success/10 border border-success/20 px-1.5 py-0.5 rounded">
+                      Terhubung
+                    </span>
+                  )}
+                </div>
+
+                {showClientDropdown && filteredClients.length > 0 && (
+                  <div className="absolute left-0 right-0 mt-1 bg-bg-secondary border border-border rounded-xl shadow-lg z-50 overflow-hidden divide-y divide-border">
+                    {filteredClients.map(c => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedClient(c)
+                          setClientSearch(c.name)
+                          setShowClientDropdown(false)
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-xs hover:bg-bg-tertiary transition-colors flex items-center justify-between"
+                      >
+                        <div>
+                          <p className="font-semibold text-text-primary">{c.name}</p>
+                          <p className="text-[10px] text-text-muted mt-0.5">{c.address}</p>
+                        </div>
+                        <span className="font-bold text-accent">{c.id}</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button 
+                  type="button" 
+                  onClick={() => setIsModalOpen(false)} 
+                  className="flex-1 px-4 py-2 border border-border text-text-secondary rounded-lg text-sm font-medium hover:bg-bg-tertiary transition-colors"
+                >
+                  Batal
+                </button>
+                <button 
+                  type="submit" 
+                  className="flex-1 px-4 py-2 bg-text-primary text-bg-primary rounded-lg text-sm font-medium hover:bg-zinc-200 transition-colors flex items-center justify-center gap-2"
+                >
+                  Simpan Tiket
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

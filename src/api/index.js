@@ -146,3 +146,24 @@ export const deleteUser = async (id) => {
   const { data } = await api.delete(`/users/${id}`);
   return data;
 };
+
+// Ticket API
+export const getTickets = async () => {
+  const { data } = await api.get('/tickets');
+  return data;
+};
+
+export const createTicket = async (ticketData) => {
+  const { data } = await api.post('/tickets', ticketData);
+  return data;
+};
+
+export const updateTicket = async (id, ticketData) => {
+  const { data } = await api.put(`/tickets/${id}`, ticketData);
+  return data;
+};
+
+export const deleteTicket = async (id) => {
+  const { data } = await api.delete(`/tickets/${id}`);
+  return data;
+};
