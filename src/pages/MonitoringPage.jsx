@@ -350,49 +350,47 @@ export default function MonitoringPage() {
         </div>
 
         {/* Tickets Grid / List */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
           {filteredTickets.map((ticket, index) => {
             const style = getStatusStyle(ticket.status)
             return (
               <div 
                 key={ticket.id} 
-                className="card p-4 md:p-6 flex flex-col justify-between hover:border-border/80 transition-all duration-200 animate-slide-up"
+                className="card p-3 md:p-5 flex flex-col justify-between hover:border-border/80 transition-all duration-200 animate-slide-up"
                 style={{ animationDelay: `${index * 30}ms`, animationFillMode: 'both' }}
               >
                 <div>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded border border-current/25 ${style.bg} ${style.text}`}>
+                  <div className="flex items-start justify-between gap-2 mb-1.5">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-current/25 ${style.bg} ${style.text}`}>
                       {ticket.status}
                     </span>
-                    <span className="text-xs font-semibold text-text-muted">{ticket.category}</span>
+                    <span className="text-[10px] md:text-xs font-semibold text-text-muted">{ticket.category}</span>
                   </div>
 
-                  <h3 className="text-base font-bold text-text-primary mb-2 line-clamp-1">{ticket.title}</h3>
-                  <p className="text-sm text-text-secondary line-clamp-3 mb-4 min-h-[60px] leading-relaxed">
+                  <h3 className="text-sm md:text-base font-bold text-text-primary mb-1 line-clamp-1">{ticket.title}</h3>
+                  <p className="text-xs md:text-sm text-text-secondary line-clamp-2 mb-2 leading-relaxed">
                     {ticket.description}
                   </p>
                 </div>
 
-                <div className="border-t border-border/40 pt-4 mt-2 space-y-3">
-                  <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="border-t border-border/40 pt-2.5 md:pt-4 mt-1.5 md:mt-2 space-y-2 md:space-y-3">
+                  <div className="grid grid-cols-2 gap-1.5 md:gap-2 text-xs">
                     <div>
                       <p className="text-[10px] font-semibold text-text-muted uppercase">Pelanggan</p>
-                      <p className="text-text-primary font-medium mt-0.5 truncate">{ticket.clientName} ({ticket.clientId})</p>
+                      <p className="text-text-primary font-medium mt-0.5 truncate text-[11px] md:text-xs">{ticket.clientName}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] font-semibold text-text-muted uppercase">Staf Pembuat</p>
-                      <p className="text-text-primary font-medium mt-0.5 truncate">{ticket.createdBy}</p>
+                      <p className="text-[10px] font-semibold text-text-muted uppercase">Pembuat</p>
+                      <p className="text-text-primary font-medium mt-0.5 truncate text-[11px] md:text-xs">{ticket.createdBy}</p>
                     </div>
                   </div>
 
                   {ticket.assignedTo && (
-                    <div className="bg-bg-secondary border border-border/50 rounded-lg p-2 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <div className="w-5 h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[10px] font-bold">
-                          {getTechnicianDisplayName(ticket.assignedTo).substring(0, 2).toUpperCase()}
-                        </div>
-                        <span className="text-xs font-semibold text-text-primary truncate">Ditugaskan: {getTechnicianDisplayName(ticket.assignedTo)}</span>
+                    <div className="bg-bg-secondary border border-border/50 rounded-md p-1.5 md:p-2 flex items-center gap-2">
+                      <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[9px] md:text-[10px] font-bold shrink-0">
+                        {getTechnicianDisplayName(ticket.assignedTo).substring(0, 2).toUpperCase()}
                       </div>
+                      <span className="text-[11px] md:text-xs font-semibold text-text-primary truncate">Teknisi: {getTechnicianDisplayName(ticket.assignedTo)}</span>
                     </div>
                   )}
 
@@ -401,21 +399,27 @@ export default function MonitoringPage() {
                       href={ticket.shareloc} 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="w-full flex items-center justify-center gap-1.5 px-3 py-2 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 rounded-xl text-xs font-bold transition-all duration-200"
+                      className="w-full flex items-center justify-center gap-1.5 px-2.5 py-1.5 md:py-2 bg-accent/10 hover:bg-accent/20 text-accent border border-accent/20 rounded-lg text-[11px] md:text-xs font-bold transition-all duration-200"
                     >
-                      <MapPin size={14} />
+                      <MapPin size={13} />
                       <span>Arahkan ke Maps</span>
                     </a>
                   )}
 
-                  {/* Keterangan Giat / Notes */}
-                  {ticket.notes && (
-                    <div className="bg-accent/5 border border-accent/15 rounded-lg p-2.5">
-                      <div className="flex items-center gap-1.5 mb-1">
-                        <FileText size={12} className="text-accent" />
-                        <span className="text-[10px] font-bold text-accent uppercase tracking-wider">Keterangan Giat</span>
+                  {/* Keterangan Giat / Notes — selalu tampil untuk Resolved/Closed */}
+                  {(ticket.status === 'Resolved' || ticket.status === 'Closed' || ticket.notes) && (
+                    <div className={`rounded-lg p-2 md:p-2.5 ${
+                      ticket.notes 
+                        ? 'bg-success/5 border border-success/15' 
+                        : 'bg-bg-secondary border border-border/50'
+                    }`}>
+                      <div className="flex items-center gap-1.5 mb-0.5">
+                        <FileText size={11} className={ticket.notes ? 'text-success' : 'text-text-muted'} />
+                        <span className={`text-[10px] font-bold uppercase tracking-wider ${ticket.notes ? 'text-success' : 'text-text-muted'}`}>Keterangan Giat</span>
                       </div>
-                      <p className="text-xs text-text-secondary leading-relaxed">{ticket.notes}</p>
+                      <p className={`text-[11px] md:text-xs leading-relaxed ${ticket.notes ? 'text-text-secondary' : 'text-text-muted italic'}`}>
+                        {ticket.notes || 'Belum ada keterangan dari teknisi'}
+                      </p>
                     </div>
                   )}
 
