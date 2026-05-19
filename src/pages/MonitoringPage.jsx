@@ -70,14 +70,17 @@ export default function MonitoringPage() {
         getDbPendingTickets().catch(() => []) // graceful fail
       ])
 
+      const safeTicketData = Array.isArray(ticketData) ? ticketData : []
+      const safeDbPendingData = Array.isArray(dbPendingData) ? dbPendingData : []
+
       // Merge: local tickets + DB pending tickets (avoid duplicates)
       const localDbIds = new Set(
-        ticketData
+        safeTicketData
           .filter(t => t.dbId)
           .map(t => t.dbId)
       )
 
-      const newDbTickets = (dbPendingData || []).filter(dbt => !localDbIds.has(dbt.dbId)).map(dbt => ({
+      const newDbTickets = safeDbPendingData.filter(dbt => !localDbIds.has(dbt.dbId)).map(dbt => ({
         id: `db-${dbt.dbId}`,
         dbId: dbt.dbId,
         title: dbt.title,
@@ -96,8 +99,8 @@ export default function MonitoringPage() {
         isFromDb: true,
       }))
 
-      setTickets([...ticketData, ...newDbTickets])
-      setClients(clientData)
+      setTickets([...safeTicketData, ...newDbTickets])
+      setClients(Array.isArray(clientData) ? clientData : [])
       setDbStats(dbStatData || [])
       setUsers(userData || [])
     } catch (error) {
