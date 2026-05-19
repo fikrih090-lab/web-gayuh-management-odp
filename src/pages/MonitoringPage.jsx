@@ -283,12 +283,16 @@ export default function MonitoringPage() {
     setShowClientDropdown(false)
   }
 
+  // Helper for safe string operations to prevent white screens
+  const safeStr = (val) => (val || '').toString().toLowerCase()
+
   // Filter clients dynamically as helpdesk searches
   const filteredClients = useMemo(() => {
     if (!clientSearch) return []
+    const searchLower = safeStr(clientSearch)
     return clients.filter(c => 
-      c.name.toLowerCase().includes(clientSearch.toLowerCase()) || 
-      c.id.toLowerCase().includes(clientSearch.toLowerCase())
+      safeStr(c.name).includes(searchLower) || 
+      safeStr(c.id).includes(searchLower)
     ).slice(0, 5) // limit to 5 results for sleek look
   }, [clients, clientSearch])
 
@@ -306,11 +310,12 @@ export default function MonitoringPage() {
 
   // Filtered tickets - Technicians only see tickets assigned to them
   const filteredTickets = useMemo(() => {
+    const searchLower = safeStr(search)
     return tickets.filter(t => {
-      const matchesSearch = t.title.toLowerCase().includes(search.toLowerCase()) || 
-                            t.clientName.toLowerCase().includes(search.toLowerCase()) ||
-                            t.description.toLowerCase().includes(search.toLowerCase()) ||
-                            t.clientId.toLowerCase().includes(search.toLowerCase())
+      const matchesSearch = safeStr(t.title).includes(searchLower) || 
+                            safeStr(t.clientName).includes(searchLower) ||
+                            safeStr(t.description).includes(searchLower) ||
+                            safeStr(t.clientId).includes(searchLower)
       
       const matchesStatus = statusFilter === 'Semua' || t.status === statusFilter
       const matchesCategory = categoryFilter === 'Semua' || t.category === categoryFilter
