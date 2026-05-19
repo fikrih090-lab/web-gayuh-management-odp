@@ -346,23 +346,10 @@ export default function MonitoringPage() {
             <p className="text-xs md:text-sm text-text-muted mt-1 font-medium">Kelola aduan pelanggan dan penugasan teknisi</p>
           </div>
           {canCreateOrDelete && (
-            <div className="flex items-center gap-2 w-full sm:w-auto">
-              <button 
-                onClick={handleSyncFromDb} 
-                disabled={syncLoading}
-                className="flex-1 sm:flex-none px-3 py-2.5 text-sm flex items-center justify-center gap-2 bg-bg-secondary border border-border hover:bg-bg-tertiary text-text-secondary rounded-xl font-semibold transition-colors disabled:opacity-50"
-              >
-                {syncLoading ? (
-                  <><div className="w-4 h-4 border-2 border-border border-t-accent rounded-full animate-spin" /> Sync...</>
-                ) : (
-                  <><Database size={15} /> <span className="hidden sm:inline">Sync</span> DB</>
-                )}
-              </button>
-              <button onClick={() => openModal()} className="flex-1 sm:flex-none btn-primary px-4 py-2.5 text-sm flex items-center justify-center gap-2">
-                <Plus size={16} />
-                <span>Tambah Tiket</span>
-              </button>
-            </div>
+            <button onClick={() => openModal()} className="btn-primary px-4 py-2.5 text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
+              <Plus size={16} />
+              <span>Tambah Tiket</span>
+            </button>
           )}
         </div>
 
