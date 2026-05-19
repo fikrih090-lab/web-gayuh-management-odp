@@ -164,7 +164,7 @@ export class NetworkService {
             const hostId = parts.shift();
             const dbName = parts.join('_');
             
-            const pool = connectionPools.get(hostId);
+            const pool = connectionPools.get(hostId ? String(hostId) : '');
             if (!pool) return null;
 
             try {

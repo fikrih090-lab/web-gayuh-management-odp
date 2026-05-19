@@ -58,7 +58,7 @@ export const updateClient = async (req: Request, res: Response) => {
 
 export const deleteClient = async (req: Request, res: Response) => {
     try {
-        await ClientService.deleteClient(req.params.id);
+        await ClientService.deleteClient(String(req.params.id));
         res.status(204).send();
     } catch (error) {
         res.status(500).json({ error: 'Failed to delete client' });

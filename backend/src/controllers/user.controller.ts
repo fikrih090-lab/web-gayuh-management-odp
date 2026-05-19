@@ -40,7 +40,7 @@ export const createUser = async (req: Request, res: Response) => {
         users.push(newUser);
         writeUsers(users);
         
-        res.status(201).json({ id: newUser.id, ...newUser, password: '' });
+        res.status(201).json({ ...newUser, password: '' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: 'Gagal membuat user baru' });

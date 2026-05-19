@@ -92,7 +92,7 @@ export class ClientService {
             const hostId = parts.shift();
             const dbName = parts.join('_');
             
-            const pool = connectionPools.get(hostId);
+            const pool = connectionPools.get(hostId ? String(hostId) : '');
             if (!pool) return null;
 
             try {
@@ -220,7 +220,7 @@ export class ClientService {
             const hostId = parts.shift();
             const dbName = parts.join('_');
             
-            const pool = connectionPools.get(hostId);
+            const pool = connectionPools.get(hostId ? String(hostId) : '');
             if (pool) {
                 await pool.query(`DELETE FROM \`${dbName}\`.customer WHERE customer_id = ?`, [id]);
                 invalidateClientCache();

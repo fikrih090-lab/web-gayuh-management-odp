@@ -42,7 +42,7 @@ export const getOdps = async (req: Request, res: Response) => {
 
 export const getOdpById = async (req: Request, res: Response) => {
     try {
-        const odp = await NetworkService.getOdpById(req.params.id);
+        const odp = await NetworkService.getOdpById(String(req.params.id));
         if (!odp) return res.status(404).json({ error: 'ODP not found' });
         res.json(odp);
     } catch (error) {
@@ -70,7 +70,7 @@ export const getOdcs = async (req: Request, res: Response) => {
 
 export const updateOdp = async (req: Request, res: Response) => {
     try {
-        const { id } = req.params;
+        const id = String(req.params.id);
         const { latitude, longitude, totalPort, coverageOdp, remark } = req.body;
         
         await NetworkService.updateOdp(id, {
@@ -91,7 +91,7 @@ export const updateOdp = async (req: Request, res: Response) => {
 
 export const deleteOdp = async (req: Request, res: Response) => {
     try {
-        const success = await NetworkService.deleteOdp(req.params.id);
+        const success = await NetworkService.deleteOdp(String(req.params.id));
         if (success) {
             res.status(204).send();
         } else {

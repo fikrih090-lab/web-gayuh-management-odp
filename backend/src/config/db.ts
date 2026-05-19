@@ -10,9 +10,6 @@ export const poolConnection = mysql.createPool({
   uri: process.env.DATABASE_URL || 'mysql://root:password@localhost:3306/gayuh_db',
 });
 
-poolConnection.on('error', (err) => {
-  console.error('Database pool error:', err.message);
-});
 
 export const db = drizzle(poolConnection, { schema, mode: 'default' });
 
