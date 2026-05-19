@@ -228,10 +228,10 @@ export const alertData = [
 
 // OLT (Pusat) location
 export const oltLocation = {
-  name: import.meta.env.VITE_OLT_NAME || 'OLT Pusat - NOC Bandung',
-  lat: Number(import.meta.env.VITE_OLT_LAT) || -6.9100,
-  lng: Number(import.meta.env.VITE_OLT_LNG) || 107.6150,
-  address: import.meta.env.VITE_OLT_ADDRESS || 'Jl. Soekarno-Hatta No. 500, Bandung'
+  name: import.meta.env.VITE_OLT_NAME || 'OLT Pusat - NOC ARDKOM',
+  lat: Number(import.meta.env.VITE_OLT_LAT) || -6.1394937,
+  lng: Number(import.meta.env.VITE_OLT_LNG) || 106.6743376,
+  address: import.meta.env.VITE_OLT_ADDRESS || 'ARDKOM, Cengkareng, Jakarta Barat'
 }
 
 // Stats helper
