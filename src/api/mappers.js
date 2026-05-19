@@ -1,3 +1,9 @@
+const parseCoordinate = (val) => {
+    if (val === null || val === undefined || val === '') return null;
+    const num = Number(val);
+    return (isNaN(num) || num === 0) ? null : num;
+};
+
 export const mapClient = (customer) => {
     // odpCode adalah field tunggal yang sudah dinormalisasi di backend (UPPERCASE)
     const odpCode = customer.odpCode
@@ -14,8 +20,8 @@ export const mapClient = (customer) => {
         // odpId harus UPPERCASE dan sama persis dengan ODP id di mapOdp
         odpId: odpCode,
         portNumber: Number(customer.noPortOdp) || 1,
-        lat: Number(customer.latitude) || -6.9175,
-        lng: Number(customer.longitude) || 107.6191,
+        lat: parseCoordinate(customer.latitude),
+        lng: parseCoordinate(customer.longitude),
         status: (['aktif', 'active'].includes(String(customer.cStatus || '').toLowerCase())) ? 'online' : 'offline',
         paymentStatus: 'paid',
         ontSerial: customer.serialNumber || '-',
@@ -36,8 +42,8 @@ export const mapOdp = (odp) => {
         totalPorts: Number(odp.totalPort) || 8,
         // usedPorts dari COUNT query di backend (sudah dijumlah lintas semua mitra)
         usedPorts: Number(odp.usedPorts) || 0,
-        lat: Number(odp.latitude) || -6.9175,
-        lng: Number(odp.longitude) || 107.6191,
+        lat: parseCoordinate(odp.latitude),
+        lng: parseCoordinate(odp.longitude),
         address: odp.document || '',
         status: 'active',
         pathId: `PATH-${odp.codeOdc || 1}`,
