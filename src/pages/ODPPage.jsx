@@ -150,13 +150,62 @@ export default function ODPPage() {
   // Hitung jarak ODP dari user, sort jika aktif (UNTUK TABEL)
   const displayData = (() => {
     if (!userLocation) return odpData
-    const withDist = odpData.map(odp => {
+
+    if (sortNearest) {
+      // Sort GLOBALLY dari allOdpData agar ODP terdekat benar-benar dari seluruh database
+      const allWithDist = allOdpData.map(odp => {
+        const lat = Number(odp.lat), lng = Number(odp.lng)
+        const dist = (lat && lng) ? getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) : Infinity
+        return { ...odp, _dist: dist }
+      })
+      const sortedAll = allWithDist.sort((a, b) => a._dist - b._dist)
+      
+      // Jika ada pencarian, filter juga (opsional, tapi disarankan)
+      let filtered = sortedAll;
+      if (search) {
+        const sLower = search.toLowerCase();
+        filtered = filtered.filter(o => 
+          (o.codeOdp || '').toLowerCase().includes(sLower) || 
+          (o.noPole || '').toLowerCase().includes(sLower) || 
+          (o.remark || '').toLowerCase().includes(sLower)
+        );
+      }
+      if (selectedLetter) {
+        filtered = filtered.filter(o => (o.codeOdp || '').toLowerCase().startsWith(selectedLetter));
+      }
+      return filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+    }
+
+    // Jika tidak sortNearest, cukup tambahkan jarak pada data paginasi server
+    return odpData.map(odp => {
       const lat = Number(odp.lat), lng = Number(odp.lng)
       const dist = (lat && lng) ? getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) : Infinity
       return { ...odp, _dist: dist }
     })
-    return sortNearest ? [...withDist].sort((a, b) => a._dist - b._dist) : withDist
   })()
+
+  // Dynamic pagination variables
+  const getDisplayTotal = () => {
+    if (sortNearest && userLocation) {
+      if (search || selectedLetter) {
+        return allOdpData.filter(o => {
+          let match = true;
+          if (search) {
+            const sLower = search.toLowerCase();
+            match = (o.codeOdp || '').toLowerCase().includes(sLower) || 
+                    (o.noPole || '').toLowerCase().includes(sLower) || 
+                    (o.remark || '').toLowerCase().includes(sLower);
+          }
+          if (match && selectedLetter) match = (o.codeOdp || '').toLowerCase().startsWith(selectedLetter);
+          return match;
+        }).length;
+      }
+      return allOdpData.length;
+    }
+    return total;
+  }
+  const displayTotal = getDisplayTotal();
+  const displayTotalPages = sortNearest && userLocation ? Math.ceil(displayTotal / PAGE_SIZE) : totalPages;
 
   // Hitung jarak ODP dari user (UNTUK PETA - SEMUA ODP)
   const mapDisplayData = (() => {
@@ -435,16 +484,16 @@ export default function ODPPage() {
           )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {displayTotalPages > 1 && (
             <div className="flex items-center justify-between px-4 md:px-5 py-3 md:py-4 border-t border-border bg-bg-primary sticky bottom-0">
-              <span className="text-[10px] md:text-xs text-text-muted">Hal {page}/{totalPages} ({total} ODP)</span>
+              <span className="text-[10px] md:text-xs text-text-muted">Hal {page}/{displayTotalPages} ({displayTotal} ODP)</span>
               <div className="flex items-center gap-2">
                 <button onClick={() => fetchOdps(page - 1, search, selectedLetter)} disabled={page <= 1}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                   ← Prev
                 </button>
-                <span className="text-xs font-mono text-text-secondary px-1 hidden sm:inline">{page} / {totalPages}</span>
-                <button onClick={() => fetchOdps(page + 1, search, selectedLetter)} disabled={page >= totalPages}
+                <span className="text-xs font-mono text-text-secondary px-1 hidden sm:inline">{page} / {displayTotalPages}</span>
+                <button onClick={() => fetchOdps(page + 1, search, selectedLetter)} disabled={page >= displayTotalPages}
                   className="px-3 py-1.5 text-xs font-medium rounded-lg border border-border bg-bg-secondary text-text-primary hover:bg-bg-tertiary disabled:opacity-40 disabled:cursor-not-allowed transition-all">
                   Next →
                 </button>
