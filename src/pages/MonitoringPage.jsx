@@ -3,7 +3,7 @@ import {
   Clipboard, Plus, Trash2, Edit, CheckCircle, AlertCircle,
   User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database, MapPin, FileText
 } from 'lucide-react'
-import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats, getUsers } from '../api'
+import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats, getUsers, getDbPendingTickets } from '../api'
 
 function getStatusStyle(status) {
   switch (status) {
@@ -21,6 +21,7 @@ export default function MonitoringPage() {
   const [dbStats, setDbStats] = useState([])
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
+  const [syncLoading, setSyncLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('Semua')
   const [categoryFilter, setCategoryFilter] = useState('Semua')
@@ -76,6 +77,69 @@ export default function MonitoringPage() {
       console.error('Error fetching tickets/clients/stats:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Sync pending tickets from MySQL database
+  const handleSyncFromDb = async () => {
+    setSyncLoading(true)
+    try {
+      const dbTickets = await getDbPendingTickets()
+      if (!dbTickets || dbTickets.length === 0) {
+        alert('Tidak ada tiket pending di database.')
+        setSyncLoading(false)
+        return
+      }
+
+      // Get existing local tickets to avoid duplicates
+      const existingTickets = await getTickets()
+      const existingDbIds = new Set(
+        existingTickets
+          .filter(t => t.title && t.title.startsWith('[DB]'))
+          .map(t => {
+            const match = t.title.match(/\[DB\]\s*(.+)/)
+            return match ? match[1].trim() : null
+          })
+          .filter(Boolean)
+      )
+
+      let imported = 0
+      for (const dbTicket of dbTickets) {
+        // Check if already imported by matching noTicket in title
+        const ticketLabel = dbTicket.noTicket || 'Tiket #' + dbTicket.dbId
+        if (existingDbIds.has(ticketLabel)) continue
+
+        // Build description with address if no maps link
+        let description = dbTicket.description || ''
+        if (dbTicket.address && !dbTicket.shareloc) {
+          description = description ? `${description}\n📍 Lokasi: ${dbTicket.address}` : `📍 Lokasi: ${dbTicket.address}`
+        }
+
+        await createTicket({
+          title: dbTicket.title,
+          description: description,
+          category: dbTicket.category,
+          clientName: dbTicket.clientName,
+          clientId: dbTicket.clientId,
+          createdBy: 'Database Billing',
+          shareloc: dbTicket.shareloc,
+          assignedTo: dbTicket.assignedTo,
+          notes: ''
+        })
+        imported++
+      }
+
+      if (imported > 0) {
+        alert(`✅ Berhasil mengimpor ${imported} tiket dari database!`)
+        fetchTicketsAndClients()
+      } else {
+        alert('Semua tiket dari database sudah pernah diimpor.')
+      }
+    } catch (error) {
+      console.error('Sync from DB error:', error)
+      alert('Gagal sync tiket dari database: ' + (error?.message || 'Unknown error'))
+    } finally {
+      setSyncLoading(false)
     }
   }
 
@@ -267,10 +331,23 @@ export default function MonitoringPage() {
             <p className="text-xs md:text-sm text-text-muted mt-1 font-medium">Kelola aduan pelanggan dan penugasan teknisi</p>
           </div>
           {canCreateOrDelete && (
-            <button onClick={() => openModal()} className="btn-primary px-4 py-2.5 text-sm flex items-center justify-center gap-2 w-full sm:w-auto">
-              <Plus size={16} />
-              <span>Tambah Tiket</span>
-            </button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button 
+                onClick={handleSyncFromDb} 
+                disabled={syncLoading}
+                className="flex-1 sm:flex-none px-3 py-2.5 text-sm flex items-center justify-center gap-2 bg-bg-secondary border border-border hover:bg-bg-tertiary text-text-secondary rounded-xl font-semibold transition-colors disabled:opacity-50"
+              >
+                {syncLoading ? (
+                  <><div className="w-4 h-4 border-2 border-border border-t-accent rounded-full animate-spin" /> Sync...</>
+                ) : (
+                  <><Database size={15} /> <span className="hidden sm:inline">Sync</span> DB</>
+                )}
+              </button>
+              <button onClick={() => openModal()} className="flex-1 sm:flex-none btn-primary px-4 py-2.5 text-sm flex items-center justify-center gap-2">
+                <Plus size={16} />
+                <span>Tambah Tiket</span>
+              </button>
+            </div>
           )}
         </div>
 

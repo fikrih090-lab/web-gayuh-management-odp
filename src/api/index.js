@@ -177,3 +177,8 @@ export const getDbResolvedTickets = async () => {
   const { data } = await api.get('/tickets/db-resolved');
   return data;
 };
+
+export const getDbPendingTickets = async () => {
+  const { data } = await api.get('/tickets/db-pending');
+  return data;
+};
