@@ -4,18 +4,18 @@ import { BrowserRouter } from 'react-router-dom'
 import App from './App'
 import './index.css'
 import 'leaflet/dist/leaflet.css'
-
 import { registerSW } from 'virtual:pwa-register'
 
 // Force unregister all old service workers to clear cache if they exist
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(registrations => {
+  navigator.serviceWorker.getRegistrations().then(async registrations => {
     let hasUnregistered = false;
     for (let registration of registrations) {
-      registration.unregister();
+      await registration.unregister();
       hasUnregistered = true;
     }
-    if (hasUnregistered) {
+    if (hasUnregistered && !sessionStorage.getItem('sw_cleared')) {
+      sessionStorage.setItem('sw_cleared', '1');
       console.log('Old service workers unregistered to clear cache. Reloading...');
       window.location.reload();
     }
