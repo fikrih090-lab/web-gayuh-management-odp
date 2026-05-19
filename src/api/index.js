@@ -71,6 +71,11 @@ export const updateOdp = async (id, odpData) => {
   return data;
 };
 
+export const resolveShortenedUrl = async (url) => {
+  const { data } = await api.post('/network/resolve-url', { url });
+  return data.resolvedUrl;
+};
+
 export const importOdpsData = async (odpData) => {
   const { data } = await api.post('/network/odps/import', odpData);
   return data;

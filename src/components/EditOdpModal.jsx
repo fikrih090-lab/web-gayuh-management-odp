@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { X, Save, MapPin } from 'lucide-react'
-import { updateOdp } from '../api'
+import { X, Save, MapPin, Loader2 } from 'lucide-react'
+import { updateOdp, resolveShortenedUrl } from '../api'
+import { extractCoordinates } from '../utils/geo'
 
 export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
     remark: ''
   })
   const [loading, setLoading] = useState(false)
+  const [resolvingUrl, setResolvingUrl] = useState(false)
 
   useEffect(() => {
     if (odpData && isOpen) {
@@ -26,23 +28,38 @@ export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
     }
   }, [odpData, isOpen])
 
-  const handleLocationPaste = (e) => {
+  const handleLocationPaste = async (e) => {
     const text = e.target.value;
-    
-    // Pattern 1: Google maps URL containing @-6.9175,107.6191
-    const urlMatch = text.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
-    if (urlMatch) {
-      setFormData(prev => ({ ...prev, lat: urlMatch[1], lng: urlMatch[2] }));
+    if (!text) return;
+
+    // 1. Coba parse langsung (jika full url atau koordinat mentah)
+    const result = extractCoordinates(text);
+    if (result) {
+      setFormData(prev => ({ ...prev, lat: result.lat, lng: result.lng }));
       e.target.value = '';
       return;
     }
 
-    // Pattern 2: -6.9175, 107.6191
-    const coordMatch = text.match(/(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)/);
-    if (coordMatch) {
-      setFormData(prev => ({ ...prev, lat: coordMatch[1], lng: coordMatch[2] }));
-      e.target.value = '';
-      return;
+    // 2. Jika bukan koordinat langsung, cek apakah ini shortened URL google maps
+    if (text.includes('maps.app.goo.gl') || text.includes('goo.gl/maps')) {
+      setResolvingUrl(true);
+      try {
+        const resolvedUrl = await resolveShortenedUrl(text);
+        if (resolvedUrl) {
+          const resolvedResult = extractCoordinates(resolvedUrl);
+          if (resolvedResult) {
+            setFormData(prev => ({ ...prev, lat: resolvedResult.lat, lng: resolvedResult.lng }));
+          } else {
+            alert('Tidak dapat mengekstrak koordinat dari link yang di-resolve');
+          }
+        }
+      } catch (err) {
+        console.error('Gagal resolve URL:', err);
+        alert('Gagal mendeteksi link maps. Pastikan koneksi internet aktif.');
+      } finally {
+        setResolvingUrl(false);
+        e.target.value = '';
+      }
     }
   };
 
@@ -92,15 +109,19 @@ export default function EditOdpModal({ isOpen, onClose, onSuccess, odpData }) {
           </div>
 
           <div className="bg-accent/5 p-3 rounded-lg border border-accent/20">
-            <label className="block text-xs font-semibold text-accent mb-1 flex items-center gap-1.5"><MapPin size={12} /> Auto Ekstrak Koordinat</label>
+            <label className="block text-xs font-semibold text-accent mb-1 flex items-center gap-1.5">
+              {resolvingUrl ? <Loader2 size={12} className="animate-spin text-accent" /> : <MapPin size={12} />}
+              {resolvingUrl ? 'Sedang mengekstrak koordinat...' : 'Auto Ekstrak Koordinat'}
+            </label>
             <input
               type="text"
-              placeholder="Paste Link Google Maps (Full) atau Titik Koordinat (Misal: -6.91, 107.61)"
+              disabled={resolvingUrl}
+              placeholder={resolvingUrl ? "Mengekstrak..." : "Paste Link Google Maps atau Titik Koordinat (Misal: -6.91, 107.61)"}
               onChange={handleLocationPaste}
-              className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm outline-none focus:border-accent"
+              className="w-full px-3 py-2 bg-bg-primary border border-border rounded-lg text-sm outline-none focus:border-accent disabled:opacity-60"
             />
             <p className="text-[10px] text-text-muted mt-1 leading-relaxed">
-              Paste koordinat atau <b>Full URL</b> Google Maps (yang mengandung @lat,lng) ke sini. Latitude dan Longitude di bawah akan otomatis terisi.
+              Paste koordinat atau link Google Maps ke sini. Latitude dan Longitude di bawah akan otomatis terisi.
             </p>
           </div>
 

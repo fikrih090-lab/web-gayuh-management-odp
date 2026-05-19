@@ -151,3 +151,26 @@ export const importOdps = async (req: Request, res: Response) => {
         res.status(500).json({ error: 'Failed to import ODPs' });
     }
 };
+
+export const resolveUrl = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { url } = req.body;
+        if (!url || typeof url !== 'string') {
+            res.status(400).json({ error: 'URL is required' });
+            return;
+        }
+
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            }
+        });
+
+        res.json({ resolvedUrl: response.url });
+    } catch (error: any) {
+        console.error('Failed to resolve URL:', error);
+        res.status(500).json({ error: 'Failed to resolve URL', details: error?.message || String(error) });
+    }
+};
+
