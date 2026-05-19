@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect } from 'react'
 import {
   Clipboard, Plus, Trash2, Edit, CheckCircle, AlertCircle,
-  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database, MapPin, FileText
+  User, Clock, Search, Filter, X, Play, Check, AlertTriangle, Shield, Database, MapPin, FileText, RefreshCw
 } from 'lucide-react'
 import { getTickets, createTicket, updateTicket, deleteTicket, getClients, getDbTicketStats, getUsers, getDbPendingTickets } from '../api'
 
@@ -21,7 +21,6 @@ export default function MonitoringPage() {
   const [dbStats, setDbStats] = useState([])
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
-  const [syncLoading, setSyncLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('Semua')
   const [categoryFilter, setCategoryFilter] = useState('Semua')
@@ -63,13 +62,41 @@ export default function MonitoringPage() {
   const fetchTicketsAndClients = async () => {
     setLoading(true)
     try {
-      const [ticketData, clientData, dbStatData, userData] = await Promise.all([
+      const [ticketData, clientData, dbStatData, userData, dbPendingData] = await Promise.all([
         getTickets(),
         getClients(),
         getDbTicketStats(),
-        getUsers()
+        getUsers(),
+        getDbPendingTickets().catch(() => []) // graceful fail
       ])
-      setTickets(ticketData)
+
+      // Merge: local tickets + DB pending tickets (avoid duplicates)
+      const localDbIds = new Set(
+        ticketData
+          .filter(t => t.dbId)
+          .map(t => t.dbId)
+      )
+
+      const newDbTickets = (dbPendingData || []).filter(dbt => !localDbIds.has(dbt.dbId)).map(dbt => ({
+        id: `db-${dbt.dbId}`,
+        dbId: dbt.dbId,
+        title: dbt.title,
+        description: dbt.address && !dbt.shareloc
+          ? (dbt.description ? `${dbt.description}\n\ud83d\udccd Lokasi: ${dbt.address}` : `\ud83d\udccd Lokasi: ${dbt.address}`)
+          : (dbt.description || ''),
+        category: dbt.category || 'Lainnya',
+        status: dbt.status || 'Open',
+        clientName: dbt.clientName || '-',
+        clientId: dbt.clientId || '-',
+        createdAt: dbt.createdAt,
+        createdBy: 'Database Billing',
+        shareloc: dbt.shareloc || '',
+        assignedTo: dbt.assignedTo || '',
+        notes: dbt.notes || '',
+        isFromDb: true,
+      }))
+
+      setTickets([...ticketData, ...newDbTickets])
       setClients(clientData)
       setDbStats(dbStatData || [])
       setUsers(userData || [])
@@ -80,71 +107,36 @@ export default function MonitoringPage() {
     }
   }
 
-  // Sync pending tickets from MySQL database
-  const handleSyncFromDb = async () => {
-    setSyncLoading(true)
+  // Auto-import a DB ticket to local when admin edits/takes it
+  const ensureLocalTicket = async (ticket) => {
+    if (!ticket.isFromDb) return ticket // already local
+    
+    // Create local copy from DB ticket
     try {
-      const dbTickets = await getDbPendingTickets()
-      if (!dbTickets || dbTickets.length === 0) {
-        alert('Tidak ada tiket pending di database.')
-        setSyncLoading(false)
-        return
-      }
-
-      // Get existing local tickets to avoid duplicates
-      const existingTickets = await getTickets()
-      const existingDbIds = new Set(
-        existingTickets
-          .filter(t => t.title && t.title.startsWith('[DB]'))
-          .map(t => {
-            const match = t.title.match(/\[DB\]\s*(.+)/)
-            return match ? match[1].trim() : null
-          })
-          .filter(Boolean)
-      )
-
-      let imported = 0
-      for (const dbTicket of dbTickets) {
-        // Check if already imported by matching noTicket in title
-        const ticketLabel = dbTicket.noTicket || 'Tiket #' + dbTicket.dbId
-        if (existingDbIds.has(ticketLabel)) continue
-
-        // Build description with address if no maps link
-        let description = dbTicket.description || ''
-        if (dbTicket.address && !dbTicket.shareloc) {
-          description = description ? `${description}\n📍 Lokasi: ${dbTicket.address}` : `📍 Lokasi: ${dbTicket.address}`
-        }
-
-        await createTicket({
-          title: dbTicket.title,
-          description: description,
-          category: dbTicket.category,
-          clientName: dbTicket.clientName,
-          clientId: dbTicket.clientId,
-          createdBy: 'Database Billing',
-          shareloc: dbTicket.shareloc,
-          assignedTo: dbTicket.assignedTo,
-          notes: ''
-        })
-        imported++
-      }
-
-      if (imported > 0) {
-        alert(`✅ Berhasil mengimpor ${imported} tiket dari database!`)
-        fetchTicketsAndClients()
-      } else {
-        alert('Semua tiket dari database sudah pernah diimpor.')
-      }
-    } catch (error) {
-      console.error('Sync from DB error:', error)
-      alert('Gagal sync tiket dari database: ' + (error?.message || 'Unknown error'))
-    } finally {
-      setSyncLoading(false)
+      const created = await createTicket({
+        title: ticket.title,
+        description: ticket.description,
+        category: ticket.category,
+        clientName: ticket.clientName,
+        clientId: ticket.clientId,
+        createdBy: ticket.createdBy || 'Database Billing',
+        shareloc: ticket.shareloc,
+        assignedTo: ticket.assignedTo,
+        notes: ticket.notes,
+        dbId: ticket.dbId,
+      })
+      return created
+    } catch (err) {
+      console.error('Error creating local copy:', err)
+      return ticket
     }
   }
 
   useEffect(() => {
     fetchTicketsAndClients()
+    // Auto-refresh every 30 seconds
+    const interval = setInterval(fetchTicketsAndClients, 30000)
+    return () => clearInterval(interval)
   }, [])
 
   const handleSubmit = async (e) => {
@@ -200,7 +192,12 @@ export default function MonitoringPage() {
 
   const handleTakeTicket = async (ticket) => {
     try {
-      await updateTicket(ticket.id, {
+      // If DB ticket, create local copy first
+      let targetTicket = ticket
+      if (ticket.isFromDb) {
+        targetTicket = await ensureLocalTicket(ticket)
+      }
+      await updateTicket(targetTicket.id, {
         status: 'In Progress',
         assignedTo: currentUser.username,
         notes: notesInput
@@ -216,7 +213,11 @@ export default function MonitoringPage() {
 
   const handleProcessTicket = async (ticket, nextStatus) => {
     try {
-      await updateTicket(ticket.id, {
+      let targetTicket = ticket
+      if (ticket.isFromDb) {
+        targetTicket = await ensureLocalTicket(ticket)
+      }
+      await updateTicket(targetTicket.id, {
         status: nextStatus,
         notes: notesInput
       })
@@ -241,19 +242,25 @@ export default function MonitoringPage() {
     }
   }
 
-  const openModal = (ticket = null) => {
-    setEditingTicket(ticket)
-    if (ticket) {
+  const openModal = async (ticket = null) => {
+    // If editing a DB ticket, ensure it's saved locally first
+    let editTarget = ticket
+    if (ticket && ticket.isFromDb) {
+      editTarget = await ensureLocalTicket(ticket)
+      fetchTicketsAndClients() // refresh list
+    }
+    setEditingTicket(editTarget)
+    if (editTarget) {
       setFormData({
-        title: ticket.title,
-        description: ticket.description,
-        category: ticket.category || 'Koneksi',
-        shareloc: ticket.shareloc || '',
-        assignedTo: ticket.assignedTo || ''
+        title: editTarget.title,
+        description: editTarget.description,
+        category: editTarget.category || 'Koneksi',
+        shareloc: editTarget.shareloc || '',
+        assignedTo: editTarget.assignedTo || ''
       })
-      const matchingClient = clients.find(c => c.id === ticket.clientId)
-      setSelectedClient(matchingClient || { name: ticket.clientName, id: ticket.clientId })
-      setClientSearch(ticket.clientName || '')
+      const matchingClient = clients.find(c => c.id === editTarget.clientId)
+      setSelectedClient(matchingClient || { name: editTarget.clientName, id: editTarget.clientId })
+      setClientSearch(editTarget.clientName || '')
     } else {
       resetForm()
     }
@@ -438,9 +445,16 @@ export default function MonitoringPage() {
               >
                 <div>
                   <div className="flex items-start justify-between gap-2 mb-1.5">
-                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-current/25 ${style.bg} ${style.text}`}>
-                      {ticket.status}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-current/25 ${style.bg} ${style.text}`}>
+                        {ticket.status}
+                      </span>
+                      {ticket.isFromDb && (
+                        <span className="text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded bg-info/10 text-info border border-info/20 flex items-center gap-1">
+                          <Database size={10} /> DB
+                        </span>
+                      )}
+                    </div>
                     <span className="text-[10px] md:text-xs font-semibold text-text-muted">{ticket.category}</span>
                   </div>
 
