@@ -224,24 +224,45 @@ export default function ClientDetailPage() {
               </h3>
             </div>
             <div className="h-[260px]">
-              <MapContainer
-                center={[client.lat, client.lng]}
-                zoom={15}
-                className="w-full h-full"
-                zoomControl={false}
-                attributionControl={false}
-              >
-                <TileLayer 
-                  key={isDark ? 'dark' : 'light'}
-                  url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
-                />
-                {traceLine.length > 0 && (
-                  <Polyline positions={traceLine} pathOptions={{ color: '#3b82f6', weight: 2, opacity: 0.6, dashArray: '6 4' }} />
-                )}
-                <Marker position={[client.lat, client.lng]} icon={createIcon('#818cf8', 20)} />
-                {odp && <Marker position={[odp.lat, odp.lng]} icon={createIcon('#22c55e', 20)} />}
-                <Marker position={[oltLoc.lat, oltLoc.lng]} icon={createIcon('#3b82f6', 24)} />
-              </MapContainer>
+              {(() => {
+                const cLat = Number(client.lat) || 0
+                const cLng = Number(client.lng) || 0
+                const oLat = odp ? Number(odp.lat) || 0 : 0
+                const oLng = odp ? Number(odp.lng) || 0 : 0
+                
+                const validClientLoc = !isNaN(cLat) && !isNaN(cLng) && cLat !== 0 && cLng !== 0
+                const mapCenter = validClientLoc ? [cLat, cLng] : [oltLoc.lat, oltLoc.lng]
+
+                const traceLine = []
+                if (validClientLoc && odp && !isNaN(oLat) && !isNaN(oLng) && oLat !== 0 && oLng !== 0) {
+                  traceLine.push([cLat, cLng])
+                  traceLine.push([oLat, oLng])
+                  traceLine.push([oltLoc.lat, oltLoc.lng])
+                }
+
+                return (
+                  <MapContainer
+                    center={mapCenter}
+                    zoom={15}
+                    className="w-full h-full"
+                    zoomControl={false}
+                    attributionControl={false}
+                  >
+                    <TileLayer 
+                      key={isDark ? 'dark' : 'light'}
+                      url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+                    />
+                    {traceLine.length > 0 && (
+                      <Polyline positions={traceLine} pathOptions={{ color: '#3b82f6', weight: 2, opacity: 0.6, dashArray: '6 4' }} />
+                    )}
+                    {validClientLoc && <Marker position={[cLat, cLng]} icon={createIcon('#818cf8', 20)} />}
+                    {odp && !isNaN(oLat) && !isNaN(oLng) && oLat !== 0 && oLng !== 0 && (
+                      <Marker position={[oLat, oLng]} icon={createIcon('#22c55e', 20)} />
+                    )}
+                    <Marker position={[oltLoc.lat, oltLoc.lng]} icon={createIcon('#3b82f6', 24)} />
+                  </MapContainer>
+                )
+              })()}
             </div>
           </div>
         </div>

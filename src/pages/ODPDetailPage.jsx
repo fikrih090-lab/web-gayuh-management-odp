@@ -193,37 +193,58 @@ export default function ODPDetailPage() {
               </h3>
             </div>
             <div className="h-[240px]">
-              <MapContainer
-                center={[odp.lat, odp.lng]}
-                zoom={17}
-                className="w-full h-full"
-                zoomControl={false}
-                attributionControl={false}
-              >
-                <TileLayer 
-                  key={isDark ? 'dark' : 'light'}
-                  url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
-                />
-                <Marker
-                  position={[odp.lat, odp.lng]}
-                  icon={createIcon(statusColor, 28)}
-                />
-                {/* Lines to clients */}
-                {connectedClients.map(client => (
-                  <Polyline
-                    key={client.id}
-                    positions={[[odp.lat, odp.lng], [client.lat, client.lng]]}
-                    pathOptions={{ color: '#818cf8', weight: 1.5, opacity: 0.5, dashArray: '4 4' }}
-                  />
-                ))}
-                {connectedClients.map(client => (
-                  <Marker
-                    key={client.id}
-                    position={[client.lat, client.lng]}
-                    icon={createIcon('#818cf8', 12)}
-                  />
-                ))}
-              </MapContainer>
+              {(() => {
+                const oLat = Number(odp.lat) || 0
+                const oLng = Number(odp.lng) || 0
+                const validOdpLoc = !isNaN(oLat) && !isNaN(oLng) && oLat !== 0 && oLng !== 0
+                const mapCenter = validOdpLoc ? [oLat, oLng] : [-6.2, 106.8]
+
+                return (
+                  <MapContainer
+                    center={mapCenter}
+                    zoom={17}
+                    className="w-full h-full"
+                    zoomControl={false}
+                    attributionControl={false}
+                  >
+                    <TileLayer 
+                      key={isDark ? 'dark' : 'light'}
+                      url={`https://{s}.basemaps.cartocdn.com/${isDark ? 'dark_all' : 'light_all'}/{z}/{x}/{y}{r}.png`} 
+                    />
+                    {validOdpLoc && (
+                      <Marker
+                        position={[oLat, oLng]}
+                        icon={createIcon(statusColor, 28)}
+                      />
+                    )}
+                    {/* Lines to clients */}
+                    {connectedClients.map(client => {
+                      const cLat = Number(client.lat)
+                      const cLng = Number(client.lng)
+                      if (isNaN(cLat) || isNaN(cLng) || (!cLat && !cLng)) return null
+                      return (
+                        <Polyline
+                          key={client.id}
+                          positions={[[oLat, oLng], [cLat, cLng]]}
+                          pathOptions={{ color: '#818cf8', weight: 1.5, opacity: 0.5, dashArray: '4 4' }}
+                        />
+                      )
+                    })}
+                    {connectedClients.map(client => {
+                      const cLat = Number(client.lat)
+                      const cLng = Number(client.lng)
+                      if (isNaN(cLat) || isNaN(cLng) || (!cLat && !cLng)) return null
+                      return (
+                        <Marker
+                          key={client.id}
+                          position={[cLat, cLng]}
+                          icon={createIcon('#818cf8', 12)}
+                        />
+                      )
+                    })}
+                  </MapContainer>
+                )
+              })()}
             </div>
           </div>
         </div>

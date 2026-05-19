@@ -226,57 +226,69 @@ export default function DashboardPage() {
         ))}
 
         {/* ODP markers */}
-        {layers.odp && odpData.map(odp => (
-          <Marker
-            key={odp.id}
-            position={[odp.lat, odp.lng]}
-            icon={createIcon(getODPColor(odp))}
-            eventHandlers={{
-              click: () => navigate(`/odp/${odp.id}`)
-            }}
-          >
-            <Popup>
-              <div className="min-w-[200px]">
-                <div className="flex items-center justify-between">
-                  <p className="font-bold text-sm">{odp.id}</p>
-                  <span className="text-xs px-2 py-0.5 rounded-full" style={{
-                    background: getODPColor(odp) + '22',
-                    color: getODPColor(odp)
-                  }}>
-                    {odp.usedPorts}/{odp.totalPorts} Port
-                  </span>
+        {layers.odp && odpData.map(odp => {
+          const lat = Number(odp.lat)
+          const lng = Number(odp.lng)
+          if (isNaN(lat) || isNaN(lng) || (!lat && !lng)) return null
+          
+          return (
+            <Marker
+              key={odp.id}
+              position={[lat, lng]}
+              icon={createIcon(getODPColor(odp))}
+              eventHandlers={{
+                click: () => navigate(`/odp/${odp.id}`)
+              }}
+            >
+              <Popup>
+                <div className="min-w-[200px]">
+                  <div className="flex items-center justify-between">
+                    <p className="font-bold text-sm">{odp.id}</p>
+                    <span className="text-xs px-2 py-0.5 rounded-full" style={{
+                      background: getODPColor(odp) + '22',
+                      color: getODPColor(odp)
+                    }}>
+                      {odp.usedPorts}/{odp.totalPorts} Port
+                    </span>
+                  </div>
+                  <p className="text-xs text-text-secondary mt-1">{odp.name}</p>
+                  <p className="text-xs text-text-muted mt-1">{odp.address}</p>
+                  <p className="text-xs text-text-muted mt-1">Tipe: {odp.type}</p>
                 </div>
-                <p className="text-xs text-text-secondary mt-1">{odp.name}</p>
-                <p className="text-xs text-text-muted mt-1">{odp.address}</p>
-                <p className="text-xs text-text-muted mt-1">Tipe: {odp.type}</p>
-              </div>
-            </Popup>
-          </Marker>
-        ))}
+              </Popup>
+            </Marker>
+          )
+        })}
 
         {/* Client markers */}
         {layers.clients && (
           <MarkerClusterGroup chunkedLoading maxClusterRadius={60}>
-            {clientData.map(client => (
-              <Marker
-                key={client.id}
-                position={[client.lat, client.lng]}
-                icon={clientIcon}
-              >
-                <Popup>
-                  <div className="min-w-[180px]">
-                    <p className="font-bold text-sm">{client.name}</p>
-                    <p className="text-xs text-text-secondary mt-1">{client.package} • {client.odpId}</p>
-                    <p className="text-xs mt-1">
-                      {client.status === 'online'
-                        ? <span className="text-success">● Online</span>
-                        : <span className="text-danger">● Offline</span>
-                      }
-                    </p>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
+            {clientData.map(client => {
+              const lat = Number(client.lat)
+              const lng = Number(client.lng)
+              if (isNaN(lat) || isNaN(lng) || (!lat && !lng)) return null
+
+              return (
+                <Marker
+                  key={client.id}
+                  position={[lat, lng]}
+                  icon={clientIcon}
+                >
+                  <Popup>
+                    <div className="min-w-[180px]">
+                      <p className="font-bold text-sm">{client.name}</p>
+                      <p className="text-xs text-text-secondary mt-1">{client.package} • {client.odpId}</p>
+                      <p className="text-xs mt-1">
+                        {client.status === 'online'
+                          ? <span className="text-success">● Online</span>
+                          : <span className="text-danger">● Offline</span>
+                        }
+                      </p>
+                    </div>
+                  </Popup>
+                </Marker>
+              )
+            })}
           </MarkerClusterGroup>
         )}
 
