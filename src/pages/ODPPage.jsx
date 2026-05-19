@@ -147,65 +147,48 @@ export default function ODPPage() {
     return () => clearTimeout(t)
   }, [searchInput])
 
-  // Hitung jarak ODP dari user, sort jika aktif (UNTUK TABEL)
-  const displayData = (() => {
-    if (!userLocation) return odpData
+  // Helper: hitung jarak ke satu ODP (aman dari error)
+  const calcDist = (odp) => {
+    if (!userLocation) return Infinity
+    const lat = Number(odp.lat || 0)
+    const lng = Number(odp.lng || 0)
+    if (!lat || !lng) return Infinity
+    try { return getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) }
+    catch { return Infinity }
+  }
 
-    if (sortNearest) {
-      // Sort GLOBALLY dari allOdpData agar ODP terdekat benar-benar dari seluruh database
-      const allWithDist = allOdpData.map(odp => {
-        const lat = Number(odp.lat), lng = Number(odp.lng)
-        const dist = (lat && lng) ? getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) : Infinity
-        return { ...odp, _dist: dist }
-      })
-      const sortedAll = allWithDist.sort((a, b) => a._dist - b._dist)
-      
-      // Jika ada pencarian, filter juga (opsional, tapi disarankan)
-      let filtered = sortedAll;
+  // Data yang tampil di tabel — useMemo agar aman dan efisien
+  const { displayData, displayTotal, displayTotalPages } = (() => {
+    if (sortNearest && userLocation && allOdpData.length > 0) {
+      // Urutkan seluruh ODP berdasarkan jarak
+      let filtered = [...allOdpData]
+        .map(odp => ({ ...odp, _dist: calcDist(odp) }))
+        .sort((a, b) => a._dist - b._dist)
+
+      // Filter pencarian & huruf (local)
       if (search) {
-        const sLower = search.toLowerCase();
-        filtered = filtered.filter(o => 
-          (o.codeOdp || '').toLowerCase().includes(sLower) || 
-          (o.noPole || '').toLowerCase().includes(sLower) || 
-          (o.remark || '').toLowerCase().includes(sLower)
-        );
+        const q = search.toLowerCase()
+        filtered = filtered.filter(o =>
+          (o.codeOdp || '').toLowerCase().includes(q) ||
+          (o.noPole  || '').toLowerCase().includes(q) ||
+          (o.remark  || '').toLowerCase().includes(q)
+        )
       }
       if (selectedLetter) {
-        filtered = filtered.filter(o => (o.codeOdp || '').toLowerCase().startsWith(selectedLetter));
+        const l = selectedLetter.toLowerCase()
+        filtered = filtered.filter(o => (o.codeOdp || '').toLowerCase().startsWith(l))
       }
-      return filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+
+      const t  = filtered.length
+      const tp = Math.max(1, Math.ceil(t / PAGE_SIZE))
+      const d  = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+      return { displayData: d, displayTotal: t, displayTotalPages: tp }
     }
 
-    // Jika tidak sortNearest, cukup tambahkan jarak pada data paginasi server
-    return odpData.map(odp => {
-      const lat = Number(odp.lat), lng = Number(odp.lng)
-      const dist = (lat && lng) ? getDistanceKm(userLocation.lat, userLocation.lng, lat, lng) : Infinity
-      return { ...odp, _dist: dist }
-    })
+    // Mode normal: data sudah dipaginasi oleh server, tambahkan jarak saja
+    const d = odpData.map(odp => ({ ...odp, _dist: calcDist(odp) }))
+    return { displayData: d, displayTotal: total, displayTotalPages: totalPages }
   })()
-
-  // Dynamic pagination variables
-  const getDisplayTotal = () => {
-    if (sortNearest && userLocation) {
-      if (search || selectedLetter) {
-        return allOdpData.filter(o => {
-          let match = true;
-          if (search) {
-            const sLower = search.toLowerCase();
-            match = (o.codeOdp || '').toLowerCase().includes(sLower) || 
-                    (o.noPole || '').toLowerCase().includes(sLower) || 
-                    (o.remark || '').toLowerCase().includes(sLower);
-          }
-          if (match && selectedLetter) match = (o.codeOdp || '').toLowerCase().startsWith(selectedLetter);
-          return match;
-        }).length;
-      }
-      return allOdpData.length;
-    }
-    return total;
-  }
-  const displayTotal = getDisplayTotal();
-  const displayTotalPages = sortNearest && userLocation ? Math.ceil(displayTotal / PAGE_SIZE) : totalPages;
 
   // Hitung jarak ODP dari user (UNTUK PETA - SEMUA ODP)
   const mapDisplayData = (() => {
