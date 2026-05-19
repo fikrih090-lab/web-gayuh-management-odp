@@ -7,7 +7,22 @@ import 'leaflet/dist/leaflet.css'
 
 import { registerSW } from 'virtual:pwa-register'
 
-// Register PWA Service Worker
+// Force unregister all old service workers to clear cache if they exist
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(registrations => {
+    let hasUnregistered = false;
+    for (let registration of registrations) {
+      registration.unregister();
+      hasUnregistered = true;
+    }
+    if (hasUnregistered) {
+      console.log('Old service workers unregistered to clear cache. Reloading...');
+      window.location.reload();
+    }
+  });
+}
+
+// Register PWA Service Worker (only if not unregistering old ones)
 const updateSW = registerSW({
   onNeedRefresh() {
     if (confirm('Versi baru aplikasi tersedia. Muat ulang sekarang?')) {
