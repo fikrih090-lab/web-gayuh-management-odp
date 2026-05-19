@@ -67,9 +67,15 @@ function MapFlyTo({ center, zoom }) {
   const map = useMap()
   const prevCenter = useRef(null)
   useEffect(() => {
-    if (center && JSON.stringify(center) !== JSON.stringify(prevCenter.current)) {
-      map.flyTo(center, zoom || map.getZoom(), { duration: 1.2 })
-      prevCenter.current = center
+    if (center && Array.isArray(center) && !isNaN(center[0]) && !isNaN(center[1])) {
+      if (JSON.stringify(center) !== JSON.stringify(prevCenter.current)) {
+        try {
+          map.flyTo(center, zoom || map.getZoom(), { duration: 1.2 })
+          prevCenter.current = center
+        } catch (e) {
+          console.warn('MapFlyTo error:', e)
+        }
+      }
     }
   }, [center, zoom, map])
   return null
@@ -97,7 +103,18 @@ export default function ODPPage() {
   const navigate  = useNavigate()
   const isDark    = useDarkMode()
 
-  const { location: userLocation, loading: gpsLoading, error: gpsError, getLocation, startWatching, stopWatching } = useGeolocation()
+
+
+  const { location: userLocationRaw, loading: gpsLoading, error: gpsError, getLocation, startWatching, stopWatching } = useGeolocation()
+  // Ensure userLocation is valid numbers
+  const userLocation = useMemo(() => {
+    if (!userLocationRaw) return null
+    const lat = Number(userLocationRaw.lat)
+    const lng = Number(userLocationRaw.lng)
+    if (isNaN(lat) || isNaN(lng)) return null
+    return { ...userLocationRaw, lat, lng }
+  }, [userLocationRaw])
+
   const [isTracking, setIsTracking] = useState(false)
 
   const user = JSON.parse(localStorage.getItem('user') || '{}')
@@ -204,7 +221,11 @@ export default function ODPPage() {
   const handleMyLocation = async () => {
     try {
       const loc = await getLocation()
-      setFlyTarget([loc.lat, loc.lng])
+      const lat = Number(loc.lat)
+      const lng = Number(loc.lng)
+      if (!isNaN(lat) && !isNaN(lng)) {
+        setFlyTarget([lat, lng])
+      }
     } catch {}
   }
 
@@ -229,7 +250,11 @@ export default function ODPPage() {
     
     // Di desktop, tampilkan card di atas map
     setSelectedODP(odp)
-    if (odp.lat && odp.lng) setFlyTarget([Number(odp.lat), Number(odp.lng)])
+    const lat = Number(odp.lat)
+    const lng = Number(odp.lng)
+    if (!isNaN(lat) && !isNaN(lng)) {
+      setFlyTarget([lat, lng])
+    }
   }
 
   // Delete ODP handler
@@ -273,9 +298,11 @@ export default function ODPPage() {
     e.target.value = ''; // reset
   };
 
-  const mapCenter = userLocation
+  const mapCenter = (userLocation && !isNaN(userLocation.lat) && !isNaN(userLocation.lng))
     ? [userLocation.lat, userLocation.lng]
-    : (selectedODP?.lat && selectedODP?.lng ? [Number(selectedODP.lat), Number(selectedODP.lng)] : [-6.905, 107.610])
+    : (selectedODP?.lat && selectedODP?.lng && !isNaN(Number(selectedODP.lat)) && !isNaN(Number(selectedODP.lng)) 
+        ? [Number(selectedODP.lat), Number(selectedODP.lng)] 
+        : [-6.905, 107.610])
 
   return (
     <div className="h-full flex flex-col lg:flex-row animate-fade-in relative z-0">

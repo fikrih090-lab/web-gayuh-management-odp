@@ -42,10 +42,14 @@ if (savedTheme === 'dark' || (savedTheme === 'system' && window.matchMedia('(pre
   document.documentElement.classList.remove('dark');
 }
 
+import { ErrorBoundary } from './components/ErrorBoundary'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </ErrorBoundary>
   </React.StrictMode>
 )
